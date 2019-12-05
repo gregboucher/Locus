@@ -33,12 +33,14 @@ namespace Locus
 
             app.UseEndpoints(endpoints =>
             {
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllerRoute(
-                        name: "default",
-                        pattern: "{controller=Dashboard}/{action=Index}/{id?}");
-                });
+                endpoints.MapControllers();
+                
+                //app.UseEndpoints(endpoints =>
+                //{
+                //    endpoints.MapControllerRoute(
+                //        name: "default",
+                //        pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+                //});
             });
         }
     }

@@ -1,0 +1,16 @@
+﻿@model Asset
+
+@{
+    ViewBag.Title = "GetAsset()";
+}
+
+<div>@Model.Id</div>
+<div>@Model.Tag</div>
+<div>@Model.Model.Id, @Model.Model.Name</div>
+<div>@Model.Group.Id, @Model.Group.Name</div>
+<div>@Model.Deactivated</div>
+
+
+@section JavaScripts {
+    <div>dummy</div>
+}

@@ -1,5 +1,6 @@
 using Locus.Models;
-//using Locus.ViewModels;
+using Locus.ViewModels;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Locus.Controllers
@@ -13,9 +14,21 @@ namespace Locus.Controllers
             _assetRepository = assetRepository;
         }
 
+        [Route("")]
+        [Route("Dashboard")]
+        [Route("Home")]
+        [Route("Dashboard/Index")]
         public ViewResult Index()
         {
-            var model = _assetRepository.GetAsset(1);
+            IEnumerable<Assignment> model = _assetRepository.TestFunc();
+            //IEnumerable<Assignment> model = _assetRepository.GetActiveAssignments();
+            return View(model);
+        }
+
+        [Route("Dashboard/GetAsset/{SerialNumber}")]
+        public ViewResult GetAsset(string SerialNumber)
+        {
+            var model = _assetRepository.GetAsset(SerialNumber);
             return View(model);
         }
     }

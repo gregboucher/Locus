@@ -1,14 +1,13 @@
-@model Asset
+@model IEnumerable<Assignment>
 
 @{
-    ViewBag.Title = "Index Method";
+    ViewBag.Title = "Index Action - GetActiveAssignments()";
 }
 
-    <div>@Model.Serial</div>
-    <div>@Model.Tag</div>
-    <div>@Model.Model.Id, @Model.Model.Name</div>
-    <div>@Model.Group.Id, @Model.Group.Name</div>
-
+@foreach (var entry in Model)
+{
+    
+}
 
 @section JavaScripts {
     <div>dummy</div>
