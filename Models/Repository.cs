@@ -15,7 +15,7 @@ namespace Locus.Models
             _connectionFactory = connectionFactory;
         }
 
-        public IEnumerable<Assignment> TestFunc()
+        public IEnumerable<Group> GetActiveAssignments()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
@@ -33,32 +33,45 @@ namespace Locus.Models
                                      ON Ast.GroupId = G.Id
                              WHERE Asg.Returned IS NULL;";
 
-                var Dict = new Dictionary<int, int>();
-
+                var Groups = new List<Group>();
+                var GroupDict = new Dictionary<int, int>();
+                var UserDict = new Dictionary<int, int>();
+                
                 IEnumerable<Assignment> assignments = db.Query<Assignment, User, Role, Asset, Model, Group, Assignment>
                 (sql, (assignment, user, role, asset, model, group) =>
                 {
-                    
+                    User CurrentUser;
+                    Group CurrentGroup;
+                    asset.Model = model;
+                    user.Role = role;
 
-                    
-                    //User u = new User();
-                    //initalise u.Assests in constructor. Probably creat custom obj.
-                    //var ast = asset.Id;
-                    assignment.User = user;
+                    if (!GroupDict.TryGetValue(group.Id, out int GroupIndex))
+                    {
+                        CurrentGroup = group;
+                        CurrentGroup.Users = new List<User>();
+                        GroupIndex = Groups.Count();
+                        Groups.Add(CurrentGroup);
+                        GroupDict.Add(group.Id, GroupIndex);
+                    }
+                    if (!UserDict.TryGetValue(user.Id, out int UserIndex))
+                    {
+                        CurrentUser = user;
+                        CurrentUser.Assets = new List<Asset>();
 
-                    assignment.User.Role = role;
-                    assignment.Asset = asset;
-                    assignment.Asset.Model = model;
-                    assignment.Asset.Group = group;
-                    //u.Assets.Add(asset); //<-------------------------
+                        UserIndex = Groups.ElementAt(GroupIndex).Users.Count();
+                        Groups.ElementAt(GroupIndex).Users.Add(CurrentUser);
+                        UserDict.Add(user.Id, UserIndex);
+                    }
+                    Groups.ElementAt(GroupIndex).Users.ElementAt(UserIndex).Assets.Add(asset);
+
                     return assignment;
                 });
 
-                return assignments;
+                return Groups;
             }
         }
 
-        public IEnumerable<Assignment> GetActiveAssignments()
+        public IEnumerable<Assignment> TestFunc()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {

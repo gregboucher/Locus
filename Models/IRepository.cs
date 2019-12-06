@@ -5,7 +5,7 @@ namespace Locus.Models
     public interface IRepository
     {
         IEnumerable<Assignment> TestFunc();
-        IEnumerable<Assignment> GetActiveAssignments();
+        IEnumerable<Group> GetActiveAssignments();
         Asset GetAsset(string SerialNumber);
     }
 }

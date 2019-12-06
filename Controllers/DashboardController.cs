@@ -20,8 +20,7 @@ namespace Locus.Controllers
         [Route("Dashboard/Index")]
         public ViewResult Index()
         {
-            IEnumerable<Assignment> model = _assetRepository.TestFunc();
-            //IEnumerable<Assignment> model = _assetRepository.GetActiveAssignments();
+            IEnumerable<Group> model = _assetRepository.GetActiveAssignments();
             return View(model);
         }
 

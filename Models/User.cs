@@ -10,6 +10,7 @@ namespace Locus.Models
         public string Absentee { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public List<Asset> Assets { get; set; }
+
+        public IList<Asset> Assets { get; set; }
     }
 }

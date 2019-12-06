@@ -1,14 +1,25 @@
-@model IEnumerable<Assignment>
+@model IEnumerable<Group>
 
 @{
     ViewBag.Title = "Index Action - GetActiveAssignments()";
 }
 
-@foreach (var entry in Model)
+@foreach (var group in Model)
 {
-    
+    <h3>@group.Name:</h3>
+    @foreach (var user in group.Users)
+    {
+        <div>@user.Name</div>
+        <ul>
+        @foreach (var asset in user.Assets)
+        {
+            <li>@asset.Tag</li>
+        }
+        </ul>
+    }
+    <hr />
 }
 
 @section JavaScripts {
-    <div>dummy</div>
+    <div>Javascrip placeholder</div>
 }
