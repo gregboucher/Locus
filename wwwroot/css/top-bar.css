@@ -1,0 +1,63 @@
+.top-bar {
+    background-color: #27293d;
+    border-bottom: 1px solid #313452;
+    height: 100%;
+    display: flex;
+}
+
+.top-bar__brand-wrapper {
+    display: flex;
+    align-items: center;
+    width: 256px;
+    border-right: 1px solid #313452;
+    box-sizing: border-box;
+    padding: 16px;
+}
+
+.top-bar__brand-icon {
+    color: white;
+    font-size: 2rem;
+    margin-right: 10px;
+}
+
+.top-bar__brand-title {
+    color: white;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 1.25rem;
+}
+
+.top-bar__input-wrapper {
+    display: flex;
+    background-color: #1e1e2f;
+    margin: 12px;
+    align-items: center;
+    border-radius: 4px;
+    flex-grow: 1;
+}
+
+.top-bar__input-icon {
+    margin-left: 10px;
+    margin-right: 10px;
+    color: #6c707c;
+}
+
+.top-bar__input-field {
+    flex-grow: 1;
+    height: 100%;
+    color: #6c707c;
+    border: none;
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    outline: none;
+}
+
+.top-bar__input-field::placeholder {
+    opacity: 1;
+}
+
+.top-bar__account-wrapper {
+    flex-grow: 0.5;
+}

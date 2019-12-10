@@ -1,13 +1,33 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>
-        @ViewBag.Title
-    </title>
+    <title>@Model.PageTitle</title>
+    @RenderSection("stylesheet")
+    <link rel="stylesheet" href="~/css/locus-font.css">
+    <link rel="stylesheet" href="~/css/page-layout.css">
+    
 </head>
-<body>
-    @RenderBody()
-    @RenderSection("JavaScripts", required: true)
+<body id="body">
+    <section id="top-bar">
+        <div class="top-bar">
+            <div class="top-bar__brand-wrapper">
+                <i class="icon-compass top-bar__brand-icon"></i>
+                <div class="top-bar__brand-title">LOCUS</div>
+            </div>
+            <div class="top-bar__input-wrapper">
+                <i class="icon-12 top-bar__input-icon"></i>
+                @RenderSection("top_bar", required: true)
+            </div>
+            <div class="top-bar__account-wrapper"></div>
+        </div>
+    </section>
+    <nav id="side-bar">
+        @RenderSection("side_bar", required: true)
+    </nav>
+    <section id="content">
+        @RenderSection("content", required: true)
+    </section>
+    @RenderSection("javascript", required: false)
 </body>
 </html>

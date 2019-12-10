@@ -15,117 +15,170 @@ namespace Locus.Models
             _connectionFactory = connectionFactory;
         }
 
-        public IEnumerable<Group> GetActiveAssignments()
+        public IEnumerable<Group> GetAssignmentsByGroup()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = @"SELECT * FROM [dbo].[Assignments] AS Asg
-                             INNER JOIN [dbo].[Users] AS U
-                                 ON Asg.UserId = U.Id
-	                             INNER JOIN [dbo].[Roles] AS R
-                                     ON U.RoleId = R.Id
+                string sql = 
+                    @"SELECT Asg.Id,
+                      Asg.UserId,
+                      Asg.AssetId,
+                      Asg.Assigned,
+                      Asg.Returned,
+                      U.Id,
+                      U.RoleId,
+                      U.Name,
+                      U.Absentee,
+                      U.Email,
+                      U.Phone,
+                      R.Id,
+                      R.Name,
+                      R.Deactivated,
+                      Ast.Id,
+                      Ast.Tag,
+                      Ast.ModelId,
+                      Ast.GroupId,
+                      DATEADD(hour, M.[Period], Asg.Assigned) AS Due, Ast.Deactivated,
+                      M.Id,
+                      M.Name,
+                      M.Period,
+                      M.Deactivated,
+                      G.Id,
+                      G.Name,
+                      G.Deactivated
+                      FROM
+                          [dbo].[Assignments] AS Asg
+                      INNER JOIN
+                          [dbo].[Users] AS U
+                      ON Asg.UserId = U.Id
+	                      INNER JOIN
+                              [dbo].[Roles] AS R
+                          ON U.RoleId = R.Id
+                      INNER JOIN
+                          [dbo].[Assets] AS Ast
+                      ON Asg.AssetId = Ast.Id
+	                      INNER JOIN
+                              [dbo].[Models] AS M
+                          ON Ast.ModelId = M.Id
+	                      INNER JOIN
+                              [dbo].[Groups] AS G
+                          ON Ast.GroupId = G.Id
+                      WHERE Asg.Returned IS NULL;";
 
-                             INNER JOIN [dbo].[Assets] AS Ast
-                                 ON Asg.AssetId = Ast.Id
-	                             INNER JOIN [dbo].[Models] AS M
-                                     ON Ast.ModelId = M.Id
-	                             INNER JOIN [dbo].[Groups] AS G
-                                     ON Ast.GroupId = G.Id
-                             WHERE Asg.Returned IS NULL;";
-
-                var Groups = new List<Group>();
-                var GroupDict = new Dictionary<int, int>();
-                var UserDict = new Dictionary<int, int>();
+                var assignmentsByGroup = new List<Group>();
+                var groupDictionary = new Dictionary<int, int>();
+                var userDictionary = new Dictionary<int, int>();
                 
-                IEnumerable<Assignment> assignments = db.Query<Assignment, User, Role, Asset, Model, Group, Assignment>
+                db.Query<Assignment, User, Role, Asset, Model, Group, Assignment>
                 (sql, (assignment, user, role, asset, model, group) =>
                 {
-                    User CurrentUser;
-                    Group CurrentGroup;
+                    User currentUser;
+                    Group currentGroup;
                     asset.Model = model;
                     user.Role = role;
 
-                    if (!GroupDict.TryGetValue(group.Id, out int GroupIndex))
+                    if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
                     {
-                        CurrentGroup = group;
-                        CurrentGroup.Users = new List<User>();
-                        GroupIndex = Groups.Count();
-                        Groups.Add(CurrentGroup);
-                        GroupDict.Add(group.Id, GroupIndex);
+                        currentGroup = group;
+                        currentGroup.Users = new List<User>();
+                        groupIndex = assignmentsByGroup.Count();
+                        assignmentsByGroup.Add(currentGroup);
+                        groupDictionary.Add(group.Id, groupIndex);
                     }
-                    if (!UserDict.TryGetValue(user.Id, out int UserIndex))
+                    if (!userDictionary.TryGetValue(user.Id, out int userIndex))
                     {
-                        CurrentUser = user;
-                        CurrentUser.Assets = new List<Asset>();
-
-                        UserIndex = Groups.ElementAt(GroupIndex).Users.Count();
-                        Groups.ElementAt(GroupIndex).Users.Add(CurrentUser);
-                        UserDict.Add(user.Id, UserIndex);
+                        currentUser = user;
+                        currentUser.Assets = new List<Asset>();
+                        userIndex = assignmentsByGroup.ElementAt(groupIndex).Users.Count();
+                        assignmentsByGroup.ElementAt(groupIndex).Users.Add(currentUser);
+                        userDictionary.Add(user.Id, userIndex);
                     }
-                    Groups.ElementAt(GroupIndex).Users.ElementAt(UserIndex).Assets.Add(asset);
-
-                    return assignment;
+                    assignmentsByGroup.ElementAt(groupIndex).Users.ElementAt(userIndex).Assets.Add(asset);
+                    return null;
                 });
-
-                return Groups;
+                return assignmentsByGroup;
             }
         }
 
-        public IEnumerable<Assignment> TestFunc()
+        public int AssignedAssetCount()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = @"SELECT * FROM [dbo].[Assignments] AS Asg
-                             INNER JOIN [dbo].[Users] AS U
-                                 ON Asg.UserId = U.Id
-	                             INNER JOIN [dbo].[Roles] AS R
-                                     ON U.RoleId = R.Id
+                string sql =
+                    @"SELECT COUNT(Id)
+                      FROM 
+                          [dbo].[Assignments]
+                      WHERE Returned IS NULL;";
 
-                             INNER JOIN [dbo].[Assets] AS Ast
-                                 ON Asg.AssetId = Ast.Id
-	                             INNER JOIN [dbo].[Models] AS M
-                                     ON Ast.ModelId = M.Id
-	                             INNER JOIN [dbo].[Groups] AS G
-                                     ON Ast.GroupId = G.Id
-                             WHERE Asg.Returned IS NULL;";
-
-                IEnumerable<Assignment> assignments = db.Query<Assignment, User, Role, Asset, Model, Group, Assignment>
-                (sql, (assignment, user, role, asset, model, group) =>
-                {
-                    //User u = new User();
-                    //initalise u.Assests in constructor. Probably creat custom obj.
-                    //var ast = asset.Id;
-                    assignment.User = user;
-                    
-                    assignment.User.Role = role;
-                    assignment.Asset = asset;
-                    assignment.Asset.Model = model;
-                    assignment.Asset.Group = group;
-                    //u.Assets.Add(asset); //<-------------------------
-                    return assignment;
-                });
-
-                return assignments;
+                int count = db.ExecuteScalar<int>(sql);
+                return count;
             }
         }
 
-        public Asset GetAsset(string SerialNumber)
+        public int DueTodayCount()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = @"SELECT * FROM [dbo].[Assets] AS A
-                             INNER JOIN [dbo].[Models] AS M
-                                 ON A.ModelId = M.Id
-                             INNER JOIN [dbo].[Groups] AS G
-                                 ON A.GroupId = G.Id
-                             WHERE A.Id = @SerialNumber;";
+                string sql =
+                    @"SELECT COUNT(Asg.Id)
+                      FROM
+                          [dbo].[Assignments] AS Asg 
+                      INNER JOIN
+                          [dbo].[Assets] AS Ast
+	                  ON Asg.AssetId = Ast.Id
+	                      INNER JOIN
+                              [dbo].[Models] AS M
+		                  ON Ast.ModelId = M.Id
+                      WHERE Returned IS NULL 
+                      AND DATEDIFF(hour, GETDATE(), DATEADD(hour, M.[Period], Asg.Assigned)) BETWEEN 0 AND 24;";
+
+                int count = db.ExecuteScalar<int>(sql);
+                return count;
+            }     
+        }
+
+        public int OverdueCount()
+        {
+            using (IDbConnection db = _connectionFactory.GetConnection())
+            {
+                string sql = 
+                    @"SELECT COUNT(Asg.Id)
+                      FROM 
+                           [dbo].[Assignments] AS Asg 
+                      INNER JOIN 
+                           [dbo].[Assets] AS Ast
+	                  ON Asg.AssetId = Ast.Id
+	                       INNER JOIN 
+                               [dbo].[Models] AS M
+		                   ON Ast.ModelId = M.Id
+                      WHERE Returned IS NULL
+                      AND DATEDIFF(hour, GETDATE(), DATEADD(hour, M.[Period], Asg.Assigned)) < 0;";
+
+                int count = db.ExecuteScalar<int>(sql);
+                return count;
+            }
+        }
+
+        public Asset GetAsset(string serialNumber)
+        {
+            using (IDbConnection db = _connectionFactory.GetConnection())
+            {
+                string sql =
+                    @"SELECT * FROM [dbo].[Assets] AS A
+                      INNER JOIN
+                          [dbo].[Models] AS M
+                      ON A.ModelId = M.Id
+                      INNER JOIN
+                          [dbo].[Groups] AS G
+                      ON A.GroupId = G.Id
+                      WHERE A.Id = @SerialNumber;";
 
                 Asset asset = db.Query<Asset, Model, Group, Asset>(sql, (asset, model, group) =>
                 {
                     asset.Model = model;
                     asset.Group = group;
                     return asset;
-                }, new { SerialNumber }).FirstOrDefault();
+                }, new { serialNumber }).FirstOrDefault();
 
                 return asset;
             }

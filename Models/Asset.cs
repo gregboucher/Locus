@@ -8,6 +8,7 @@ namespace Locus.Models
         public string Tag { get; set; }
         public Model Model { get; set; }
         public Group Group { get; set; }
+        public DateTime Due { get; set; }
         public DateTime? Deactivated { get; set; }
     }
 }
