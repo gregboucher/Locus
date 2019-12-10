@@ -6,7 +6,7 @@
 
 @section side_bar {
     <div class="navigation">
-        <a class="navigation__button navigation__button--selected" href="#">
+        <a asp-controller="Dashboard" asp-action="Index" class="navigation__button navigation__button--selected">
             <i class="icon-10 navigation__button-icon"></i>
             <div class="navigation__button-text">Dashboard</div>
         </a>
@@ -57,7 +57,7 @@
             <div class="dashboard-overview__card">
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
-                        <div class="dashboard-overview__card-number">5</div>
+                        <div class="dashboard-overview__card-number">@Model.AssignedAssetsCount</div>
                         <div class="dashboard-overview__card-type">Users</div>
                     </div>
                     <i class="icon-11 dashboard-overview__card-icon"></i>
@@ -66,7 +66,7 @@
             <div class="dashboard-overview__card">
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
-                        <div class="dashboard-overview__card-number">2</div>
+                        <div class="dashboard-overview__card-number">@Model.DueTodayCount</div>
                         <div class="dashboard-overview__card-type">Due Today</div>
                     </div>
                     <i class="icon-5 dashboard-overview__card-icon"></i>
@@ -75,7 +75,7 @@
             <div class="dashboard-overview__card">
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
-                        <div class="dashboard-overview__card-number">1</div>
+                        <div class="dashboard-overview__card-number">@Model.OverdueCount</div>
                         <div class="dashboard-overview__card-type">Overdue</div>
                     </div>
                     <i class="icon-12 dashboard-overview__card-icon"></i>
@@ -92,36 +92,61 @@
             </div>
         </div>
         <div class="dashboard-groups">
-            <div class="dashboard-groups__header accordion">
-                <i class="dashboard-groups__header-icon"></i>
-                <div class="dashboard-groups__header-name">Libau</div>
-                <div class="dashboard-groups__header-number">(3)</div>
-            </div>
-            <div class="dashboard-groups__body">
-                <table class="dashboard-groups__table" data-name="dashboard-groups__table">
-                    <tr class="dashboard-groups__row">
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Created</th>
-                        <th>Next Due Date</th>
-                        <th>Assets</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                    <tr class="dashboard-groups__row">
-                        <td class="dashboard-groups__search-field">Greg Boucher</td>
-                        <td class="dashboard-groups__search-field">CRT</td>
-                        <td>14-12-2019</td>
-                        <td>16-12-2019</td>
-                        <td><i class="icon-10 dashboard-groups__icon"></i><i class="icon-11 dashboard-groups__icon"></i><i class="icon-12 dashboard-groups__icon"></i></td>
-                        <td><div class="dashboard-groups__status dashboard-groups__status--active dashboard-groups__search-field">Active</div></td>
-                        <td>
-                            <a class="icon-edit dashboard-groups__icon" href="#"></a>
-                            <a class="icon-cancel dashboard-groups__icon" href="#"></a>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            @foreach (var group in Model.Groups)
+            {
+                <div class="dashboard-groups__header accordion">
+                    <i class="dashboard-groups__header-icon"></i>
+                    <div class="dashboard-groups__header-name">@group.Name</div>
+                    <div class="dashboard-groups__header-number">(@group.Users.Count)</div>
+                </div>
+                <div class="dashboard-groups__body">
+                    <table class="dashboard-groups__table" data-name="dashboard-groups__table">
+                        <tr class="dashboard-groups__row">
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Created</th>
+                            <th>Next Due Date</th>
+                            <th>Assets</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        @foreach (var user in group.Users)
+                        {
+                            string status = ""; 
+                            <tr class="dashboard-groups__row">
+                                <td class="dashboard-groups__search-field">@user.Name</td>
+                                <td class="dashboard-groups__search-field">@user.Role.Name</td>
+                                <td>@user.Created.ToString("dd-MM-yyyy")</td>
+                                <td>TODO</td>
+                                <td>
+                                    @foreach (var asset in user.Assets)
+                                    {
+                                        var hours = (asset.Due - DateTime.Now).TotalHours;
+                                        if (hours < 0)
+                                        {
+                                            status = "Overdue";
+                                        }
+                                        else if (hours > 24 & status != "Overdue")
+                                        {
+                                            status = "Active";
+                                        }
+                                        else if (status != "Overdue")
+                                        {
+                                            status = "Due";
+                                        }
+                                        <i class="icon-10 dashboard-groups__icon dashboard-groups__icon--@status.ToLower()"></i>
+                                    }
+                                </td>
+                                <td><div class="dashboard-groups__status dashboard-groups__search-field dashboard-groups__status--@status.ToLower()">@status</div></td>
+                                <td>
+                                    <a class="icon-edit dashboard-groups__icon" href="#"></a>
+                                    <a class="icon-cancel dashboard-groups__icon" href="#"></a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            }
         </div>
     </div>
 }

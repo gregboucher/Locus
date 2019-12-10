@@ -31,6 +31,7 @@ namespace Locus.Models
                       U.Absentee,
                       U.Email,
                       U.Phone,
+                      U.Created,
                       R.Id,
                       R.Name,
                       R.Deactivated,
@@ -65,7 +66,7 @@ namespace Locus.Models
                           ON Ast.GroupId = G.Id
                       WHERE Asg.Returned IS NULL;";
 
-                var assignmentsByGroup = new List<Group>();
+                var groups = new List<Group>();
                 var groupDictionary = new Dictionary<int, int>();
                 var userDictionary = new Dictionary<int, int>();
                 
@@ -81,31 +82,31 @@ namespace Locus.Models
                     {
                         currentGroup = group;
                         currentGroup.Users = new List<User>();
-                        groupIndex = assignmentsByGroup.Count();
-                        assignmentsByGroup.Add(currentGroup);
+                        groupIndex = groups.Count();
+                        groups.Add(currentGroup);
                         groupDictionary.Add(group.Id, groupIndex);
                     }
                     if (!userDictionary.TryGetValue(user.Id, out int userIndex))
                     {
                         currentUser = user;
                         currentUser.Assets = new List<Asset>();
-                        userIndex = assignmentsByGroup.ElementAt(groupIndex).Users.Count();
-                        assignmentsByGroup.ElementAt(groupIndex).Users.Add(currentUser);
+                        userIndex = groups.ElementAt(groupIndex).Users.Count();
+                        groups.ElementAt(groupIndex).Users.Add(currentUser);
                         userDictionary.Add(user.Id, userIndex);
                     }
-                    assignmentsByGroup.ElementAt(groupIndex).Users.ElementAt(userIndex).Assets.Add(asset);
+                    groups.ElementAt(groupIndex).Users.ElementAt(userIndex).Assets.Add(asset);
                     return null;
                 });
-                return assignmentsByGroup;
+                return groups;
             }
         }
 
-        public int AssignedAssetCount()
+        public int AssignedUserCount()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
                 string sql =
-                    @"SELECT COUNT(Id)
+                    @"SELECT Count(DISTINCT UserId)
                       FROM 
                           [dbo].[Assignments]
                       WHERE Returned IS NULL;";
@@ -130,7 +131,7 @@ namespace Locus.Models
                               [dbo].[Models] AS M
 		                  ON Ast.ModelId = M.Id
                       WHERE Returned IS NULL 
-                      AND DATEDIFF(hour, GETDATE(), DATEADD(hour, M.[Period], Asg.Assigned)) BETWEEN 0 AND 24;";
+                      AND DATEDIFF(hour, GETDATE(), DATEADD(hour, M.[Period], Asg.Assigned)) BETWEEN 1 AND 24;";
 
                 int count = db.ExecuteScalar<int>(sql);
                 return count;
@@ -152,7 +153,7 @@ namespace Locus.Models
                                [dbo].[Models] AS M
 		                   ON Ast.ModelId = M.Id
                       WHERE Returned IS NULL
-                      AND DATEDIFF(hour, GETDATE(), DATEADD(hour, M.[Period], Asg.Assigned)) < 0;";
+                      AND DATEDIFF(hour, GETDATE(), DATEADD(hour, M.[Period], Asg.Assigned)) <= 0;";
 
                 int count = db.ExecuteScalar<int>(sql);
                 return count;

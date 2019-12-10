@@ -16,19 +16,19 @@
     background-color: #27293d;
 }
 
-.dashboard-groups__header.accordion > .dashboard-groups__header-icon::after {
-    content: '\e806';
-    font-family: "locus-font";
-    font-style: normal;
-}
+    .dashboard-groups__header.accordion > .dashboard-groups__header-icon::after {
+        content: '\e806';
+        font-family: "locus-font";
+        font-style: normal;
+    }
 
-.dashboard-groups__header.accordion.is-open > .dashboard-groups__header-icon::after {
-    content: '\e808';
-}
+    .dashboard-groups__header.accordion.is-open > .dashboard-groups__header-icon::after {
+        content: '\e808';
+    }
 
-.dashboard-groups__header:not(:first-child) {
-    margin-top: 10px;
-}
+    .dashboard-groups__header:not(:first-child) {
+        margin-top: 10px;
+    }
 
 .dashboard-groups__header-name {
     margin-left: 8px;
@@ -65,18 +65,26 @@
     border-bottom: 1px solid #313452;
 }
 
-.dashboard-groups__row > td, .dashboard-groups__row th {
-    padding: 10px 0;
-}
+    .dashboard-groups__row > td, .dashboard-groups__row th {
+        padding: 10px 0;
+    }
 
-.dashboard-groups__row:not(:first-child):hover {
-    background-color: #222235;
-    transition: background-color 0.1s linear;
-}
+    .dashboard-groups__row:not(:first-child):hover {
+        background-color: #222235;
+        transition: background-color 0.1s linear;
+    }
 
 .dashboard-groups__icon {
     font-size: 1rem;
     text-decoration: none;
+}
+
+.dashboard-groups__icon--due {
+    color: #c8a339;
+}
+
+.dashboard-groups__icon--overdue {
+    color: #ed5959;
 }
 
 .dashboard-groups__icon.icon-edit {
@@ -108,7 +116,7 @@
     color: #ff4747;
 }
 
-.dashboard-groups__status--due-today {
+.dashboard-groups__status--due {
     border: 1px solid #fbbc06;
     color: #fbbc06;
 }

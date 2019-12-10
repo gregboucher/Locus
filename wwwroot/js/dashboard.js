@@ -15,7 +15,7 @@ dashboard__cards[0].addEventListener("click", function(){
 })
 dashboard__cards[1].addEventListener("click", function(){
     var selected = IsCardSelected(this);
-    Update('dashboard-groups__status--due-today', selected);
+    Update('dashboard-groups__status--due', selected);
 })
 dashboard__cards[2].addEventListener("click", function(){
     var selected = IsCardSelected(this);

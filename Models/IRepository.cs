@@ -5,7 +5,7 @@ namespace Locus.Models
     public interface IRepository
     {
         IEnumerable<Group> GetAssignmentsByGroup();
-        int AssignedAssetCount();
+        int AssignedUserCount();
         int DueTodayCount();
         int OverdueCount();
         Asset GetAsset(string serialNumber);
