@@ -58,7 +58,8 @@
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
                         <div class="dashboard-overview__card-number">@Model.AssignedAssetsCount</div>
-                        <div class="dashboard-overview__card-type">Users</div>
+                        <div class="dashboard-overview__card-subject">Active</div>
+                        <div class="dashboard-overview__card-verb">User@(Model.AssignedAssetsCount == 1 ? "" : "s")</div>
                     </div>
                     <i class="icon-11 dashboard-overview__card-icon"></i>
                 </div>
@@ -67,7 +68,8 @@
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
                         <div class="dashboard-overview__card-number">@Model.DueTodayCount</div>
-                        <div class="dashboard-overview__card-type">Due Today</div>
+                        <div class="dashboard-overview__card-subject">Asset@(Model.DueTodayCount == 1 ? "" : "s")</div>
+                        <div class="dashboard-overview__card-verb">Due Today</div>
                     </div>
                     <i class="icon-5 dashboard-overview__card-icon"></i>
                 </div>
@@ -76,7 +78,8 @@
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
                         <div class="dashboard-overview__card-number">@Model.OverdueCount</div>
-                        <div class="dashboard-overview__card-type">Overdue</div>
+                        <div class="dashboard-overview__card-subject">Asset@(Model.OverdueCount == 1 ? "" : "s")</div>
+                        <div class="dashboard-overview__card-verb">Overdue</div>
                     </div>
                     <i class="icon-12 dashboard-overview__card-icon"></i>
                 </div>
@@ -85,7 +88,8 @@
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
                         <div class="dashboard-overview__card-number">0</div>
-                        <div class="dashboard-overview__card-type">Empty</div>
+                        <div class="dashboard-overview__card-subject">Subject</div>
+                        <div class="dashboard-overview__card-verb">Verb</div>
                     </div>
                     <i class="icon-5 dashboard-overview__card-icon"></i>
                 </div>
@@ -105,44 +109,61 @@
                             <th>Name</th>
                             <th>Role</th>
                             <th>Created</th>
-                            <th>Next Due Date</th>
                             <th>Assets</th>
+                            <th>Next Due Date</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                         @foreach (var user in group.Users)
                         {
-                            string status = ""; 
-                            <tr class="dashboard-groups__row">
-                                <td class="dashboard-groups__search-field">@user.Name</td>
-                                <td class="dashboard-groups__search-field">@user.Role.Name</td>
-                                <td>@user.Created.ToString("dd-MM-yyyy")</td>
-                                <td>TODO</td>
-                                <td>
-                                    @foreach (var asset in user.Assets)
+                            string userStatus = "";
+                            DateTime nextDueDate = DateTime.MaxValue; 
+                    <tr class="dashboard-groups__row">
+                        <td class="dashboard-groups__search-content">@user.Name</td>
+                        <td class="dashboard-groups__search-content">@user.Role.Name</td>
+                        <td>@user.Created.ToString("dd-MM-yyyy")</td>
+                        <td>
+                            @foreach (var asset in user.Assets)
+                            {
+                                string assetStatus = "";
+                                int days = (int)Math.Ceiling((asset.Due - DateTime.Now).TotalDays);
+                                if (days > 1)
+                                {
+                                    assetStatus = "Active";
+                                    if (userStatus != "Overdue" & userStatus != "Due")
                                     {
-                                        var hours = (asset.Due - DateTime.Now).TotalHours;
-                                        if (hours < 0)
-                                        {
-                                            status = "Overdue";
-                                        }
-                                        else if (hours > 24 & status != "Overdue")
-                                        {
-                                            status = "Active";
-                                        }
-                                        else if (status != "Overdue")
-                                        {
-                                            status = "Due";
-                                        }
-                                        <i class="icon-10 dashboard-groups__icon dashboard-groups__icon--@status.ToLower()"></i>
+                                        userStatus = "Active";
                                     }
-                                </td>
-                                <td><div class="dashboard-groups__status dashboard-groups__search-field dashboard-groups__status--@status.ToLower()">@status</div></td>
-                                <td>
-                                    <a class="icon-edit dashboard-groups__icon" href="#"></a>
-                                    <a class="icon-cancel dashboard-groups__icon" href="#"></a>
-                                </td>
-                            </tr>
+                                }
+                                else if (days == 1)
+                                {
+                                    assetStatus = "Due";
+                                    if (userStatus != "Overdue")
+                                    {
+                                        userStatus = "Due";
+                                    }
+                                }
+                                else
+                                {
+                                    assetStatus = "Overdue";
+                                    userStatus = "Overdue";
+                                }
+                                if (assetStatus != "Overdue" & asset.Due < nextDueDate)
+                                {
+                                    nextDueDate = asset.Due;
+                                }
+                                <i class="icon-10 dashboard-groups__icon dashboard-groups__search-classlist dashboard--@assetStatus.ToLower()"></i>
+                            }
+                        </td>
+                        <td>@nextDueDate.ToString("dd-MM-yyyy")</td>
+                        <td>
+                            <div class="dashboard-groups__status dashboard-groups__search-content dashboard--@userStatus.ToLower()">@userStatus</div>
+                        </td>
+                        <td>
+                            <a class="icon-edit dashboard-groups__icon" href="#"></a>
+                            <a class="icon-cancel dashboard-groups__icon" href="#"></a>
+                        </td>
+                    </tr>
                         }
                     </table>
                 </div>

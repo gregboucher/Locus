@@ -39,7 +39,7 @@
     font-size: 0.875rem;
 }
 
-.dashboard-groups__header:hover, .dashboard-groups__header.is-open {
+.dashboard-groups__header:hover {
     background-color: #2b2d43;
     transition: background-color 0.1s linear;
     cursor: pointer;
@@ -79,21 +79,13 @@
     text-decoration: none;
 }
 
-.dashboard-groups__icon--due {
-    color: #c8a339;
-}
+    .dashboard-groups__icon.icon-edit {
+        color: #3d9554;
+    }
 
-.dashboard-groups__icon--overdue {
-    color: #ed5959;
-}
-
-.dashboard-groups__icon.icon-edit {
-    color: #3d9554;
-}
-
-.dashboard-groups__icon.icon-cancel {
-    color: #f15555;
-}
+    .dashboard-groups__icon.icon-cancel {
+        color: #f15555;
+    }
 
 .dashboard-groups__status {
     display: inline-block;
@@ -106,17 +98,17 @@
     user-select: none;
 }
 
-.dashboard-groups__status--active {
-    border: 1px solid #23af47;
-    color: #23af47;
-}
+    .dashboard-groups__status.dashboard--active {
+        border: 1px solid #23af47;
+        color: #23af47;
+    }
 
-.dashboard-groups__status--overdue {
-    border: 1px solid #ff4747;
-    color: #ff4747;
-}
+    .dashboard-groups__status.dashboard--due {
+        border: 1px solid #fbbc06;
+        color: #fbbc06;
+    }
 
-.dashboard-groups__status--due {
-    border: 1px solid #fbbc06;
-    color: #fbbc06;
-}
+    .dashboard-groups__status.dashboard--overdue {
+        border: 1px solid #ff4747;
+        color: #ff4747;
+    }

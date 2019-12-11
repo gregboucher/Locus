@@ -5,6 +5,14 @@
     padding: 21px;
 }
 
-.dashboard > div:not(:last-child) {
-    margin-bottom: 21px;
+    .dashboard > div:not(:last-child) {
+        margin-bottom: 21px;
+    }
+
+.dashboard--due {
+    color: #fbbc06;
+}
+
+.dashboard--overdue {
+    color: #ff4747;
 }

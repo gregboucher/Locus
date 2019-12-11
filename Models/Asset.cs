@@ -9,6 +9,7 @@ namespace Locus.Models
         public Model Model { get; set; }
         public Group Group { get; set; }
         public DateTime Due { get; set; }
+        public string Status { get; set; }
         public DateTime? Deactivated { get; set; }
     }
 }

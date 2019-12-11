@@ -15,11 +15,11 @@ dashboard__cards[0].addEventListener("click", function(){
 })
 dashboard__cards[1].addEventListener("click", function(){
     var selected = IsCardSelected(this);
-    Update('dashboard-groups__status--due', selected);
+    Update('dashboard--due', selected);
 })
 dashboard__cards[2].addEventListener("click", function(){
     var selected = IsCardSelected(this);
-    Update('dashboard-groups__status--overdue', selected);
+    Update('dashboard--overdue', selected);
 })
 
 function IsCardSelected(currentCard) {
@@ -51,7 +51,7 @@ function Update(phrase, selected) {
                 var tr = table.getElementsByTagName("tr");
                 var openGroup = false;
                 for (i = 1; i < tr.length; i++) {
-                    var td = tr[i].getElementsByClassName("dashboard-groups__search-field");
+                    var td = tr[i].getElementsByClassName("dashboard-groups__search-content");
                     for (j = 0; j < td.length; j++) {
                         if (td[j].innerHTML.toUpperCase().indexOf(phrase) > -1) {
                             tr[i].style.display = "";
@@ -86,12 +86,15 @@ function Update(phrase, selected) {
                 //search all rows for status div whose class matches phrase, hide row if no match
                 //show all rows and open all groups if phrase is 'open-all'
                 for (i = 1; i < tr.length; i++) {
-                    var td = tr[i].getElementsByClassName("dashboard-groups__status");
-                    if (phrase == 'open-all' || td[0].classList.contains(phrase)) {
-                        tr[i].style.display = "";
-                        openGroup = true;
-                    } else {
-                        tr[i].style.display = "none";
+                    var td = tr[i].getElementsByClassName("dashboard-groups__search-classlist");
+                    for (j = 0; j < td.length; j++) {
+                        if (phrase == 'open-all' || td[j].classList.contains(phrase)) {
+                            tr[i].style.display = "";
+                            openGroup = true;
+                            break
+                        } else {
+                            tr[i].style.display = "none";
+                        }
                     }
                 }
                 ((openGroup == true) ? SetAccordion('open', obj) : SetAccordion('close', obj));

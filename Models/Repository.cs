@@ -19,7 +19,7 @@ namespace Locus.Models
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = 
+                string sql =
                     @"SELECT Asg.Id,
                       Asg.UserId,
                       Asg.AssetId,
@@ -39,7 +39,13 @@ namespace Locus.Models
                       Ast.Tag,
                       Ast.ModelId,
                       Ast.GroupId,
-                      DATEADD(hour, M.[Period], Asg.Assigned) AS Due, Ast.Deactivated,
+                      FORMAT(DATEADD(DAY, M.[Period], Asg.Assigned), 'dd-MM-yy') AS Due,
+                      CASE 
+                      WHEN FORMAT(GETDATE(), 'dd-MM-yy') < FORMAT(DATEADD(DAY, M.[Period], Asg.Assigned), 'dd-MM-yy') THEN 'Active'
+                      WHEN FORMAT(GETDATE(), 'dd-MM-yy') = FORMAT(DATEADD(DAY, M.[Period], Asg.Assigned), 'dd-MM-yy') THEN 'Due'
+                      ELSE 'Overdue'
+                      END AS [Status],
+                      Ast.Deactivated,
                       M.Id,
                       M.Name,
                       M.Period,
@@ -47,24 +53,18 @@ namespace Locus.Models
                       G.Id,
                       G.Name,
                       G.Deactivated
-                      FROM
-                          [dbo].[Assignments] AS Asg
-                      INNER JOIN
-                          [dbo].[Users] AS U
-                      ON Asg.UserId = U.Id
-	                      INNER JOIN
-                              [dbo].[Roles] AS R
-                          ON U.RoleId = R.Id
-                      INNER JOIN
-                          [dbo].[Assets] AS Ast
-                      ON Asg.AssetId = Ast.Id
-	                      INNER JOIN
-                              [dbo].[Models] AS M
-                          ON Ast.ModelId = M.Id
-	                      INNER JOIN
-                              [dbo].[Groups] AS G
-                          ON Ast.GroupId = G.Id
-                      WHERE Asg.Returned IS NULL;";
+                      FROM [dbo].[Assignments] AS Asg
+                           INNER JOIN [dbo].[Users] AS U
+                           ON Asg.UserId = U.Id
+	                          INNER JOIN [dbo].[Roles] AS R
+                              ON U.RoleId = R.Id
+                           INNER JOIN [dbo].[Assets] AS Ast
+                           ON Asg.AssetId = Ast.Id
+	                          INNER JOIN [dbo].[Models] AS M
+                              ON Ast.ModelId = M.Id
+	                          INNER JOIN [dbo].[Groups] AS G
+                              ON Ast.GroupId = G.Id
+                     WHERE Asg.Returned IS NULL;";
 
                 var groups = new List<Group>();
                 var groupDictionary = new Dictionary<int, int>();
@@ -107,9 +107,8 @@ namespace Locus.Models
             {
                 string sql =
                     @"SELECT Count(DISTINCT UserId)
-                      FROM 
-                          [dbo].[Assignments]
-                      WHERE Returned IS NULL;";
+                        FROM [dbo].[Assignments]
+                       WHERE Returned IS NULL;";
 
                 int count = db.ExecuteScalar<int>(sql);
                 return count;
@@ -122,16 +121,13 @@ namespace Locus.Models
             {
                 string sql =
                     @"SELECT COUNT(Asg.Id)
-                      FROM
-                          [dbo].[Assignments] AS Asg 
-                      INNER JOIN
-                          [dbo].[Assets] AS Ast
-	                  ON Asg.AssetId = Ast.Id
-	                      INNER JOIN
-                              [dbo].[Models] AS M
-		                  ON Ast.ModelId = M.Id
-                      WHERE Returned IS NULL 
-                      AND DATEDIFF(hour, GETDATE(), DATEADD(hour, M.[Period], Asg.Assigned)) BETWEEN 1 AND 24;";
+                        FROM [dbo].[Assignments] AS Asg 
+                             INNER JOIN [dbo].[Assets] AS Ast
+	                         ON Asg.AssetId = Ast.Id
+	                            INNER JOIN [dbo].[Models] AS M
+		                        ON Ast.ModelId = M.Id
+                       WHERE Returned IS NULL 
+                         AND FORMAT(GETDATE(), 'dd-MM-yy') = FORMAT(DATEADD(DAY, M.[Period], Asg.Assigned), 'dd-MM-yy');";
 
                 int count = db.ExecuteScalar<int>(sql);
                 return count;
@@ -142,18 +138,15 @@ namespace Locus.Models
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = 
+                string sql =
                     @"SELECT COUNT(Asg.Id)
-                      FROM 
-                           [dbo].[Assignments] AS Asg 
-                      INNER JOIN 
-                           [dbo].[Assets] AS Ast
-	                  ON Asg.AssetId = Ast.Id
-	                       INNER JOIN 
-                               [dbo].[Models] AS M
-		                   ON Ast.ModelId = M.Id
-                      WHERE Returned IS NULL
-                      AND DATEDIFF(hour, GETDATE(), DATEADD(hour, M.[Period], Asg.Assigned)) <= 0;";
+                        FROM [dbo].[Assignments] AS Asg 
+                             INNER JOIN [dbo].[Assets] AS Ast
+	                         ON Asg.AssetId = Ast.Id
+	                            INNER JOIN [dbo].[Models] AS M
+		                        ON Ast.ModelId = M.Id
+                       WHERE Returned IS NULL
+                         AND FORMAT(GETDATE(), 'dd-MM-yy') > FORMAT(DATEADD(DAY, M.[Period], Asg.Assigned), 'dd-MM-yy');";
 
                 int count = db.ExecuteScalar<int>(sql);
                 return count;
@@ -165,14 +158,13 @@ namespace Locus.Models
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
                 string sql =
-                    @"SELECT * FROM [dbo].[Assets] AS A
-                      INNER JOIN
-                          [dbo].[Models] AS M
-                      ON A.ModelId = M.Id
-                      INNER JOIN
-                          [dbo].[Groups] AS G
-                      ON A.GroupId = G.Id
-                      WHERE A.Id = @SerialNumber;";
+                    @"SELECT *
+                        FROM [dbo].[Assets] AS A
+                             INNER JOIN [dbo].[Models] AS M
+                             ON A.ModelId = M.Id
+                             INNER JOIN [dbo].[Groups] AS G
+                             ON A.GroupId = G.Id
+                       WHERE A.Id = @SerialNumber;";
 
                 Asset asset = db.Query<Asset, Model, Group, Asset>(sql, (asset, model, group) =>
                 {
