@@ -4,10 +4,6 @@
 }
 
 .dashboard-groups__header {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
     display: flex;
     align-items: center;
     color: #868a95;
@@ -17,13 +13,13 @@
 }
 
     .dashboard-groups__header.accordion > .dashboard-groups__header-icon::after {
-        content: '\e806';
+        content: '\e82b';
         font-family: "locus-font";
         font-style: normal;
     }
 
     .dashboard-groups__header.accordion.is-open > .dashboard-groups__header-icon::after {
-        content: '\e808';
+        content: '\e82d';
     }
 
     .dashboard-groups__header:not(:first-child) {
@@ -39,7 +35,7 @@
     font-size: 0.875rem;
 }
 
-.dashboard-groups__header:hover {
+.dashboard-groups__header:hover:not(.dashboard-groups__header--empty) {
     background-color: #2b2d43;
     transition: background-color 0.1s linear;
     cursor: pointer;
@@ -58,6 +54,7 @@
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
+    white-space: nowrap;
 }
 
 .dashboard-groups__row {
@@ -74,28 +71,20 @@
         transition: background-color 0.1s linear;
     }
 
-.dashboard-groups__icon {
-    font-size: 1rem;
+    .dashboard-groups__row:not(:first-child):hover .dashboard-groups__action-button {
+        opacity: 1;
+        transition: opacity 0.1s linear;
+    }
+
+.dashboard-groups__asset-icon {
+    font-size: 1.1rem;
     text-decoration: none;
 }
-
-    .dashboard-groups__icon.icon-edit {
-        color: #3d9554;
-    }
-
-    .dashboard-groups__icon.icon-cancel {
-        color: #f15555;
-    }
 
 .dashboard-groups__status {
     display: inline-block;
     padding: 6px 9px;
     border-radius: 4px;
-    color: #fff;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 
     .dashboard-groups__status.dashboard--active {
@@ -112,3 +101,28 @@
         border: 1px solid #ff4747;
         color: #ff4747;
     }
+
+.dashboard-groups__action {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.dashboard-groups__action-button {
+    text-decoration: none;
+    margin-right: 10px;
+    padding: 6px 18px;
+    color: #868a95;
+    border: 1px solid #555860;
+    border-radius: 4px;
+    opacity: 0.3;
+}
+
+.dashboard-groups__action-button--edit:hover {
+    color: #4d83ff;
+    border-color: #4d83ff;
+}
+
+.dashboard-groups__action-button--return:hover {
+    color: #ff4747;
+    border-color: #ff4747;
+}

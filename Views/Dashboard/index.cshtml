@@ -1,21 +1,21 @@
 @model DashboardIndexViewModel
 
 @section top_bar {
-    <input class="top-bar__input-field" id="top-bar__input-field" type="text" onkeyup="Update(this.value.toUpperCase())" placeholder="Search Assignments">
+    <input class="top-bar__input-field" id="top-bar__input-field" type="text" onkeyup="Update(this.value.toUpperCase())" placeholder="Search Assignments by Name, Role, or Status">
 }
 
 @section side_bar {
-    <div class="navigation">
+    <div class="navigation no-select">
         <a asp-controller="Dashboard" asp-action="Index" class="navigation__button navigation__button--selected">
-            <i class="icon-10 navigation__button-icon"></i>
+            <i class="icon-home navigation__button-icon"></i>
             <div class="navigation__button-text">Dashboard</div>
         </a>
         <a class="navigation__button" href="#">
-            <i class="icon-13 navigation__button-icon"></i>
+            <i class="icon-book navigation__button-icon"></i>
             <div class="navigation__button-text">History</div>
         </a>
         <div class="navigation__button accordion">
-            <i class="icon-6 navigation__button-icon"></i>
+            <i class="icon-cog navigation__button-icon"></i>
             <div class="navigation__button-text">Admin</div>
             <i class="navigation__button-dropdown-icon"></i>
         </div>
@@ -30,7 +30,7 @@
             </a>
         </div>
         <a class="navigation__button" href="#">
-            <i class="icon-2 navigation__button-icon"></i>
+            <i class="icon-user-plus navigation__button-icon"></i>
             <div class="navigation__button-text">New Assignment</div>
         </a>
     </div>
@@ -38,135 +38,132 @@
 
 @section content {
     <div class="dashboard">
-        <div class="dashboard-header">
+        <div class="dashboard-header no-select">
             <div class="dashboard-header__group">
                 <div class="dashboard-header__organisation">Nelson Park School</div>
                 <div class="dashboard-header__index">
-                    <i class="icon-10"></i>/
+                    <i class="icon-home"></i>/
                     <div class="dashboard-header__index--end">Dashboard</div>
                 </div>
             </div>
             <div class="dashboard-header__group">
                 <a class="dashboard-header__button" href="#">
-                    <i class="icon-2"></i>
+                    <i class="icon-user-plus"></i>
                     <div class="dashboard-header__button-text">New Assignment</div>
                 </a>
             </div>
         </div>
         <div class="dashboard-overview">
-            <div class="dashboard-overview__card">
+            <div class="dashboard-overview__card no-select" title="Show all Assignments">
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
                         <div class="dashboard-overview__card-number">@Model.AssignedAssetsCount</div>
                         <div class="dashboard-overview__card-subject">Active</div>
-                        <div class="dashboard-overview__card-verb">User@(Model.AssignedAssetsCount == 1 ? "" : "s")</div>
+                        <div class="dashboard-overview__card-verb">Assignment@(Model.AssignedAssetsCount == 1 ? "" : "s")</div>
                     </div>
-                    <i class="icon-11 dashboard-overview__card-icon"></i>
+                    <i class="icon-user-o dashboard-overview__card-icon"></i>
                 </div>
             </div>
-            <div class="dashboard-overview__card">
-                <div class="dashboard-overview__card-body">
+            <div class="dashboard-overview__card no-select">
+                <div class="dashboard-overview__card-body" title="Filter by Assets due today">
                     <div class="dashboard-overview__card-info">
                         <div class="dashboard-overview__card-number">@Model.DueTodayCount</div>
                         <div class="dashboard-overview__card-subject">Asset@(Model.DueTodayCount == 1 ? "" : "s")</div>
                         <div class="dashboard-overview__card-verb">Due Today</div>
                     </div>
-                    <i class="icon-5 dashboard-overview__card-icon"></i>
+                    <i class="icon-calendar-empty dashboard-overview__card-icon"></i>
                 </div>
             </div>
-            <div class="dashboard-overview__card">
+            <div class="dashboard-overview__card no-select" title="Filter by overdue Assets">
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
                         <div class="dashboard-overview__card-number">@Model.OverdueCount</div>
                         <div class="dashboard-overview__card-subject">Asset@(Model.OverdueCount == 1 ? "" : "s")</div>
                         <div class="dashboard-overview__card-verb">Overdue</div>
                     </div>
-                    <i class="icon-12 dashboard-overview__card-icon"></i>
+                    <i class="icon-calendar-times-o dashboard-overview__card-icon"></i>
                 </div>
             </div>
-            <div class="dashboard-overview__card">
+            <div class="dashboard-overview__card no-select" title="Placeholder">
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
                         <div class="dashboard-overview__card-number">0</div>
                         <div class="dashboard-overview__card-subject">Subject</div>
                         <div class="dashboard-overview__card-verb">Verb</div>
                     </div>
-                    <i class="icon-5 dashboard-overview__card-icon"></i>
+                    <i class="icon-question-circle-o dashboard-overview__card-icon"></i>
                 </div>
             </div>
         </div>
         <div class="dashboard-groups">
-            @foreach (var group in Model.Groups)
+            @if (Model.Groups.Count() > 0)
             {
-                <div class="dashboard-groups__header accordion">
-                    <i class="dashboard-groups__header-icon"></i>
-                    <div class="dashboard-groups__header-name">@group.Name</div>
-                    <div class="dashboard-groups__header-number">(@group.Users.Count)</div>
-                </div>
-                <div class="dashboard-groups__body">
-                    <table class="dashboard-groups__table" data-name="dashboard-groups__table">
-                        <tr class="dashboard-groups__row">
-                            <th>Name</th>
-                            <th>Role</th>
-                            <th>Created</th>
-                            <th>Assets</th>
-                            <th>Next Due Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                        @foreach (var user in group.Users)
-                        {
-                            string userStatus = "";
-                            DateTime nextDueDate = DateTime.MaxValue; 
-                    <tr class="dashboard-groups__row">
-                        <td class="dashboard-groups__search-content">@user.Name</td>
-                        <td class="dashboard-groups__search-content">@user.Role.Name</td>
-                        <td>@user.Created.ToString("dd-MM-yyyy")</td>
-                        <td>
-                            @foreach (var asset in user.Assets)
+                @foreach (var group in Model.Groups)
+                {
+                    <div class="dashboard-groups__header no-select accordion" title="@group.Description">
+                        <i class="dashboard-groups__header-icon"></i>
+                        <div class="dashboard-groups__header-name">@group.Name</div>
+                        <div class="dashboard-groups__header-number">(@group.Users.Count)</div>
+                    </div>
+                    <div class="dashboard-groups__body">
+                        <table class="dashboard-groups__table" data-name="dashboard-groups__table">
+                            <tr class="dashboard-groups__row no-select">
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Created</th>
+                                <th>Assets</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            @foreach (var user in group.Users)
                             {
-                                string assetStatus = "";
-                                int days = (int)Math.Ceiling((asset.Due - DateTime.Now).TotalDays);
-                                if (days > 1)
-                                {
-                                    assetStatus = "Active";
-                                    if (userStatus != "Overdue" & userStatus != "Due")
-                                    {
-                                        userStatus = "Active";
-                                    }
-                                }
-                                else if (days == 1)
-                                {
-                                    assetStatus = "Due";
-                                    if (userStatus != "Overdue")
-                                    {
-                                        userStatus = "Due";
-                                    }
-                                }
-                                else
-                                {
-                                    assetStatus = "Overdue";
-                                    userStatus = "Overdue";
-                                }
-                                if (assetStatus != "Overdue" & asset.Due < nextDueDate)
-                                {
-                                    nextDueDate = asset.Due;
-                                }
-                                <i class="icon-10 dashboard-groups__icon dashboard-groups__search-classlist dashboard--@assetStatus.ToLower()"></i>
+                                string userStatus = "";
+                                DateTime nextDueDate = DateTime.MaxValue;
+                                <tr class="dashboard-groups__row">
+                                    <td class="dashboard-groups__search-content">@user.Name</td>
+                                    <td class="dashboard-groups__search-content">@user.Role.Name</td>
+                                    <td>@user.Created.ToString("dd-MM-yyyy")</td>
+                                    <td>
+                                        @foreach (var asset in user.Assets)
+                                        {
+                                            if (asset.Status == "Active" & userStatus != "Overdue" & userStatus != "Due")
+                                            {
+                                                userStatus = "Active";
+                                            }
+                                            else if (asset.Status == "Due" & userStatus != "Overdue")
+                                            {
+                                                userStatus = "Due";
+                                            }
+                                            else if (asset.Status == "Overdue")
+                                            {
+                                                userStatus = "Overdue";
+                                            }
+
+                                            if (asset.Due < nextDueDate)
+                                            {
+                                                nextDueDate = asset.Due;
+                                            }
+                                            <i class="icon-@asset.Model.Icon.Name dashboard-groups__asset-icon no-select dashboard-groups__search-classlist dashboard--@asset.Status.ToLower()" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
+                                        }
+                                    </td>
+                                    <td>@nextDueDate.ToString("dd-MM-yyyy")</td>
+                                    <td>
+                                        <div class="dashboard-groups__status dashboard-groups__search-content no-select dashboard--@userStatus.ToLower()">@userStatus</div>
+                                    </td>
+                                    <td class="dashboard-groups__action">
+                                        <a class="dashboard-groups__action-button dashboard-groups__action-button--edit" title="Edit User details &#xA;Add/remove Assets" href="#">Edit</a>
+                                        <a class="dashboard-groups__action-button dashboard-groups__action-button--return" title="Unassign all Assets" href="#">Return All</a>
+                                    </td>
+                                </tr>
                             }
-                        </td>
-                        <td>@nextDueDate.ToString("dd-MM-yyyy")</td>
-                        <td>
-                            <div class="dashboard-groups__status dashboard-groups__search-content dashboard--@userStatus.ToLower()">@userStatus</div>
-                        </td>
-                        <td>
-                            <a class="icon-edit dashboard-groups__icon" href="#"></a>
-                            <a class="icon-cancel dashboard-groups__icon" href="#"></a>
-                        </td>
-                    </tr>
-                        }
-                    </table>
-                </div>
+                        </table>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="dashboard-groups__header no-select dashboard-groups__header--empty">No Assets are currently assigned</div>
             }
         </div>
     </div>

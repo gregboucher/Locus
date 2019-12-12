@@ -16,8 +16,6 @@ namespace Locus.Controllers
 
         [Route("")]
         [Route("Dashboard")]
-        [Route("Home")]
-        [Route("Dashboard/Index")]
         public ViewResult Index()
         {
             DashboardIndexViewModel model = new DashboardIndexViewModel

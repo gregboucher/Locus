@@ -14,20 +14,16 @@
     color: #868a95;
     border-bottom: 1px solid #313452;
     font-size: 0.875rem;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 
 .navigation__button.accordion > .navigation__button-dropdown-icon::after {
-    content: '\e80d';
+    content: '\e859';
     font-family: "locus-font";
     font-style: normal;
 }
 
 .navigation__button.accordion.is-open > .navigation__button-dropdown-icon::after {
-    content: '\e810';
+    content: '\e85c';
 }
 
 .navigation__button-icon {

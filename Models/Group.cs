@@ -7,6 +7,7 @@ namespace Locus.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public DateTime? Deactivated { get; set; }
 
         public IList<User> Users { get; set; }
