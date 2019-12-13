@@ -71,7 +71,7 @@
                         <div class="dashboard-overview__card-subject">Asset@(Model.DueTodayCount == 1 ? "" : "s")</div>
                         <div class="dashboard-overview__card-verb">Due Today</div>
                     </div>
-                    <i class="icon-calendar-empty dashboard-overview__card-icon"></i>
+                    <i class="icon-calendar-check-o dashboard-overview__card-icon"></i>
                 </div>
             </div>
             <div class="dashboard-overview__card no-select" title="Filter by overdue Assets">
@@ -118,8 +118,6 @@
                             </tr>
                             @foreach (var user in group.Users)
                             {
-                                string userStatus = "";
-                                DateTime nextDueDate = DateTime.MaxValue;
                                 <tr class="dashboard-groups__row">
                                     <td class="dashboard-groups__search-content">@user.Name</td>
                                     <td class="dashboard-groups__search-content">@user.Role.Name</td>
@@ -127,33 +125,18 @@
                                     <td>
                                         @foreach (var asset in user.Assets)
                                         {
-                                            if (asset.Status == "Active" & userStatus != "Overdue" & userStatus != "Due")
-                                            {
-                                                userStatus = "Active";
-                                            }
-                                            else if (asset.Status == "Due" & userStatus != "Overdue")
-                                            {
-                                                userStatus = "Due";
-                                            }
-                                            else if (asset.Status == "Overdue")
-                                            {
-                                                userStatus = "Overdue";
-                                            }
-
-                                            if (asset.Due < nextDueDate)
-                                            {
-                                                nextDueDate = asset.Due;
-                                            }
                                             <i class="icon-@asset.Model.Icon.Name dashboard-groups__asset-icon no-select dashboard-groups__search-classlist dashboard--@asset.Status.ToLower()" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
                                         }
                                     </td>
-                                    <td>@nextDueDate.ToString("dd-MM-yyyy")</td>
+                                    <td>@user.Assets[0].Due.ToString("dd-MM-yyyy")</td>
                                     <td>
-                                        <div class="dashboard-groups__status dashboard-groups__search-content no-select dashboard--@userStatus.ToLower()">@userStatus</div>
+                                        <div class="dashboard-groups__status dashboard-groups__search-content no-select dashboard--@user.Assets[0].Status.ToLower()">@user.Assets[0].Status</div>
                                     </td>
-                                    <td class="dashboard-groups__action">
-                                        <a class="dashboard-groups__action-button dashboard-groups__action-button--edit" title="Edit User details &#xA;Add/remove Assets" href="#">Edit</a>
-                                        <a class="dashboard-groups__action-button dashboard-groups__action-button--return" title="Unassign all Assets" href="#">Return All</a>
+                                    <td>
+                                        <div class="dashboard-groups__action">
+                                            <a class="dashboard-groups__action-button dashboard-groups__action-button--edit" title="Edit User details &#xA;Add/remove Assets" href="#">Edit</a>
+                                            <a class="dashboard-groups__action-button dashboard-groups__action-button--return" title="Unassign all Assets" href="#">Return All</a>
+                                        </div>
                                     </td>
                                 </tr>
                             }

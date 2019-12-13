@@ -54,7 +54,6 @@
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    white-space: nowrap;
 }
 
 .dashboard-groups__row {
@@ -77,7 +76,7 @@
     }
 
 .dashboard-groups__asset-icon {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     text-decoration: none;
 }
 
@@ -105,6 +104,7 @@
 .dashboard-groups__action {
     display: flex;
     flex-wrap: nowrap;
+    align-items: center;
 }
 
 .dashboard-groups__action-button {

@@ -3,6 +3,7 @@ using Dapper;
 using System.Collections.Generic;
 using Locus.Data;
 using System.Data;
+using System;
 
 namespace Locus.Models
 {
@@ -69,38 +70,38 @@ namespace Locus.Models
                                  ON M.IconId = I.Id
 	                          INNER JOIN [dbo].[Groups] AS G
                               ON Ast.GroupId = G.Id
-                     WHERE Asg.Returned IS NULL;";
+                     WHERE Asg.Returned IS NULL
+                     ORDER BY G.Id, U.Id, Due;";
 
                 var groups = new List<Group>();
                 var groupDictionary = new Dictionary<int, int>();
-                var userDictionary = new Dictionary<int, int>();
-                
+                var userDictionary = new Dictionary<Tuple<int, int>, int>();
+
                 db.Query<Assignment, User, Role, Asset, Model, Icon, Group, Assignment>
                 (sql, (assignment, user, role, asset, model, icon, group) =>
-                {
-                    User currentUser;
-                    Group currentGroup;
+                {       
                     model.Icon = icon;
                     asset.Model = model;
                     user.Role = role;
-
+                    
                     if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
                     {
-                        currentGroup = group;
-                        currentGroup.Users = new List<User>();
                         groupIndex = groups.Count();
-                        groups.Add(currentGroup);
                         groupDictionary.Add(group.Id, groupIndex);
+                        Group currentGroup = group;
+                        currentGroup.Users = new List<User>();
+                        groups.Add(currentGroup);
                     }
-                    if (!userDictionary.TryGetValue(user.Id, out int userIndex))
+                    var key = new Tuple<int, int>(group.Id, user.Id);
+                    if (!userDictionary.TryGetValue(key, out int userIndex))
                     {
-                        currentUser = user;
+                        userIndex = groups[groupIndex].Users.Count();
+                        userDictionary.Add(key, userIndex);
+                        User currentUser = user;
                         currentUser.Assets = new List<Asset>();
-                        userIndex = groups.ElementAt(groupIndex).Users.Count();
-                        groups.ElementAt(groupIndex).Users.Add(currentUser);
-                        userDictionary.Add(user.Id, userIndex);
+                        groups[groupIndex].Users.Add(currentUser);
                     }
-                    groups.ElementAt(groupIndex).Users.ElementAt(userIndex).Assets.Add(asset);
+                    groups[groupIndex].Users[userIndex].Assets.Add(asset);
                     return null;
                 });
                 return groups;
