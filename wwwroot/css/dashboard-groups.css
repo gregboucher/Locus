@@ -115,6 +115,7 @@
     border: 1px solid #555860;
     border-radius: 4px;
     opacity: 0.3;
+    white-space: nowrap;
 }
 
 .dashboard-groups__action-button--edit:hover {

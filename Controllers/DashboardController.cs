@@ -21,7 +21,7 @@ namespace Locus.Controllers
             DashboardIndexViewModel model = new DashboardIndexViewModel
             {
                 PageTitle = "Dashboard",
-                AssignedAssetsCount = _repository.AssignedUserCount(),
+                AssignedUserCount = _repository.AssignedUserCount(),
                 DueTodayCount = _repository.DueTodayCount(),
                 OverdueCount = _repository.OverdueCount(),
                 Groups = _repository.GetAssignmentsByGroup()

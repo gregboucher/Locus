@@ -38,15 +38,15 @@
 
 @section content {
     <div class="dashboard">
-        <div class="dashboard-header no-select">
-            <div class="dashboard-header__group">
-                <div class="dashboard-header__organisation">Nelson Park School</div>
-                <div class="dashboard-header__index">
+        <div class="content-header no-select">
+            <div class="content-header__group">
+                <div class="content-header__organisation">Nelson Park School</div>
+                <div class="content-header__index">
                     <i class="icon-home"></i>/
-                    <div class="dashboard-header__index--end">Dashboard</div>
+                    <div class="content-header__index--end">Dashboard</div>
                 </div>
             </div>
-            <div class="dashboard-header__group">
+            <div class="content-header__group">
                 <a class="dashboard-header__button" href="#">
                     <i class="icon-user-plus"></i>
                     <div class="dashboard-header__button-text">New Assignment</div>
@@ -57,9 +57,9 @@
             <div class="dashboard-overview__card no-select" title="Show all Assignments">
                 <div class="dashboard-overview__card-body">
                     <div class="dashboard-overview__card-info">
-                        <div class="dashboard-overview__card-number">@Model.AssignedAssetsCount</div>
+                        <div class="dashboard-overview__card-number">@Model.AssignedUserCount</div>
                         <div class="dashboard-overview__card-subject">Active</div>
-                        <div class="dashboard-overview__card-verb">Assignment@(Model.AssignedAssetsCount == 1 ? "" : "s")</div>
+                        <div class="dashboard-overview__card-verb">Assignment@(Model.AssignedUserCount == 1 ? "" : "s")</div>
                     </div>
                     <i class="icon-user-o dashboard-overview__card-icon"></i>
                 </div>
@@ -155,8 +155,8 @@
 @section stylesheet {
     <link rel="stylesheet" href="~/css/navigation.css">
     <link rel="stylesheet" href="~/css/top-bar.css">
+    <link rel="stylesheet" href="~/css/content-header.css">
     <link rel="stylesheet" href="~/css/dashboard.css">
-    <link rel="stylesheet" href="~/css/dashboard-header.css">
     <link rel="stylesheet" href="~/css/dashboard-overview.css">
     <link rel="stylesheet" href="~/css/dashboard-groups.css">
 }

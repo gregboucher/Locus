@@ -1,0 +1,26 @@
+﻿.content-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.content-header__group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #bcbfc5;
+}
+
+.content-header__organisation {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.content-header__index {
+    display: flex;
+    font-size: 0.825rem;
+}
+
+.content-header__index--end {
+    color: #4d83ff;
+}

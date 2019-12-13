@@ -9,6 +9,23 @@
         margin-bottom: 21px;
     }
 
+.dashboard-header__button {
+    display: flex;
+    background-color: #4d83ff;
+    font-size: 0.875rem;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.dashboard-header__button-text {
+    margin-left: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .dashboard--due {
     color: #fbbc06;
 }
