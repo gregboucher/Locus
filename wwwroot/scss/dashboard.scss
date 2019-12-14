@@ -2,7 +2,7 @@
 
 .dashboard {
     > div:not(:last-child) {
-        margin-bottom: $dashboard-spacing;
+        margin-bottom: $content-spacing;
     }
 
     &-header {

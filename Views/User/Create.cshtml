@@ -1,7 +1,7 @@
 ﻿@model UserCreateViewModel
 
 @section top_bar {
-    <input class="top-bar__input-field" id="top-bar__input-field" type="text" onkeyup="" placeholder="Search Assets by Name">
+    <input class="top-bar__input-field" type="text" onkeyup="" placeholder="Search Assets by Name">
 }
 
 @section side_bar {
@@ -32,10 +32,14 @@
 
 @section content {
     <div class="user-form">
-        
+
     </div>
 }
 
 @section stylesheet {
     <link rel="stylesheet" href="~/css/user_form.css">
+}
+
+@section javascript {
+    <script src="~/js/accordion.js"></script>
 }

@@ -1,13 +1,7 @@
 var dashboard__tables = document.querySelectorAll("table[data-name=dashboard-groups__table]");
 var dashboard__cards = document.querySelectorAll(".dashboard-overview__card");
-var accordions = document.getElementsByClassName("accordion");
 inputActive = false;
 
-for (var i = 0; i < accordions.length; i++) {
-    accordions[i].addEventListener("click", function(){
-        SetAccordion('toggle', this)
-    })
-}
 dashboard__cards[0].addEventListener("click", function(){
     var selected = IsCardSelected(this);
     //show all rows and open all groups
@@ -24,7 +18,7 @@ dashboard__cards[2].addEventListener("click", function(){
 
 function IsCardSelected(currentCard) {
     var selected;
-    document.getElementById("top-bar__input-field").value = '';
+    document.getElementsByClassName("top-bar__input-field")[0].value = '';
     dashboard__cards.forEach(function(card){
         if (card != currentCard) {
             card.classList.remove('is-active');
@@ -106,25 +100,5 @@ function Update(phrase, selected) {
                 SetAccordion('close', obj)
             }
         });
-    }
-}
-
-function SetAccordion(flag, obj) {
-    var content = obj.nextElementSibling
-    if (flag == 'toggle') {
-        obj.classList.toggle('is-open');
-        if (content.style.maxHeight) {
-           content.style.maxHeight = null;
-       } else {
-           content.style.maxHeight = content.scrollHeight + "px";
-       }
-    } else if (flag == 'open') {
-            obj.classList.add('is-open');
-            content.style.maxHeight = content.scrollHeight + "px";
-        } else {
-        if (flag == 'close') {
-            obj.classList.remove('is-open');
-            content.style.maxHeight = null;
-        }
     }
 }

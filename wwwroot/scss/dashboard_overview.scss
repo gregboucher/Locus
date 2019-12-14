@@ -6,7 +6,7 @@
         justify-content: space-between;
 
         > div:not(:last-child) {
-            margin-right: $dashboard-spacing;
+            margin-right: $content-spacing;
         }
 
         &__card {

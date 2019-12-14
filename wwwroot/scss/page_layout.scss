@@ -6,7 +6,6 @@
 }
 
 #body {
-    //host this font locally
     font-family: Roboto, sans-serif;
     font-weight: 400;
     margin: 0;
@@ -22,7 +21,6 @@
     right: 0;
     height: $top-bar--height;
     z-index: 1;
-    //visibility: hidden;
 }
 
 #side-bar {
@@ -33,14 +31,13 @@
     width: $side-bar--width;
     display: flex;
     flex-direction: column;
-    //visibility: hidden;
 }
 
 #content {
     margin-top: $top-bar--height;
     display: flex;
     flex-direction: column;
-    padding: $dashboard-spacing;
+    padding: $content-spacing;
     background-color: $colour-background;
     box-sizing: border-box;
     flex-grow: 1;

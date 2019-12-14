@@ -4,7 +4,7 @@
     &-header {
         display: flex;
         justify-content: space-between;
-        margin-bottom: $dashboard-spacing;
+        margin-bottom: $content-spacing;
 
         &__group {
             display: flex;
@@ -25,7 +25,6 @@
         }
 
         &__controller {
-            
         }
 
         &__action {

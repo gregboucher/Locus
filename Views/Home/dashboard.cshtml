@@ -1,7 +1,7 @@
 @model HomeDashboardViewModel
 
 @section top_bar {
-    <input class="top-bar__input-field" id="top-bar__input-field" type="text" onkeyup="Update(this.value.toUpperCase())" placeholder="Search Assignments by Name, Role, or Status">
+    <input class="top-bar__input-field" type="text" onkeyup="Update(this.value.toUpperCase())" placeholder="Search Assignments by Name, Role, or Status">
 }
 
 @section side_bar {
@@ -151,5 +151,6 @@
 }
 
 @section javascript {
+    <script src="~/js/accordion.js"></script>
     <script src="~/js/dashboard.js"></script>
 }

@@ -23,6 +23,7 @@ namespace Locus.Models
                 string sql =
                     @"SELECT Asg.Id,
                       Asg.Assigned,
+                      Asg.Due,
                       Asg.Returned,
                       Asg.UserId,
                       Asg.AssetId,
@@ -40,11 +41,13 @@ namespace Locus.Models
                       Ast.Tag,
                       Ast.ModelId,
                       Ast.GroupId,
-                      FORMAT(DATEADD(DAY, M.[Period], Asg.Assigned), 'dd-MM-yy') AS Due,
-                      CASE 
-                      WHEN FORMAT(GETDATE(), 'dd-MM-yy') < FORMAT(DATEADD(DAY, M.Period, Asg.Assigned), 'dd-MM-yy') THEN 'Active'
-                      WHEN FORMAT(GETDATE(), 'dd-MM-yy') = FORMAT(DATEADD(DAY, M.Period, Asg.Assigned), 'dd-MM-yy') THEN 'Due'
-                      ELSE 'Overdue' END AS [Status],
+                      CASE
+                      WHEN FORMAT(GETDATE(), 'dd-MM-yy') < FORMAT(Asg.Due, 'dd-MM-yy')
+                           THEN 'Active'
+                      WHEN FORMAT(GETDATE(), 'dd-MM-yy') = FORMAT(Asg.Due, 'dd-MM-yy')
+                           THEN 'Due'
+                           ELSE 'Overdue'
+                      END AS [Status],
                       Ast.Deactivated,
                       M.Id,
                       M.Name,
@@ -79,9 +82,10 @@ namespace Locus.Models
 
                 db.Query<Assignment, User, Role, Asset, Model, Icon, Group, Assignment>
                 (sql, (assignment, user, role, asset, model, icon, group) =>
-                {       
+                {
                     model.Icon = icon;
                     asset.Model = model;
+                    asset.Due = assignment.Due;
                     user.Role = role;
                     
                     if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
@@ -134,7 +138,7 @@ namespace Locus.Models
 	                            INNER JOIN [dbo].[Models] AS M
 		                        ON Ast.ModelId = M.Id
                        WHERE Returned IS NULL 
-                         AND FORMAT(GETDATE(), 'dd-MM-yy') = FORMAT(DATEADD(DAY, M.Period, Asg.Assigned), 'dd-MM-yy');";
+                         AND FORMAT(GETDATE(), 'dd-MM-yy') = FORMAT(Asg.Due, 'dd-MM-yy');";
 
                 int count = db.ExecuteScalar<int>(sql);
                 return count;
@@ -153,7 +157,7 @@ namespace Locus.Models
 	                            INNER JOIN [dbo].[Models] AS M
 		                        ON Ast.ModelId = M.Id
                        WHERE Returned IS NULL
-                         AND FORMAT(GETDATE(), 'dd-MM-yy') > FORMAT(DATEADD(DAY, M.Period, Asg.Assigned), 'dd-MM-yy');";
+                         AND FORMAT(GETDATE(), 'dd-MM-yy') > FORMAT(Asg.Due, 'dd-MM-yy');";
 
                 int count = db.ExecuteScalar<int>(sql);
                 return count;

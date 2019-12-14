@@ -15,10 +15,6 @@
         color: $colour-font;
         border-bottom: 1px solid $colour-border;
         font-size: 0.875rem;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
 
         &.accordion > &-dropdown-icon::after {
             content: '\e859';
