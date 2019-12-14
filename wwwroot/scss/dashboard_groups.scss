@@ -1,0 +1,134 @@
+﻿@import "_variables.scss";
+
+.dashboard {
+    &-groups {
+        display: flex;
+        flex-direction: column;
+
+        &__header {
+            display: flex;
+            align-items: center;
+            color: $colour-font;
+            padding: 10px;
+            border: 1px solid $colour-border;
+            background-color: $colour-foreground;
+
+            &.accordion > &-icon::after {
+                content: '\e82b';
+                font-family: "locus-font";
+                font-style: normal;
+            }
+
+            &.accordion.is-open > &-icon::after {
+                content: '\e82d';
+            }
+
+            &:not(:first-child) {
+                margin-top: 10px;
+            }
+
+            &-name {
+                margin-left: 8px;
+                flex-grow: 1;
+            }
+
+            &-number {
+                font-size: 0.875rem;
+            }
+
+            &:hover {
+                background-color: lighten($colour-foreground, 2%);
+                transition: background-color 0.1s linear;
+                cursor: pointer;
+            }
+        }
+
+        &__body {
+            padding-left: 16px;
+            font-size: 0.8rem;
+            color: $colour-font;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-in-out;
+        }
+
+        &__table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        &__row {
+            text-align: left;
+            //&:not(:last-child) {
+            border-bottom: 1px solid $colour-border;
+            //}
+            > td, th {
+                padding: 10px 0;
+            }
+
+            &:not(:first-child):hover {
+                background-color: lighten($colour-background, 2%);
+                transition: background-color 0.1s linear;
+            }
+
+            &:not(:first-child):hover .dashboard-groups__action-button {
+                opacity: 1;
+                transition: opacity 0.1s linear;
+            }
+        }
+
+        &__asset-icon {
+            font-size: 1.4rem;
+            text-decoration: none;
+        }
+
+        &__status {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 4px;
+
+            &.dashboard--active {
+                border: 1px solid $colour-green;
+                color: $colour-green;
+            }
+
+            &.dashboard--due {
+                border: 1px solid $colour-yellow;
+                color: $colour-yellow;
+            }
+
+            &.dashboard--overdue {
+                border: 1px solid $colour-red;
+                color: $colour-red;
+            }
+        }
+
+        &__action {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+
+            &-button {
+                text-decoration: none;
+                margin-right: 10px;
+                padding: 6px 18px;
+                color: $colour-font;
+                border: 1px solid darken($colour-font, 20%);
+                border-radius: 4px;
+                opacity: 0.3;
+                white-space: nowrap;
+
+                &--edit:hover {
+                    color: $colour-blue;
+                    border-color: $colour-blue;
+                }
+
+                &--return:hover {
+                    color: $colour-red;
+                    border-color: $colour-red;
+                }
+            }
+        }
+    }
+}

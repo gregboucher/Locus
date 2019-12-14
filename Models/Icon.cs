@@ -1,5 +1,8 @@
-﻿namespace Locus.Models
+﻿using System.Diagnostics;
+
+namespace Locus.Models
 {
+    [DebuggerDisplay("{Name, nq}")]
     public class Icon
     {
         public int Id { get; set; }

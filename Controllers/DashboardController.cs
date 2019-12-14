@@ -1,6 +1,5 @@
 using Locus.Models;
 using Locus.ViewModels;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Locus.Controllers
@@ -21,6 +20,8 @@ namespace Locus.Controllers
             DashboardIndexViewModel model = new DashboardIndexViewModel
             {
                 PageTitle = "Dashboard",
+                Controller = ControllerContext.RouteData.Values["controller"].ToString(),
+                Action = ControllerContext.RouteData.Values["action"].ToString(),
                 AssignedUserCount = _repository.AssignedUserCount(),
                 DueTodayCount = _repository.DueTodayCount(),
                 OverdueCount = _repository.OverdueCount(),

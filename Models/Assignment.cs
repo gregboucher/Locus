@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 
 namespace Locus.Models
 {
+    [DebuggerDisplay("{Id, nq}")]
     public class Assignment
     {
         public int Id { get; set; }

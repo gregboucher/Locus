@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Locus.Models
 {
+    [DebuggerDisplay("{Name, nq}")]
     public class User
     {
         public int Id { get; set; }

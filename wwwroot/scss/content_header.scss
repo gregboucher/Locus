@@ -1,0 +1,36 @@
+﻿@import "_variables.scss";
+
+.content {
+    &-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: $dashboard-spacing;
+
+        &__group {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: lighten($colour-font, 20%);
+        }
+
+        &__organisation {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        &__index {
+            display: flex;
+            font-size: 0.825rem;
+        }
+
+        &__controller {
+            
+        }
+
+        &__action {
+            color: $colour-blue;
+            margin-left: 5px;
+        }
+    }
+}

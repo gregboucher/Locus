@@ -1,0 +1,51 @@
+﻿[
+  {
+    "outputFile": "wwwroot/css/page_layout.css",
+    "inputFile": "wwwroot/scss/page_layout.scss",
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFile": "wwwroot/css/top_bar.css",
+    "inputFile": "wwwroot/scss/top_bar.scss",
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFile": "wwwroot/css/content_header.css",
+    "inputFile": "wwwroot/scss/content_header.scss",
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFile": "wwwroot/css/navigation.css",
+    "inputFile": "wwwroot/scss/navigation.scss",
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFile": "wwwroot/css/dashboard.css",
+    "inputFile": "wwwroot/scss/dashboard.scss",
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFile": "wwwroot/css/dashboard_overview.css",
+    "inputFile": "wwwroot/scss/dashboard_overview.scss",
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFile": "wwwroot/css/dashboard_groups.css",
+    "inputFile": "wwwroot/scss/dashboard_groups.scss",
+    "minify": {
+      "enabled": false
+    }
+  }
+]

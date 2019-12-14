@@ -1,9 +1,12 @@
+﻿@import "_variables.scss";
+
 @font-face {
     font-family: Roboto;
     src: url(../font/Roboto-Regular.ttf);
 }
 
 #body {
+    //host this font locally
     font-family: Roboto, sans-serif;
     font-weight: 400;
     margin: 0;
@@ -17,27 +20,32 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 60px;
+    height: $top-bar--height;
     z-index: 1;
+    //visibility: hidden;
 }
 
 #side-bar {
     position: fixed;
-    top: 60px;
+    top: $top-bar--height;
     left: 0;
     bottom: 0;
-    width: 256px;
+    width: $side-bar--width;
     display: flex;
     flex-direction: column;
+    //visibility: hidden;
 }
 
 #content {
-    margin-top: 60px;
+    margin-top: $top-bar--height;
     display: flex;
+    flex-direction: column;
+    padding: $dashboard-spacing;
+    background-color: $colour-background;
+    box-sizing: border-box;
     flex-grow: 1;
-    min-height: calc(100vh - 60px);
-    margin-left: 256px;
-    background-color: grey;
+    min-height: calc(100vh - #{$top-bar--height});
+    margin-left: $side-bar--width;
 }
 
 .no-select {

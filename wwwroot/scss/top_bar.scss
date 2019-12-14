@@ -1,0 +1,66 @@
+﻿@import "_variables.scss";
+
+.top-bar {
+    background-color: $colour-foreground;
+    border-bottom: 1px solid $colour-border;
+    height: 100%;
+    display: flex;
+
+    &__brand-wrapper {
+        display: flex;
+        align-items: center;
+        width: $side-bar--width;
+        border-right: 1px solid $colour-border;
+        box-sizing: border-box;
+        padding: 16px;
+    }
+
+    &__brand-icon {
+        color: white;
+        font-size: 2rem;
+        margin-right: 10px;
+    }
+
+    &__brand-title {
+        color: white;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 1.25rem;
+    }
+
+    &__input-wrapper {
+        display: flex;
+        background-color: $colour-background;
+        margin: 12px;
+        align-items: center;
+        border-radius: 4px;
+        flex-grow: 1;
+    }
+
+    &__input-icon {
+        margin-left: 10px;
+        margin-right: 10px;
+        color: darken($colour-font, 10%);
+    }
+
+    &__input-field {
+        flex-grow: 1;
+        height: 100%;
+        color: darken($colour-font, 10%);
+        border: none;
+        background-color: transparent;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        outline: none;
+
+        &::placeholder {
+            opacity: 1;
+        }
+    }
+
+    &__account-wrapper {
+        //placeholder
+        flex-grow: 0.5;
+    }
+}

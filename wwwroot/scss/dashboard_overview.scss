@@ -1,0 +1,63 @@
+﻿@import "_variables.scss";
+
+.dashboard {
+    &-overview {
+        display: flex;
+        justify-content: space-between;
+
+        > div:not(:last-child) {
+            margin-right: $dashboard-spacing;
+        }
+
+        &__card {
+            flex: 1 0 0;
+            overflow: hidden;
+            background-color: $colour-foreground;
+            border: 1px solid $colour-border;
+            display: flex;
+            flex-direction: column;
+            color: $colour-font;
+
+            &.is-active {
+                border-color: $colour-blue;
+            }
+
+            &-body {
+                display: flex;
+                padding: 24px 32px;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            &-info {
+                font-weight: 600;
+                overflow: hidden;
+            }
+
+            &-icon {
+                font-size: 2.5rem;
+                color: $colour-blue;
+            }
+
+            &-number {
+                font-size: 2.5rem;
+                font-weight: 600;
+            }
+
+            &-subject {
+                font-weight: 700;
+            }
+
+            &-verb {
+                font-size: 0.875rem;
+                font-weight: 400;
+            }
+
+            &:hover {
+                cursor: pointer;
+                background-color: lighten($colour-foreground, 2%);
+                transition: background-color 0.1s linear;
+            }
+        }
+    }
+}

@@ -5,8 +5,11 @@
     <title>@Model.PageTitle</title>
     @RenderSection("stylesheet")
     <link rel="stylesheet" href="~/css/locus-font.css">
-    <link rel="stylesheet" href="~/css/page-layout.css">
-    
+    <link rel="stylesheet" href="~/css/page_layout.css">
+    <link rel="stylesheet" href="~/css/navigation.css">
+    <link rel="stylesheet" href="~/css/top_bar.css">
+    <link rel="stylesheet" href="~/css/content_header.css">
+
 </head>
 <body id="body">
     <section id="top-bar">
@@ -23,9 +26,22 @@
         </div>
     </section>
     <nav id="side-bar">
-        @RenderSection("side_bar", required: true)
+        <div class="navigation no-select">
+            @RenderSection("side_bar", required: true)
+        </div>
     </nav>
     <section id="content">
+        <div class="content-header no-select">
+            <div class="content-header__group">
+                <div class="content-header__organisation">Nelson Park School</div>
+                <div class="content-header__index">
+                    <i class="icon-home"></i>
+                    <div class="content-header__controller">@(" / " + Model.Controller + " /")</div>
+                    <div class="content-header__action">@Model.Action</div>
+                </div>
+            </div>
+            @RenderSection("content_header", required: false)
+        </div>
         @RenderSection("content", required: true)
     </section>
     @RenderSection("javascript", required: false)

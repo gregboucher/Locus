@@ -5,54 +5,46 @@
 }
 
 @section side_bar {
-    <div class="navigation no-select">
-        <a asp-controller="Dashboard" asp-action="Index" class="navigation__button navigation__button--selected">
-            <i class="icon-home navigation__button-icon"></i>
-            <div class="navigation__button-text">Dashboard</div>
+    <a asp-controller="Dashboard" asp-action="Index" class="navigation__button navigation__button--selected">
+        <i class="icon-home navigation__button-icon"></i>
+        <div class="navigation__button-text">Dashboard</div>
+    </a>
+    <a class="navigation__button" href="#">
+        <i class="icon-book navigation__button-icon"></i>
+        <div class="navigation__button-text">History</div>
+    </a>
+    <div class="navigation__button accordion">
+        <i class="icon-cog navigation__button-icon"></i>
+        <div class="navigation__button-text">Admin</div>
+        <i class="navigation__button-dropdown-icon"></i>
+    </div>
+    <div class="navigation__submenu">
+        <a class="navigation__button" href="#">
+            <i class="icon-right-dir navigation__button-icon"></i>
+            <div class="navigation__button-text">Settings</div>
         </a>
         <a class="navigation__button" href="#">
-            <i class="icon-book navigation__button-icon"></i>
-            <div class="navigation__button-text">History</div>
+            <i class="icon-right-dir navigation__button-icon"></i>
+            <div class="navigation__button-text">Create Tool</div>
         </a>
-        <div class="navigation__button accordion">
-            <i class="icon-cog navigation__button-icon"></i>
-            <div class="navigation__button-text">Admin</div>
-            <i class="navigation__button-dropdown-icon"></i>
-        </div>
-        <div class="navigation__submenu">
-            <a class="navigation__button" href="#">
-                <i class="icon-right-dir navigation__button-icon"></i>
-                <div class="navigation__button-text">Settings</div>
-            </a>
-            <a class="navigation__button" href="#">
-                <i class="icon-right-dir navigation__button-icon"></i>
-                <div class="navigation__button-text">Create Tool</div>
-            </a>
-        </div>
-        <a class="navigation__button" href="#">
-            <i class="icon-user-plus navigation__button-icon"></i>
-            <div class="navigation__button-text">New Assignment</div>
+    </div>
+    <a class="navigation__button" href="#">
+        <i class="icon-user-plus navigation__button-icon"></i>
+        <div class="navigation__button-text">New Assignment</div>
+    </a>
+}
+
+@section content_header {
+    <div class="content-header__group">
+        <a class="dashboard-header__button" href="#">
+            <i class="icon-user-plus"></i>
+            <div class="dashboard-header__button-text">New Assignment</div>
         </a>
     </div>
 }
 
 @section content {
     <div class="dashboard">
-        <div class="content-header no-select">
-            <div class="content-header__group">
-                <div class="content-header__organisation">Nelson Park School</div>
-                <div class="content-header__index">
-                    <i class="icon-home"></i>/
-                    <div class="content-header__index--end">Dashboard</div>
-                </div>
-            </div>
-            <div class="content-header__group">
-                <a class="dashboard-header__button" href="#">
-                    <i class="icon-user-plus"></i>
-                    <div class="dashboard-header__button-text">New Assignment</div>
-                </a>
-            </div>
-        </div>
         <div class="dashboard-overview">
             <div class="dashboard-overview__card no-select" title="Show all Assignments">
                 <div class="dashboard-overview__card-body">
@@ -153,12 +145,9 @@
 }
 
 @section stylesheet {
-    <link rel="stylesheet" href="~/css/navigation.css">
-    <link rel="stylesheet" href="~/css/top-bar.css">
-    <link rel="stylesheet" href="~/css/content-header.css">
     <link rel="stylesheet" href="~/css/dashboard.css">
-    <link rel="stylesheet" href="~/css/dashboard-overview.css">
-    <link rel="stylesheet" href="~/css/dashboard-groups.css">
+    <link rel="stylesheet" href="~/css/dashboard_overview.css">
+    <link rel="stylesheet" href="~/css/dashboard_groups.css">
 }
 
 @section javascript {
