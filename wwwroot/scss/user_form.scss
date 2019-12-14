@@ -1,0 +1,8 @@
+﻿@import "_variables.scss";
+
+.user-form {
+    flex-grow: 1;
+    box-sizing: border-box;
+    background-color: $colour-background;
+    padding: $dashboard-spacing;
+}

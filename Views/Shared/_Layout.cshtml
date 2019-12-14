@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>@Model.PageTitle</title>
+    <title>@Model.Action</title>
     @RenderSection("stylesheet")
     <link rel="stylesheet" href="~/css/locus-font.css">
     <link rel="stylesheet" href="~/css/page_layout.css">
@@ -35,8 +35,9 @@
             <div class="content-header__group">
                 <div class="content-header__organisation">Nelson Park School</div>
                 <div class="content-header__index">
-                    <i class="icon-home"></i>
-                    <div class="content-header__controller">@(" / " + Model.Controller + " /")</div>
+                    <div class="content-header__controller">
+                        <i class="icon-@Model.Controller.ToLower()"></i>@(Model.Controller + " /")
+                    </div>
                     <div class="content-header__action">@Model.Action</div>
                 </div>
             </div>

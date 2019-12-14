@@ -1,11 +1,11 @@
-@model DashboardIndexViewModel
+@model HomeDashboardViewModel
 
 @section top_bar {
     <input class="top-bar__input-field" id="top-bar__input-field" type="text" onkeyup="Update(this.value.toUpperCase())" placeholder="Search Assignments by Name, Role, or Status">
 }
 
 @section side_bar {
-    <a asp-controller="Dashboard" asp-action="Index" class="navigation__button navigation__button--selected">
+    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button navigation__button--selected">
         <i class="icon-home navigation__button-icon"></i>
         <div class="navigation__button-text">Dashboard</div>
     </a>
@@ -28,7 +28,7 @@
             <div class="navigation__button-text">Create Tool</div>
         </a>
     </div>
-    <a class="navigation__button" href="#">
+    <a asp-controller="User" asp-action="Create" class="navigation__button">
         <i class="icon-user-plus navigation__button-icon"></i>
         <div class="navigation__button-text">New Assignment</div>
     </a>
@@ -36,7 +36,7 @@
 
 @section content_header {
     <div class="content-header__group">
-        <a class="dashboard-header__button" href="#">
+        <a asp-controller="User" asp-action="Create" class="dashboard-header__button">
             <i class="icon-user-plus"></i>
             <div class="dashboard-header__button-text">New Assignment</div>
         </a>
@@ -126,8 +126,8 @@
                                     </td>
                                     <td>
                                         <div class="dashboard-groups__action">
-                                            <a class="dashboard-groups__action-button dashboard-groups__action-button--edit" title="Edit User details &#xA;Add/remove Assets" href="#">Edit</a>
-                                            <a class="dashboard-groups__action-button dashboard-groups__action-button--return" title="Unassign all Assets" href="#">Return All</a>
+                                            <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id" class="dashboard-groups__action-button dashboard-groups__action-button--edit" title="Edit User details &#xA;Add/remove Assets">Edit</a>
+                                            <a class="dashboard-groups__action-button dashboard-groups__action-button--return" title="Mark those Assets belonging to this User and Group as returned" href="#">Return All</a>
                                         </div>
                                     </td>
                                 </tr>

@@ -159,29 +159,5 @@ namespace Locus.Models
                 return count;
             }
         }
-
-        public Asset GetAsset(string serialNumber)
-        {
-            using (IDbConnection db = _connectionFactory.GetConnection())
-            {
-                string sql =
-                    @"SELECT *
-                        FROM [dbo].[Assets] AS A
-                             INNER JOIN [dbo].[Models] AS M
-                             ON A.ModelId = M.Id
-                             INNER JOIN [dbo].[Groups] AS G
-                             ON A.GroupId = G.Id
-                       WHERE A.Id = @SerialNumber;";
-
-                Asset asset = db.Query<Asset, Model, Group, Asset>(sql, (asset, model, group) =>
-                {
-                    asset.Model = model;
-                    asset.Group = group;
-                    return asset;
-                }, new { serialNumber }).FirstOrDefault();
-
-                return asset;
-            }
-        }
     }
 }

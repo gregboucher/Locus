@@ -19,7 +19,7 @@ namespace Locus
         {
             services.AddControllersWithViews();
             services.AddSingleton<IConnectionFactory, ConnectionFactory>();
-            services.AddSingleton<IRepository, Repository>();     
+            services.AddSingleton<IRepository, Repository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

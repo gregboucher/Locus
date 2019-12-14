@@ -8,6 +8,5 @@ namespace Locus.Models
         int AssignedUserCount();
         int DueTodayCount();
         int OverdueCount();
-        Asset GetAsset(string serialNumber);
     }
 }

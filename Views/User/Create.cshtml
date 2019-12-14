@@ -1,0 +1,41 @@
+﻿@model UserCreateViewModel
+
+@section top_bar {
+    <input class="top-bar__input-field" id="top-bar__input-field" type="text" onkeyup="" placeholder="Search Assets by Name">
+}
+
+@section side_bar {
+    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button navigation__button--selected">
+        <i class="icon-home navigation__button-icon"></i>
+        <div class="navigation__button-text">Dashboard</div>
+    </a>
+    <a class="navigation__button" href="#">
+        <i class="icon-book navigation__button-icon"></i>
+        <div class="navigation__button-text">History</div>
+    </a>
+    <div class="navigation__button accordion">
+        <i class="icon-cog navigation__button-icon"></i>
+        <div class="navigation__button-text">Admin</div>
+        <i class="navigation__button-dropdown-icon"></i>
+    </div>
+    <div class="navigation__submenu">
+        <a class="navigation__button" href="#">
+            <i class="icon-right-dir navigation__button-icon"></i>
+            <div class="navigation__button-text">Settings</div>
+        </a>
+        <a class="navigation__button" href="#">
+            <i class="icon-right-dir navigation__button-icon"></i>
+            <div class="navigation__button-text">Create Tool</div>
+        </a>
+    </div>
+}
+
+@section content {
+    <div class="user-form">
+        
+    </div>
+}
+
+@section stylesheet {
+    <link rel="stylesheet" href="~/css/user_form.css">
+}

@@ -47,5 +47,12 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFile": "wwwroot/css/user_form.css",
+    "inputFile": "wwwroot/scss/user_form.scss",
+    "minify": {
+      "enabled": false
+    }
   }
 ]
