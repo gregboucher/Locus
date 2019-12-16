@@ -30,7 +30,7 @@
         margin-left: 10px;
         margin-right: 10px;
         color: #6c707c; }
-    .top-bar__input-field {
+    .top-bar__input {
         flex-grow: 1;
         height: 100%;
         color: #6c707c;
@@ -40,7 +40,7 @@
         -moz-box-shadow: none;
         box-shadow: none;
         outline: none; }
-        .top-bar__input-field::placeholder {
+        .top-bar__input::placeholder {
             opacity: 1; }
     .top-bar__account-wrapper {
         flex-grow: 0.5; }

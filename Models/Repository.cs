@@ -74,7 +74,7 @@ namespace Locus.Models
 	                          INNER JOIN [dbo].[Groups] AS G
                               ON Ast.GroupId = G.Id
                      WHERE Asg.Returned IS NULL
-                     ORDER BY G.Id, U.Id, Due;";
+                     ORDER BY G.Name DESC, U.Id, Due;";
 
                 var groups = new List<Group>();
                 var groupDictionary = new Dictionary<int, int>();

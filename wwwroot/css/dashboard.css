@@ -16,8 +16,38 @@
     overflow: hidden;
     white-space: nowrap; }
 
-.dashboard--due {
-    color: #fbbc06; }
-
-.dashboard--overdue {
-    color: #ff4747; }
+.dashboard-overview {
+    display: flex;
+    justify-content: space-between; }
+    .dashboard-overview > div:not(:last-child) {
+        margin-right: 21px; }
+    .dashboard-overview__card {
+        flex: 1 0 0;
+        display: flex;
+        overflow: hidden;
+        background-color: #27293d;
+        border: 1px solid #313452;
+        color: #868a95;
+        padding: 24px 32px;
+        justify-content: space-between;
+        align-items: center; }
+        .dashboard-overview__card.is-active {
+            border-color: #4d83ff; }
+        .dashboard-overview__card-info {
+            font-weight: 600;
+            overflow: hidden; }
+        .dashboard-overview__card-icon {
+            font-size: 2.5rem;
+            color: #4d83ff; }
+        .dashboard-overview__card-number {
+            font-size: 2.5rem;
+            font-weight: 600; }
+        .dashboard-overview__card-subject {
+            font-weight: 700; }
+        .dashboard-overview__card-verb {
+            font-size: 0.875rem;
+            font-weight: 400; }
+        .dashboard-overview__card:hover {
+            cursor: pointer;
+            background-color: #2b2d43;
+            transition: background-color 0.1s linear; }

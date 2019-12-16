@@ -1,0 +1,77 @@
+@import "_variables.scss";
+
+.user {
+    &-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        > div:not(:last-child) {
+            margin-right: $content-spacing;
+        }
+
+        &__card {
+            flex: 1 0 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: $colour-foreground;
+            border: 1px solid $colour-border;
+            color: $colour-font;
+            padding: 24px 32px;
+            //max-width: 672px;
+            //box-sizing: border-box;
+        }
+        &__header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: lighten($colour-font, 20%);
+            margin-bottom: 20px;
+        }
+        &__row {
+            display: flex;
+            flex-direction: column;
+            &:not(:last-child) {
+                margin-bottom: 24px;
+            }
+        }
+        &__name {
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+        }
+        &__input {
+            border: 1px solid $colour-border;
+            color: $colour-font;
+            background-color: $colour-background;
+            padding: 14px 22px;
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+            outline: none;
+            &--error {
+                border-color: $colour-red;
+            }
+        }
+        &__error {
+            color: $colour-red;
+            font-size: 0.875rem;
+            padding-top: 8px;
+        }
+        &__select {
+            border: 1px solid $colour-border;
+            color: $colour-font;
+            background-color: $colour-background;
+            padding: 14px 22px;
+        }
+        &__comment {
+            background-color: $colour-background;
+            border: 1px solid $colour-border;
+            color: $colour-font;
+            resize: vertical;
+            max-height: 400px;
+            padding: 10px;
+            min-height: 100px;
+            font-family: Roboto;
+            font-size: 0.875rem;
+        }
+    }
+}

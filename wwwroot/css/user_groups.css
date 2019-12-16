@@ -1,0 +1,10 @@
+﻿.user-groups {
+    display: flex; }
+    .user-groups__card {
+        display: flex;
+        flex: 1 0 0;
+        overflow: hidden;
+        background-color: #27293d;
+        border: 1px solid #313452;
+        color: #868a95;
+        padding: 24px 32px; }

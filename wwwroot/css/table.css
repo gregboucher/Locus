@@ -1,0 +1,63 @@
+﻿.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; }
+    .table__row {
+        text-align: left;
+        border-bottom: 1px solid #313452; }
+        .table__row > td, .table__row th {
+            padding: 10px 0; }
+        .table__row:not(:first-child):hover {
+            background-color: #222235;
+            transition: background-color 0.1s linear; }
+        .table__row:not(:first-child):hover .table__action-button {
+            opacity: 1;
+            transition: opacity 0.1s linear; }
+    .table__asset-icon {
+        font-size: 1.4rem;
+        text-decoration: none; }
+        .table__asset-icon--due {
+            color: #fbbc06; }
+        .table__asset-icon--overdue {
+            color: #ff4747; }
+    .table__model-icon {
+        font-size: 1.4rem;
+        margin-right: 8px; }
+    .table__status {
+        display: inline-block;
+        padding: 6px 9px;
+        border-radius: 4px; }
+        .table__status--active {
+            border: 1px solid #23af47;
+            color: #23af47; }
+        .table__status--due {
+            border: 1px solid #fbbc06;
+            color: #fbbc06; }
+        .table__status--overdue {
+            border: 1px solid #ff4747;
+            color: #ff4747; }
+    .table__action {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center; }
+        .table__action-button {
+            text-decoration: none;
+            margin-right: 10px;
+            padding: 6px 18px;
+            color: #868a95;
+            border: 1px solid #555860;
+            border-radius: 4px;
+            opacity: 0.3;
+            white-space: nowrap; }
+            .table__action-button--edit:hover {
+                color: #4d83ff;
+                border-color: #4d83ff; }
+            .table__action-button--return:hover {
+                color: #ff4747;
+                border-color: #ff4747; }
+            .table__action-button--assign:hover {
+                color: #4d83ff;
+                border-color: #4d83ff; }
+            .table__action-button--extend:hover {
+                color: #fbbc06;
+                border-color: #fbbc06; }

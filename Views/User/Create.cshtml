@@ -1,7 +1,7 @@
 ﻿@model UserCreateViewModel
 
 @section top_bar {
-    <input class="top-bar__input-field" type="text" onkeyup="" placeholder="Search Assets by Name">
+    <input class="top-bar__input" id="top-bar__input" type="text" onkeyup="" placeholder="Search Assets by Name">
 }
 
 @section side_bar {
@@ -31,13 +31,62 @@
 }
 
 @section content {
-    <div class="user-form">
+    <form class="user" id="user">
+        <div class="user-details">
+            <div class="user-details__card">
+                <div class="user-details__header ">User Details</div>
+                <div class="user-details__row">
+                    <div class="user-details__name">Name (required)</div>
+                    <input class="user-details__input user-details__input--error" id="user-details__input-name" type="text" placeholder="">
+                    <label class="user-details__error">You must provide a Name for this User</label>
+                </div>
+                <div class="user-details__row">
+                    <div class="user-details__name">Email</div>
+                    <input class="user-details__input" id="user-details__input-email" type="text" placeholder="">
+                    <label class="user-details__error">Invalid email address.</label>
+                </div>
+                <div class="user-details__row">
+                    <div class="user-details__name">Phone</div>
+                    <input class="user-details__input" id="user-details__input-phone" type="text" placeholder="">
+                </div>
+                <div class="user-details__row">
+                    <div class="user-details__name">Absentee</div>
+                    <input class="user-details__input" id="user-details__input-absentee" type="text" placeholder="">
+                </div>
+                <div class="user-details__row">
+                    <div class="user-details__name">Role (required)</div>
+                    <select class="user-details__select">
+                        <option value="CRT">CRT</option>
+                        <option value="CRT">Cleaner</option>
+                        <option value="CRT">Contractor</option>
+                    </select>
+                    <label class="user-details__error">You must select a Role for this User.</label>
+                </div>
+            </div>
+            <div class="user-details__card">
+                <div class="user-details__row">
+                    <div class="user-details__name">Comments</div>
+                    <textarea name="user-details__input-comment" form="user" class="user-details__comment" id="user-details__input-comment"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="user-groups">
+            <div class="user-groups__card">
 
-    </div>
+            </div>
+        </div>
+        <div class="user-assets">
+            <div class="user-assets__card">
+
+            </div>
+        </div>
+    </form>
 }
 
 @section stylesheet {
-    <link rel="stylesheet" href="~/css/user_form.css">
+    <link rel="stylesheet" href="~/css/user.css">
+    <link rel="stylesheet" href="~/css/user_details.css">
+    <link rel="stylesheet" href="~/css/user_groups.css">
 }
 
 @section javascript {

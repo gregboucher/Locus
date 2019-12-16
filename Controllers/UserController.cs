@@ -14,7 +14,6 @@ namespace Locus.Controllers
             _repository = repository;
         }
 
-        [Route("~/")]
         [Route("")]
         [Route("[action]")]
         public ViewResult Create()

@@ -35,22 +35,36 @@
     }
   },
   {
-    "outputFile": "wwwroot/css/dashboard_overview.css",
-    "inputFile": "wwwroot/scss/dashboard_overview.scss",
+    "outputFile": "wwwroot/css/user.css",
+    "inputFile": "wwwroot/scss/user.scss",
     "minify": {
       "enabled": false
     }
   },
   {
-    "outputFile": "wwwroot/css/dashboard_groups.css",
-    "inputFile": "wwwroot/scss/dashboard_groups.scss",
+    "outputFile": "wwwroot/css/user_details.css",
+    "inputFile": "wwwroot/scss/user_details.scss",
     "minify": {
       "enabled": false
     }
   },
   {
-    "outputFile": "wwwroot/css/user_form.css",
-    "inputFile": "wwwroot/scss/user_form.scss",
+    "outputFile": "wwwroot/css/user_groups.css",
+    "inputFile": "wwwroot/scss/user_groups.scss",
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFile": "wwwroot/css/table.css",
+    "inputFile": "wwwroot/scss/table.scss",
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFile": "wwwroot/css/group.css",
+    "inputFile": "wwwroot/scss/group.scss",
     "minify": {
       "enabled": false
     }

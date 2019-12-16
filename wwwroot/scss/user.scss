@@ -1,0 +1,7 @@
+﻿@import "_variables.scss";
+
+.user {
+    > div:not(:last-child) {
+        margin-bottom: $content-spacing;
+    }
+}
