@@ -95,34 +95,34 @@
                                 <th>Name</th>
                                 <th>Role</th>
                                 <th>Created</th>
-                                <th>Assets</th>
-                                <th>Due Date</th>
                                 <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Assets</th>
                                 <th>Actions</th>
                             </tr>
                             @foreach (var user in group.Users)
                             {
-                                <tr class="table__row">
-                                    <td class="table__search-content">@user.Name</td>
-                                    <td class="table__search-content">@user.Role.Name</td>
-                                    <td>@user.Created.ToString("dd-MM-yyyy")</td>
-                                    <td>
-                                        @foreach (var asset in user.Assets)
-                                        {
-                                            <i class="icon-@asset.Model.Icon.Name table__asset-icon no-select table__search-classList table__asset-icon--@asset.Status.ToLower()" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
-                                        }
-                                    </td>
-                                    <td>@user.Assets[0].Due.ToString("dd-MM-yyyy")</td>
-                                    <td>
-                                        <div class="table__status table__search-content no-select table__status--@user.Assets[0].Status.ToLower()">@user.Assets[0].Status</div>
-                                    </td>
-                                    <td>
-                                        <div class="table__action">
-                                            <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id" class="table__action-button table__action-button--edit" title="Edit User details &#xA;Add/remove Assets">Edit</a>
-                                            <a class="table__action-button table__action-button--return" title="Mark those Assets belonging to this User and Group as returned" href="#">Return All</a>
-                                        </div>
-                                    </td>
-                                </tr>
+                        <tr class="table__row">
+                            <td class="table__search-content">@user.Name</td>
+                            <td class="table__search-content">@user.Role.Name</td>
+                            <td>@user.Created.ToString("dd-MM-yyyy")</td>
+                            <td>
+                                <div class="table__status table__search-content no-select table__status--@user.Assets[0].Status.ToLower()">@user.Assets[0].Status</div>
+                            </td>
+                            <td>@user.Assets[0].Due.ToString("dd-MM-yyyy")</td>
+                            <td>
+                                @foreach (var asset in user.Assets)
+                                {
+                                    <i class="icon-@asset.Model.Icon.Name table__asset-icon no-select table__search-classList table__asset-icon--@asset.Status.ToLower()" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
+                                }
+                            </td>
+                            <td>
+                                <div class="table__action">
+                                    <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id" class="table__action-button table__action-button--edit" title="Edit User details &#xA;Add/remove Assets">Edit</a>
+                                    <a class="table__action-button table__action-button--return" title="Mark those Assets belonging to this User and Group as returned" href="#">Return All</a>
+                                </div>
+                            </td>
+                        </tr>
                             }
                         </table>
                     </div>

@@ -1,6 +1,7 @@
 ﻿using Locus.Models;
 using Locus.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace Locus.Controllers
 {
@@ -14,8 +15,10 @@ namespace Locus.Controllers
             _repository = repository;
         }
 
+        [Route("~/")]
         [Route("")]
         [Route("[action]")]
+        [HttpGet]
         public ViewResult Create()
         {
             UserCreateViewModel model = new UserCreateViewModel
@@ -24,6 +27,13 @@ namespace Locus.Controllers
                 Action = ControllerContext.RouteData.Values["action"].ToString(),
             };
             return View(model);
+        }
+
+        [Route("[action]")]
+        [HttpPost]
+        public ViewResult Create(AssetList assetList)
+        {
+            return View();
         }
 
         [Route("[action]/{id}")]
