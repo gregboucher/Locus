@@ -1,0 +1,200 @@
+@import "_variables.scss";
+
+.data {
+    visibility: hidden;
+
+    &-table {
+        min-width: 100%;
+        margin: 0 auto;
+        clear: both;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-bottom: 1px solid map-get($colour-map, --border);
+
+        &__length {
+            display: none;
+        }
+
+        &__wrapper {
+            font-size: 0.8rem;
+            color: map-get($colour-map, --font);
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            box-sizing: border-box;
+        }
+
+        &__status {
+            display: inline-block;
+            padding: 3px 9px;
+            min-width: 3.5rem;
+            font-variant: small-caps;
+            text-align: center;
+            border-radius: 4px;
+            //red, yellow, green
+            @for $i from 5 through 7 {
+                $c: nth($colour-map, $i);
+
+                &#{nth($c, 1)} {
+                    color: nth($c, 2);
+                    border: 1px solid nth($c, 2);
+                }
+            }
+        }
+
+        &__icon {
+            font-size: 1.2rem;
+            //red, yellow
+            @for $i from 5 through 6 {
+                $c: nth($colour-map, $i);
+
+                &#{nth($c, 1)} {
+                    color: nth($c, 2);
+                }
+            }
+        }
+
+        &__action {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+
+            &-button {
+                flex: 1 0 0;
+                padding: 7px 9px;
+                text-decoration: none;
+                text-align: center;
+                font-variant: small-caps;
+                border: 1px solid transparent;
+                color: darken(map-get($colour-map, --font), 10%);
+                border-left: 1px solid map-get($colour-map, --border);
+                background-color: transparent;
+
+                &:last-child {
+                    //border-right: 1px solid map-get($colour-map, --border);
+                }
+
+
+                &:hover {
+                    cursor: pointer;
+                }
+                //yellow, green, blue
+                @for $i from 2 through 4 {
+                    $c: nth($colour-map, $i);
+
+                    &#{nth($c, 1)}:hover {
+                        color: nth($c, 2);
+                        border: 1px solid nth($c, 2);
+                    }
+                }
+            }
+        }
+
+        &__paginate {
+            float: right;
+            text-align: right;
+            padding-top: 0.25em;
+
+            & .paginate-button {
+                box-sizing: border-box;
+                display: inline-block;
+                min-width: 1.5em;
+                padding: 0.5em 1em;
+                margin-left: 2px;
+                text-align: center;
+                text-decoration: none !important;
+                cursor: pointer;
+                *cursor: hand;
+                border: 1px solid transparent;
+                border-radius: 4px;
+
+                &:not(.disabled):not(.current):hover {
+                    border: 1px solid map-get($colour-map, --border);
+                }
+
+                &.current {
+                    color: white;
+                    background-color: darken(map-get($colour-map, --blue), 5%);
+                    border: 1px solid map-get($colour-map, --border);
+
+                    &:hover {
+                        background-color: map-get($colour-map, --blue);
+                    }
+                }
+
+                &.disabled {
+                    color: darken(map-get($colour-map, --font), 30%);
+                }
+            }
+        }
+
+        &__info {
+            clear: both;
+            float: left;
+            padding-top: 0.755em;
+        }
+
+        & thead tr th {
+            position: relative;
+            padding: 10px;
+            border-bottom: 1px solid map-get($colour-map, --border);
+
+            &:not(.sorting_disabled) {
+                cursor: pointer;
+            }
+
+            &.sorting-asc:after,
+            &.sorting-desc:after,
+            &.sorting:after {
+                font-family: "locus-font";
+                font-style: normal;
+                position: absolute;
+                top: 12px;
+                right: 8px;
+                display: block;
+                color: map-get($colour-map, --blue);
+            }
+
+            &.sorting:after {
+                content: '\f0dc';
+                color: darken(map-get($colour-map, --font), 30%);
+            }
+
+            &.sorting-asc:after {
+                content: '\e856';
+            }
+
+            &.sorting-desc:after {
+                content: '\e855';
+            }
+        }
+
+        & tbody tr {
+            transition: background-color 0.1s linear;
+
+            &.even:hover,
+            &.odd:hover {
+                background-color: lighten(map-get($colour-map, --background), 4%);
+            }
+
+            &.even {
+                background-color: lighten(map-get($colour-map, --background), 2%);
+            }
+
+            & td {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 10rem;
+
+                &:not(:last-child) {
+                    padding: 8px 10px;
+                }
+
+                &.data-table__empty {
+                    text-align: center;
+                }
+            }
+        }
+    }
+}

@@ -42,29 +42,22 @@
     }
   },
   {
-    "outputFile": "wwwroot/css/user_details.css",
-    "inputFile": "wwwroot/scss/user_details.scss",
+    "outputFile": "wwwroot/css/data.css",
+    "inputFile": "wwwroot/scss/data.scss",
     "minify": {
       "enabled": false
     }
   },
   {
-    "outputFile": "wwwroot/css/user_groups.css",
-    "inputFile": "wwwroot/scss/user_groups.scss",
+    "outputFile": "wwwroot/css/dropdown.css",
+    "inputFile": "wwwroot/scss/dropdown.scss",
     "minify": {
       "enabled": false
     }
   },
   {
-    "outputFile": "wwwroot/css/table.css",
-    "inputFile": "wwwroot/scss/table.scss",
-    "minify": {
-      "enabled": false
-    }
-  },
-  {
-    "outputFile": "wwwroot/css/group.css",
-    "inputFile": "wwwroot/scss/group.scss",
+    "outputFile": "wwwroot/css/overview.css",
+    "inputFile": "wwwroot/scss/overview.scss",
     "minify": {
       "enabled": false
     }

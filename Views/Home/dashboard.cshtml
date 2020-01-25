@@ -1,7 +1,7 @@
 @model HomeDashboardViewModel
 
 @section top_bar {
-    <input class="top-bar__input" id="top-bar__input" type="text" onkeyup="Update(this.value.toUpperCase())" placeholder="Search Assignments by Name, Role, or Status">
+    <input class="top-bar__input" id="top-bar__input" type="text" placeholder="Search All Assignments">
 }
 
 @section side_bar {
@@ -45,104 +45,111 @@
 
 @section content {
     <div class="dashboard">
-        <div class="dashboard-overview">
-            <div class="dashboard-overview__card no-select" title="Show all Assignments">
-                <div class="dashboard-overview__card-text">
-                    <div class="dashboard-overview__card-number">@Model.AssignedUserCount</div>
-                    <div class="dashboard-overview__card-subject">Active</div>
-                    <div class="dashboard-overview__card-verb">Assignment@(Model.AssignedUserCount == 1 ? "" : "s")</div>
+        <div class="overview">
+            <div class="overview__card no-select" title="Filter by Assets due today">
+                <div class="overview__card-text">
+                    <div class="overview__card-quantity">@Model.DueTodayCount</div>
+                    <div class="overview__card-subject">Asset@(Model.DueTodayCount == 1 ? "" : "s")</div>
+                    <div class="overview__card-verb">Due Today</div>
                 </div>
-                <i class="icon-user-o dashboard-overview__card-icon"></i>
+                <i class="icon-calendar-check-o overview__card-icon"></i>
             </div>
-            <div class="dashboard-overview__card no-select" title="Filter by Assets due today">
-                <div class="dashboard-overview__card-text">
-                    <div class="dashboard-overview__card-number">@Model.DueTodayCount</div>
-                    <div class="dashboard-overview__card-subject">Asset@(Model.DueTodayCount == 1 ? "" : "s")</div>
-                    <div class="dashboard-overview__card-verb">Due Today</div>
-                 </div>
-                <i class="icon-calendar-check-o dashboard-overview__card-icon"></i>
-            </div>
-            <div class="dashboard-overview__card no-select" title="Filter by overdue Assets">
-                <div class="dashboard-overview__card-text">
-                    <div class="dashboard-overview__card-number">@Model.OverdueCount</div>
-                    <div class="dashboard-overview__card-subject">Asset@(Model.OverdueCount == 1 ? "" : "s")</div>
-                    <div class="dashboard-overview__card-verb">Overdue</div>
+            <div class="overview__card no-select" title="Filter by overdue Assets">
+                <div class="overview__card-text">
+                    <div class="overview__card-quantity">@Model.OverdueCount</div>
+                    <div class="overview__card-subject">Asset@(Model.OverdueCount == 1 ? "" : "s")</div>
+                    <div class="overview__card-verb">Overdue</div>
                 </div>
-                <i class="icon-calendar-times-o dashboard-overview__card-icon"></i>
+                <i class="icon-calendar-times-o overview__card-icon"></i>
             </div>
-            <div class="dashboard-overview__card no-select" title="Placeholder">
-                <div class="dashboard-overview__card-text">
-                    <div class="dashboard-overview__card-number">0</div>
-                    <div class="dashboard-overview__card-subject">Subject</div>
-                    <div class="dashboard-overview__card-verb">Verb</div>
+            <div class="overview__card no-select" title="Filter by Assets Assigned today">
+                <div class="overview__card-text">
+                    <div class="overview__card-quantity">@Model.CreatedTodayCount</div>
+                    <div class="overview__card-subject">User@(Model.CreatedTodayCount == 1 ? "" : "s")</div>
+                    <div class="overview__card-verb">Created Today</div>
                 </div>
-                <i class="icon-question-circle-o dashboard-overview__card-icon"></i>
+                <i class="icon-calendar-plus-o overview__card-icon"></i>
+            </div>
+            <div class="overview__card no-select" title="Filter by Extended Assets">
+                <div class="overview__card-text">
+                    <div class="overview__card-quantity">0</div>
+                    <div class="overview__card-subject">Subject</div>
+                    <div class="overview__card-verb">Verb</div>
+                </div>
+                <i class="icon-calendar overview__card-icon"></i>
             </div>
         </div>
-        <div class="group">
-            @if (Model.Groups.Count() > 0)
-            {
+        <div class="dropdown__wrapper">
+            <div id="dropdown" class="dropdown">No Filter</div>
+            <div class="dropdown__content">
+                <input class="dropdown__search" type="text">
+                <div class="dropdown__scroll-group">
+                    <div class="dropdown__option is-active" data-search="">No Filter<span class="dropdown__option-value">@Model.DistinctUsersByGroupCount</span></div>
+                    @foreach (var group in Model.Groups)
+                    {
+                        <div class="dropdown__option" data-search="@group.Name">@group.Name<span class="dropdown__option-value">@group.Users.Count</span></div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="data">
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Group</th>
+                        <th>Role</th>
+                        <th>Created</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                        <th>Assets</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
                 @foreach (var group in Model.Groups)
                 {
-                    <div class="group__header no-select accordion" title="@group.Description">
-                        <i class="group__header-icon"></i>
-                        <div class="group__header-name">@group.Name</div>
-                        <div class="group__header-number">(@group.Users.Count)</div>
-                    </div>
-                    <div class="group__body">
-                        <table class="table" data-name="dashboard-group__table">
-                            <tr class="table__row no-select">
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Created</th>
-                                <th>Status</th>
-                                <th>Due Date</th>
-                                <th>Assets</th>
-                                <th>Actions</th>
-                            </tr>
-                            @foreach (var user in group.Users)
-                            {
-                        <tr class="table__row">
-                            <td class="table__search-content">@user.Name</td>
-                            <td class="table__search-content">@user.Role.Name</td>
-                            <td>@user.Created.ToString("dd-MM-yyyy")</td>
+                    foreach (var user in group.Users)
+                    {
+                        <tr>
+                            <td>@user.Name</td>
+                            <td>@group.Name</td>
+                            <td>@user.Role.Name</td>
+                            <td class="@(DateTime.Now.ToString("dd-MM-yy") == user.Created.ToString("dd-MM-yy") ? "data-table__today" : "")">@user.Created.ToString("dd-MM-yy")</td>
                             <td>
-                                <div class="table__status table__search-content no-select table__status--@user.Assets[0].Status.ToLower()">@user.Assets[0].Status</div>
+                                <div class="data-table__status data-table__status--@user.Assets[0].Status.ToLower() no-select">@user.Assets[0].Status</div>
                             </td>
-                            <td>@user.Assets[0].Due.ToString("dd-MM-yyyy")</td>
+                            <td>@user.Assets[0].Due.ToString("dd-MM-yy")</td>
                             <td>
                                 @foreach (var asset in user.Assets)
                                 {
-                                    <i class="icon-@asset.Model.Icon.Name table__asset-icon no-select table__search-classList table__asset-icon--@asset.Status.ToLower()" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
+                                    <i class="icon-tag data-table__icon data-table__icon--@asset.Status.ToLower() no-select" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
                                 }
                             </td>
                             <td>
-                                <div class="table__action">
-                                    <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id" class="table__action-button table__action-button--edit" title="Edit User details &#xA;Add/remove Assets">Edit</a>
-                                    <a class="table__action-button table__action-button--return" title="Mark those Assets belonging to this User and Group as returned" href="#">Return All</a>
+                                <div class="data-table__action">
+                                    <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id" class="data-table__action-button data-table__action-button--blue" title="Edit User details &#xA;Add/remove Assets">Edit</a>
+                                    <input type="button" value="Return All" class="data-table__action-button data-table__action-button--yellow" title="Mark those Assets belonging to this User and Group as returned"/>
                                 </div>
                             </td>
                         </tr>
-                            }
-                        </table>
-                    </div>
+                    }
                 }
-            }
-            else
-            {
-                <div class="group__header no-select">No Assets are currently assigned</div>
-            }
+            </table>
         </div>
     </div>
 }
 
 @section stylesheet {
     <link rel="stylesheet" href="~/css/dashboard.css">
-    <link rel="stylesheet" href="~/css/table.css">
-    <link rel="stylesheet" href="~/css/group.css">
+    <link rel="stylesheet" href="css/overview.css">
+    <link rel="stylesheet" href="css/dropdown.css">
+    <link rel="stylesheet" href="css/data.css">
 }
 
 @section javascript {
-    <script src="~/js/accordion.js"></script>
-    <script src="~/js/dashboard.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+    <script src="js/accordion.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="js/dashboard.js"></script>
 }

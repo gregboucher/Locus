@@ -29,7 +29,7 @@
             transition: background-color 0.1s linear;
             transition: color 0.1s linear;
             cursor: pointer; }
-        .navigation__button--selected {
+        .navigation__button--blue {
             color: #4d83ff; }
     .navigation__submenu {
         max-height: 0;

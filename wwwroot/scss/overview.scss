@@ -1,0 +1,69 @@
+@import "_variables.scss";
+
+.overview {
+    display: flex;
+
+    > div:not(:last-child) {
+        margin-right: $content-spacing;
+    }
+
+    &__card {
+        display: flex;
+        flex: 1 0 0;
+        padding: 24px 32px;
+        justify-content: space-between;
+        align-items: center;
+        color: map-get($colour-map, --font);
+        background-color: map-get($colour-map, --foreground);
+        border: 1px solid map-get($colour-map, --border);
+
+        &--small {
+            padding: 6px 16px;
+        }
+
+        &.is-active {
+            border-color: map-get($colour-map, --blue);
+        }
+
+        &.is-active &-text {
+            color: lighten(map-get($colour-map, --font), 25%);
+        }
+
+        &-icon {
+            font-size: 2.5rem;
+            color: map-get($colour-map, --blue);
+        }
+
+        &--small &-icon {
+            font-size: 1.5rem;
+        }
+
+        &-quantity {
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        &--small &-quantity {
+            font-size: 1.5rem;
+        }
+
+        &-subject {
+            font-weight: 700;
+        }
+
+        &-verb {
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: lighten(map-get($colour-map, --foreground), 2%);
+            transition: background-color 0.1s linear;
+        }
+
+        &:hover &-text {
+            color: lighten(map-get($colour-map, --font), 25%);
+        }
+    }
+}

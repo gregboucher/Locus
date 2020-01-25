@@ -13,6 +13,7 @@ namespace Locus.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public DateTime Created { get; set; }
+        public string Comment { get; set; }
         public Role Role { get; set; }
 
         public IList<Asset> Assets { get; set; }

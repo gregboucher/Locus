@@ -33,6 +33,7 @@ namespace Locus.Models
                       U.Email,
                       U.Phone,
                       U.Created,
+                      U.Comment,
                       U.RoleId,
                       R.Id,
                       R.Name,
@@ -74,7 +75,7 @@ namespace Locus.Models
 	                          INNER JOIN [dbo].[Groups] AS G
                               ON Ast.GroupId = G.Id
                      WHERE Asg.Returned IS NULL
-                     ORDER BY G.Id, U.Id, Due;";
+                     ORDER BY G.Name, U.Id, Due;";
 
                 var groups = new List<Group>();
                 var groupDictionary = new Dictionary<int, int>();
@@ -112,14 +113,32 @@ namespace Locus.Models
             }
         }
 
-        public int AssignedUserCount()
+        public int DistinctUsersByGroupCount()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
                 string sql =
-                    @"SELECT Count(DISTINCT UserId)
-                        FROM [dbo].[Assignments]
-                       WHERE Returned IS NULL;";
+                    @"SELECT SUM(COUNT(distinct Asg.UserId)) OVER() AS total_count
+                        FROM [dbo].[Assignments] AS Asg
+		                     INNER JOIN [dbo].[Assets] AS Ast
+                             ON Asg.AssetId = Ast.Id
+                       WHERE Asg.Returned IS NULL
+                       GROUP BY Ast.GroupId";
+
+                int count = db.ExecuteScalar<int>(sql);
+                return count;
+            }
+        }
+
+        public int CreatedTodayCount()
+        {
+            using (IDbConnection db = _connectionFactory.GetConnection())
+            {
+                string sql =
+                    @"SELECT COUNT(Asg.Id)
+                        FROM [dbo].[Assignments] As Asg
+                       WHERE Returned IS NULL
+                         AND FORMAT(Asg.Assigned, 'dd-MM-yy') = FORMAT(GETDATE(), 'dd-MM-yy')";
 
                 int count = db.ExecuteScalar<int>(sql);
                 return count;

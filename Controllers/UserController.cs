@@ -15,7 +15,7 @@ namespace Locus.Controllers
             _repository = repository;
         }
 
-        [Route("~/")]
+        //[Route("~/")]
         [Route("")]
         [Route("[action]")]
         [HttpGet]
@@ -23,8 +23,7 @@ namespace Locus.Controllers
         {
             UserCreateViewModel model = new UserCreateViewModel
             {
-                Controller = ControllerContext.RouteData.Values["controller"].ToString(),
-                Action = ControllerContext.RouteData.Values["action"].ToString(),
+                
             };
             return View(model);
         }
@@ -41,8 +40,7 @@ namespace Locus.Controllers
         {
             UserEditViewModel model = new UserEditViewModel
             {
-                Controller = ControllerContext.RouteData.Values["controller"].ToString(),
-                Action = ControllerContext.RouteData.Values["action"].ToString(),
+                
             };
             return View(model);
         }

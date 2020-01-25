@@ -8,7 +8,9 @@
     margin: 0;
     display: flex;
     flex-grow: 1;
-    align-content: stretch; }
+    align-content: stretch;
+    white-space: nowrap;
+    text-align: left; }
 
 #top-bar {
     position: fixed;
@@ -25,7 +27,8 @@
     bottom: 0;
     width: 256px;
     display: flex;
-    flex-direction: column; }
+    flex-direction: column;
+    z-index: 1; }
 
 #content {
     margin-top: 60px;
@@ -34,7 +37,7 @@
     padding: 21px;
     background-color: #1e1e2f;
     box-sizing: border-box;
-    flex-grow: 1;
+    width: 100%;
     min-height: calc(100vh - 60px);
     margin-left: 256px; }
 

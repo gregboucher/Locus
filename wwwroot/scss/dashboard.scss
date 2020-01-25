@@ -1,78 +1,33 @@
 ﻿@import "_variables.scss";
 
 .dashboard {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
     > div:not(:last-child) {
         margin-bottom: $content-spacing;
     }
+
     &-header {
         &__button {
             display: flex;
-            background-color: $colour-blue;
+            background-color: darken(map-get($colour-map, --blue), 5%);
             font-size: 0.875rem;
             color: white;
             padding: 10px 15px;
             text-decoration: none;
             cursor: pointer;
             border-radius: 4px;
+
+            &:hover {
+                background-color: map-get($colour-map, --blue);
+            }
         }
         &__button-text {
             margin-left: 5px;
             overflow: hidden;
             white-space: nowrap;
-        }
-    }
-    &-overview {
-        display: flex;
-        justify-content: space-between;
-
-        > div:not(:last-child) {
-            margin-right: $content-spacing;
-        }
-
-        &__card {
-            flex: 1 0 0;
-            display: flex;
-            overflow: hidden;
-            background-color: $colour-foreground;
-            border: 1px solid $colour-border;
-            color: $colour-font;
-            padding: 24px 32px;
-            justify-content: space-between;
-            align-items: center;
-
-            &.is-active {
-                border-color: $colour-blue;
-            }
-
-            &-info {
-                font-weight: 600;
-                overflow: hidden;
-            }
-
-            &-icon {
-                font-size: 2.5rem;
-                color: $colour-blue;
-            }
-
-            &-number {
-                font-size: 2.5rem;
-                font-weight: 600;
-            }
-
-            &-subject {
-                font-weight: 700;
-            }
-
-            &-verb {
-                font-size: 0.875rem;
-                font-weight: 400;
-            }
-
-            &:hover {
-                cursor: pointer;
-                background-color: lighten($colour-foreground, 2%);
-                transition: background-color 0.1s linear;
-            }
         }
     }
 }

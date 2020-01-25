@@ -10,7 +10,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            color: lighten($colour-font, 20%);
+            color: lighten(map-get($colour-map, --font), 20%);
         }
 
         &__organisation {
@@ -25,11 +25,12 @@
         }
 
         &__controller {
+
         }
 
         &__action {
-            color: $colour-blue;
-            margin-left: 5px;
+            color: map-get($colour-map, --blue);
+            margin-left: 3px;
         }
     }
 }

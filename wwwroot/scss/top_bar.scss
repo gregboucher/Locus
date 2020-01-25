@@ -1,8 +1,8 @@
 ﻿@import "_variables.scss";
 
 .top-bar {
-    background-color: $colour-foreground;
-    border-bottom: 1px solid $colour-border;
+    background-color: map-get($colour-map, --foreground);
+    border-bottom: 1px solid map-get($colour-map, --border);
     height: 100%;
     display: flex;
 
@@ -10,7 +10,7 @@
         display: flex;
         align-items: center;
         width: $side-bar--width;
-        border-right: 1px solid $colour-border;
+        border-right: 1px solid map-get($colour-map, --border);
         box-sizing: border-box;
         padding: 16px;
     }
@@ -30,7 +30,7 @@
 
     &__input-wrapper {
         display: flex;
-        background-color: $colour-background;
+        background-color: map-get($colour-map, --background);
         margin: 12px;
         align-items: center;
         border-radius: 4px;
@@ -40,13 +40,13 @@
     &__input-icon {
         margin-left: 10px;
         margin-right: 10px;
-        color: darken($colour-font, 10%);
+        color: darken(map-get($colour-map, --font), 10%);
     }
 
     &__input {
         flex-grow: 1;
         height: 100%;
-        color: darken($colour-font, 10%);
+        color: darken(map-get($colour-map, --font), 10%);
         border: none;
         background-color: transparent;
         -webkit-box-shadow: none;

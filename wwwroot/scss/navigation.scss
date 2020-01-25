@@ -2,8 +2,8 @@
 
 .navigation {
     flex-grow: 1;
-    border-right: 1px solid $colour-border;
-    background-color: $colour-foreground;
+    border-right: 1px solid map-get($colour-map, --border);
+    background-color: map-get($colour-map, --foreground);
 
     &__button {
         display: flex;
@@ -12,8 +12,8 @@
         overflow: hidden;
         white-space: nowrap;
         text-decoration: none;
-        color: $colour-font;
-        border-bottom: 1px solid $colour-border;
+        color: map-get($colour-map, --font);
+        border-bottom: 1px solid map-get($colour-map, --border);
         font-size: 0.875rem;
 
         &.accordion > &-dropdown-icon::after {
@@ -36,15 +36,15 @@
         }
 
         &:hover, &.is-open {
-            background-color: lighten($colour-foreground, 2%);
+            background-color: lighten(map-get($colour-map, --foreground), 2%);
             color: #fff;
             transition: background-color 0.1s linear;
             transition: color 0.1s linear;
             cursor: pointer;
         }
 
-        &--selected {
-            color: $colour-blue;
+        &--blue {
+            color: map-get($colour-map, --blue);
         }
     }
 
@@ -55,7 +55,6 @@
 
         > .navigation__button {
             padding-left: 32px;
-            //background-color: darken($colour-foreground, 2%);
         }
     }
 }

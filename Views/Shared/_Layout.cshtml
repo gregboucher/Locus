@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>@Model.Action</title>
+    <title>@ViewContext.RouteData.Values["Action"]</title>
     @RenderSection("stylesheet")
     <link rel="stylesheet" href="~/css/locus-font.css">
     <link rel="stylesheet" href="~/css/page_layout.css">
@@ -36,9 +36,9 @@
                 <div class="content-header__organisation">Nelson Park School</div>
                 <div class="content-header__index">
                     <div class="content-header__controller">
-                        <i class="icon-@Model.Controller.ToLower()"></i>@(Model.Controller + " /")
+                        <i class="icon-@(ViewContext.RouteData.Values["Controller"].ToString().ToLower())"></i>@(ViewContext.RouteData.Values["Controller"] + " /")
                     </div>
-                    <div class="content-header__action">@Model.Action</div>
+                    <div class="content-header__action">@ViewContext.RouteData.Values["Action"]</div>
                 </div>
             </div>
             @RenderSection("content_header", required: false)
