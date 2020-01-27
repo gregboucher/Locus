@@ -85,36 +85,6 @@ namespace Locus.Models
             }
         }
 
-        public int DistinctUsersByGroupCount()
-        {
-            using (IDbConnection db = _connectionFactory.GetConnection())
-            {
-                string sql =
-                    @"SELECT SUM(COUNT(distinct Asg.UserId)) OVER() AS total_count
-                        FROM [dbo].[Assignments] AS Asg
-		                     INNER JOIN [dbo].[Assets] AS Ast
-                             ON Asg.AssetId = Ast.Id
-                       WHERE Asg.Returned IS NULL
-                       GROUP BY Ast.GroupId";
-
-                return db.ExecuteScalar<int>(sql);
-            }
-        }
-
-        public int CreatedTodayCount()
-        {
-            using (IDbConnection db = _connectionFactory.GetConnection())
-            {
-                string sql =
-                    @"SELECT COUNT(*)
-                        FROM [dbo].[Assignments] As Asg
-                       WHERE Asg.Returned IS NULL
-                         AND FORMAT(Asg.Assigned, 'dd-MM-yy') = FORMAT(GETDATE(), 'dd-MM-yy')";
-
-                return db.ExecuteScalar<int>(sql);
-            }
-        }
-
         public int DueTodayCount()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
@@ -146,6 +116,20 @@ namespace Locus.Models
 		                        ON Ast.ModelId = M.Id
                        WHERE Asg.Returned IS NULL
                          AND FORMAT(GETDATE(), 'dd-MM-yy') > FORMAT(Asg.Due, 'dd-MM-yy');";
+
+                return db.ExecuteScalar<int>(sql);
+            }
+        }
+
+        public int UsersCreatedTodayCount()
+        {
+            using (IDbConnection db = _connectionFactory.GetConnection())
+            {
+                string sql =
+                    @"SELECT COUNT(DISTINCT Asg.UserId)
+                        FROM [dbo].[Assignments] As Asg
+                       WHERE Asg.Returned IS NULL
+                         AND FORMAT(Asg.Assigned, 'dd-MM-yy') = FORMAT(GETDATE(), 'dd-MM-yy');";
 
                 return db.ExecuteScalar<int>(sql);
             }

@@ -84,7 +84,7 @@
             <div class="dropdown__content">
                 <input class="dropdown__search" type="text">
                 <div class="dropdown__scroll-group">
-                    <div class="dropdown__option is-active" data-search="">No Filter<span class="dropdown__option-value">@Model.DistinctUsersByGroupCount</span></div>
+                    <div class="dropdown__option is-active" data-search="">No Filter<span class="dropdown__option-value">@{var assignmentCount = 0; foreach (var group in Model.Groups) { assignmentCount += group.Users.Count; } @assignmentCount }</span></div>
                     @foreach (var group in Model.Groups)
                     {
                         <div class="dropdown__option" data-search="@group.Name">@group.Name<span class="dropdown__option-value">@group.Users.Count</span></div>

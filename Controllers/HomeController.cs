@@ -21,10 +21,9 @@ namespace Locus.Controllers
         {
             HomeDashboardViewModel model = new HomeDashboardViewModel
             {
-                DistinctUsersByGroupCount = _repository.DistinctUsersByGroupCount(),
                 DueTodayCount = _repository.DueTodayCount(),
                 OverdueCount = _repository.OverdueCount(),
-                CreatedTodayCount = _repository.CreatedTodayCount(),
+                CreatedTodayCount = _repository.UsersCreatedTodayCount(),
                 Groups = _repository.GetAssignmentsByGroup()
             };
             return View(model);

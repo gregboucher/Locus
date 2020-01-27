@@ -5,10 +5,9 @@ namespace Locus.Models
     public interface IRepository
     {
         IEnumerable<Group_User> GetAssignmentsByGroup();
-        int DistinctUsersByGroupCount();
         int DueTodayCount();
         int OverdueCount();
-        int CreatedTodayCount();
+        int UsersCreatedTodayCount();
 
         IEnumerable<Group_InactiveModel> GetAllInactiveModels();
         IEnumerable<Role> GetAllRoles(); 
