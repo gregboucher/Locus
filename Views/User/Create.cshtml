@@ -1,7 +1,7 @@
 ﻿@model UserCreateViewModel
 
 @section top_bar {
-    <input class="top-bar__input" id="top-bar__input" type="text" onkeyup="" placeholder="Search Assets by Name">
+    <input class="top-bar__input" id="top-bar__input" type="text" placeholder="Search Assets by Model, Tag, Status or Group">
 }
 
 @section side_bar {
@@ -31,23 +31,117 @@
 }
 
 @section content {
-    <form asp-controller="User" asp-action="Create" method="post">
-        <input type="hidden" class="user-assets__input input-index" name="assetList.Returns.Index" value="5" />
-        <input type="radio" class="user-assets__input input-return" name="assetList.Returns[5]" value="SN: CRT" />
-        <input type="radio" class="user-assets__input input-extend" name="assetList.Extends[5]" value="SN: CRT" />
-        <button type="submit">Save</button>
-        <input type="hidden" class="user-assets__input input-index" name="assetList.Extends.Index" value="2" />
-        <input type="radio" class="user-assets__input input-return" name="assetList.Returns[2]" value="SN Salto" />
-        <input type="radio" class="user-assets__input input-extend" name="assetList.Extends[2]" value="SN Salto" />
+    <form class="user" id="user" method="post" autocomplete="off">
+        <div class="user-content">
+            <div class="user-details">
+                <div class="user-details__row">
+                    <div>Name</div>
+                    <input name="Name" class="user-details__input" type="text" placeholder="">
+                </div>
+                <div class="user-details__row">
+                    <div>Email</div>
+                    <input name="Email" class="user-details__input" type="text" placeholder="">
+                </div>
+                <div class="user-details__row">
+                    <div>Phone</div>
+                    <input name="Phone" class="user-details__input " type="text" placeholder="">
+                </div>
+                <div class="user-details__row">
+                    <div>Absentee</div>
+                    <input name="Absentee" class="user-details__input" type="text" placeholder="">
+                </div>
+                <div class="user-details__row">
+                    <div>Role</div>
+                    <div class="user-details__input-wrapper">
+                        <select name="Role" class="user-details__input user-details__input--select">
+                            <option hidden="hidden" disabled="disabled" selected="selected" value=""></option>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <option value="@role.Id">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="user-details__row user-details__row--grow">
+                    <div>Comments</div>
+                    <textarea name="Comment" class="user-details__input user-details__input-comment"></textarea>
+                </div>
+            </div>
+            <div class="user-assets">
+                <div class="user-assets__header">
+                    <div class="dropdown__wrapper dropdown__wrapper--larger">
+                        <div id="dropdown" class="dropdown">All</div>
+                        <div class="dropdown__content">
+                            <input class="dropdown__search" type="text">
+                            <div class="dropdown__scroll-group">
+                                <div class="dropdown__option is-active" data-search="">All<span class="dropdown__option-value">@{var assetCount = 0; foreach (var group in Model.Groups) { assetCount += group.InactiveModels.Count; } @assetCount }</span></div>
+                                @foreach (var group in Model.Groups)
+                                {
+                                    <div class="dropdown__option" data-search="@group.Name">@group.Name<span class="dropdown__option-value">@group.InactiveModels.Count</span></div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-assets__content">
+                    @{
+                        int index = 0;
+                        foreach (var group in Model.Groups)
+                        {
+                            foreach (var _model in group.InactiveModels)
+                            {
+                                        <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
+                                            @if (_model.Surplus != 0)
+                                            {
+                                                <input type="hidden" class="user-assets__hidden" name="assetList.Index" value="@index" disabled="disabled" />
+                                                <input type="hidden" class="user-assets__hidden" name="assetList[@index].Id" value="@_model.Id" disabled="disabled" />
+                                                <input type="hidden" class="user-assets__hidden" name="assetList[@index].group" value="@group.Id" disabled="disabled" />
+                                                <input type="radio" class="user-assets__input is-assign" name="assetList[@index].action" value="assign" />
+                                                ++index;
+                                            }
+                                            <div class="user-assets__card">
+                                                <i class="icon-@_model.Icon user-assets__icon"></i>
+                                                <div class="user-assets__left">
+                                                    <div class="user-assets__model searchable">@_model.Model</div>
+                                                    <div class="user-assets__group searchable">@group.Name</div>
+                                                </div>
+                                                <div class="user-assets__right">
+                                                    <div class="user-assets__names">
+                                                        <div>Status:</div>
+                                                        <div>Surplus:</div>
+                                                        <div>Period:</div>
+                                                    </div>
+                                                    <div class="user-assets__values">
+                                                        <div>...</div>
+                                                        <div>@(_model.Surplus + " / " + _model.Total)</div>
+                                                        <div>@(_model.Period + " day" + (_model.Period == 1 ? "" : "s"))</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="user-footer">
+            <input type="submit" value="Create" id="submit" class="user-footer__button">
+            <input type="button" value="Clear" class="user-footer__button">
+            <input type="hidden" id="checkboxAssigned" name="checkboxAssigned">
+        </div>
     </form>
 }
 
 @section stylesheet {
     <link rel="stylesheet" href="~/css/user.css">
-    <link rel="stylesheet" href="~/css/user_details.css">
-    <link rel="stylesheet" href="~/css/user_groups.css">
+    <link rel="stylesheet" href="~/css/dropdown.css">
 }
 
 @section javascript {
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
     <script src="~/js/accordion.js"></script>
+    <script src="~/js/dropdown.js"></script>
+    <script src="~/js/user.js"></script>
 }

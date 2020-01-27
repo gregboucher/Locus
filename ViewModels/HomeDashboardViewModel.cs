@@ -9,7 +9,7 @@ namespace Locus.ViewModels
         public int DueTodayCount { get; set; }
         public int OverdueCount { get; set; }
         public int CreatedTodayCount { get; set; }
-        public IEnumerable<Group> Groups { get; set; }
+        public IEnumerable<Group_User> Groups { get; set; }
     }
 }
 

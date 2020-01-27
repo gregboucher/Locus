@@ -88,7 +88,7 @@ $(function() {
         searchAssets(searchInput.val());
     })
 
-    var cards = $('.user-assets__card-wrapper:not(.is-blank)');
+    var cards = $('.user-assets__card-wrapper:not(.is-blank):not(.is-empty)');
     var checkboxReturnAll = $("#user-assets__header-check");
 
     cards.click(function() {

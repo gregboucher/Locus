@@ -108,6 +108,9 @@
             cursor: pointer; }
             .user-assets__card-wrapper {
                 flex: 1 0 50%; }
+                .user-assets__card-wrapper.is-empty {
+                    opacity: 0.4;
+                    pointer-events: none; }
             .user-assets__card:hover {
                 background-color: #2b2d43; }
             .user-assets__card:before {

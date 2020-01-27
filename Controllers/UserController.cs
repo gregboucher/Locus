@@ -15,7 +15,7 @@ namespace Locus.Controllers
             _repository = repository;
         }
 
-        //[Route("~/")]
+        [Route("~/")]
         [Route("")]
         [Route("[action]")]
         [HttpGet]
@@ -23,14 +23,15 @@ namespace Locus.Controllers
         {
             UserCreateViewModel model = new UserCreateViewModel
             {
-                
+                Roles = _repository.GetAllRoles(),
+                Groups = _repository.GetAllInactiveModels()
             };
             return View(model);
         }
 
         [Route("[action]")]
         [HttpPost]
-        public ViewResult Create(AssetList assetList)
+        public ViewResult Create(int temp)
         {
             return View();
         }

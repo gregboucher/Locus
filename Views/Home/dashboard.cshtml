@@ -113,7 +113,7 @@
                         <tr>
                             <td>@user.Name</td>
                             <td>@group.Name</td>
-                            <td>@user.Role.Name</td>
+                            <td>@user.Role</td>
                             <td class="@(DateTime.Now.ToString("dd-MM-yy") == user.Created.ToString("dd-MM-yy") ? "data-table__today" : "")">@user.Created.ToString("dd-MM-yy")</td>
                             <td>
                                 <div class="data-table__status data-table__status--@user.Assets[0].Status.ToLower() no-select">@user.Assets[0].Status</div>
@@ -122,7 +122,7 @@
                             <td>
                                 @foreach (var asset in user.Assets)
                                 {
-                                    <i class="icon-tag data-table__icon data-table__icon--@asset.Status.ToLower() no-select" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
+                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToLower() no-select" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
                                 }
                             </td>
                             <td>
@@ -141,15 +141,15 @@
 
 @section stylesheet {
     <link rel="stylesheet" href="~/css/dashboard.css">
-    <link rel="stylesheet" href="css/overview.css">
-    <link rel="stylesheet" href="css/dropdown.css">
-    <link rel="stylesheet" href="css/data.css">
+    <link rel="stylesheet" href="~/css/overview.css">
+    <link rel="stylesheet" href="~/css/dropdown.css">
+    <link rel="stylesheet" href="~/css/data.css">
 }
 
 @section javascript {
-    <script src="js/jquery.js"></script>
-    <script src="js/jquery.dataTables.js"></script>
-    <script src="js/accordion.js"></script>
-    <script src="js/dropdown.js"></script>
-    <script src="js/dashboard.js"></script>
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/jquery.dataTables.js"></script>
+    <script src="~/js/accordion.js"></script>
+    <script src="~/js/dropdown.js"></script>
+    <script src="~/js/dashboard.js"></script>
 }
