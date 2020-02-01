@@ -79,6 +79,7 @@
         }
 
         &__content {
+            visibility: hidden;
             display: flex;
             align-content: flex-start;
             flex-wrap: wrap;

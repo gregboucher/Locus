@@ -74,10 +74,10 @@
                         <div class="dropdown__content">
                             <input class="dropdown__search" type="text">
                             <div class="dropdown__scroll-group">
-                                <div class="dropdown__option is-active" data-search="">All<span class="dropdown__option-value">@{var assetCount = 0; foreach (var group in Model.Groups) { assetCount += group.InactiveModels.Count; } @assetCount }</span></div>
+                                <div class="dropdown__option is-active" data-search="">All<span class="dropdown__option-value">@{var count = 0; foreach (var group in Model.Groups) { count += group.Models.Count; } @count }</span></div>
                                 @foreach (var group in Model.Groups)
                                 {
-                                    <div class="dropdown__option" data-search="@group.Name">@group.Name<span class="dropdown__option-value">@group.InactiveModels.Count</span></div>
+                                    <div class="dropdown__option" data-search="@group.Name">@group.Name<span class="dropdown__option-value">@group.Models.Count</span></div>
                                 }
                             </div>
                         </div>
@@ -88,37 +88,40 @@
                         int index = 0;
                         foreach (var group in Model.Groups)
                         {
-                            foreach (var _model in group.InactiveModels)
+                            foreach (var _model in group.Models)
                             {
-                                        <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
-                                            @if (_model.Surplus != 0)
-                                            {
-                                                <input type="hidden" class="user-assets__hidden" name="assetList.Index" value="@index" disabled="disabled" />
-                                                <input type="hidden" class="user-assets__hidden" name="assetList[@index].Id" value="@_model.Id" disabled="disabled" />
-                                                <input type="hidden" class="user-assets__hidden" name="assetList[@index].group" value="@group.Id" disabled="disabled" />
-                                                <input type="radio" class="user-assets__input is-assign" name="assetList[@index].action" value="assign" />
-                                                ++index;
-                                            }
-                                            <div class="user-assets__card">
-                                                <i class="icon-@_model.Icon user-assets__icon"></i>
-                                                <div class="user-assets__left">
-                                                    <div class="user-assets__model searchable">@_model.Model</div>
-                                                    <div class="user-assets__group searchable">@group.Name</div>
+                                if (_model.Asset == null)
+                                {
+                                    <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
+                                        @if (_model.Surplus != 0)
+                                        {
+                                            <input type="hidden" class="user-assets__hidden" name="assetList.Index" value="@index" disabled="disabled" />
+                                            <input type="hidden" class="user-assets__hidden" name="assetList[@index].Id" value="@_model.Id" disabled="disabled" />
+                                            <input type="hidden" class="user-assets__hidden" name="assetList[@index].group" value="@group.Id" disabled="disabled" />
+                                            <input type="radio" class="user-assets__input is-assign" name="assetList[@index].action" value="assign" />
+                                            ++index;
+                                        }
+                                        <div class="user-assets__card">
+                                            <i class="icon-@_model.Icon user-assets__icon"></i>
+                                            <div class="user-assets__left">
+                                                <div class="user-assets__model searchable">@_model.Name</div>
+                                                <div class="user-assets__group searchable">@group.Name</div>
+                                            </div>
+                                            <div class="user-assets__right">
+                                                <div class="user-assets__names">
+                                                    <div>Status:</div>
+                                                    <div>Surplus:</div>
+                                                    <div>Period:</div>
                                                 </div>
-                                                <div class="user-assets__right">
-                                                    <div class="user-assets__names">
-                                                        <div>Status:</div>
-                                                        <div>Surplus:</div>
-                                                        <div>Period:</div>
-                                                    </div>
-                                                    <div class="user-assets__values">
-                                                        <div>...</div>
-                                                        <div>@(_model.Surplus + " / " + _model.Total)</div>
-                                                        <div>@(_model.Period + " day" + (_model.Period == 1 ? "" : "s"))</div>
-                                                    </div>
+                                                <div class="user-assets__values">
+                                                    <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
+                                                    <div>@(_model.Surplus + " / " + _model.Total)</div>
+                                                    <div>@(_model.Period + " day" + (_model.Period == 1 ? "" : "s"))</div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                }
                             }
                         }
                     }
@@ -127,7 +130,8 @@
         </div>
         <div class="user-footer">
             <input type="submit" value="Create" id="submit" class="user-footer__button">
-            <input type="button" value="Clear" class="user-footer__button">
+            <input type="button" value="Reset" class="user-footer__button">
+            <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button">Cancel</a>
             <input type="hidden" id="checkboxAssigned" name="checkboxAssigned">
         </div>
     </form>

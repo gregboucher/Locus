@@ -14,16 +14,16 @@ namespace Locus.Controllers
             _repository = repository;
         }
 
-        //[Route("~/")]
+        [Route("~/")]
         [Route("")]
         [Route("[action]")]
         public ViewResult Dashboard()
         {
             HomeDashboardViewModel model = new HomeDashboardViewModel
             {
-                DueTodayCount = _repository.DueTodayCount(),
-                OverdueCount = _repository.OverdueCount(),
-                CreatedTodayCount = _repository.UsersCreatedTodayCount(),
+                CountDueToday = _repository.CountDueToday(),
+                CountOverdue = _repository.CountOverdue(),
+                CountCreatedToday = _repository.CountUsersCreatedToday(),
                 Groups = _repository.GetAssignmentsByGroup()
             };
             return View(model);

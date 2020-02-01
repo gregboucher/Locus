@@ -1,11 +1,10 @@
-using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace Locus.Models
 {
     [DebuggerDisplay("{Name, nq}")]
-    public class Group_User
+    public class GroupOfUsers
     {
         public int Id { get; set; }
         public string Name { get; set; }

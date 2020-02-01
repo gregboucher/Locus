@@ -1,16 +1,19 @@
 using System.Collections.Generic;
+using System;
 
 namespace Locus.Models
 {
     public interface IRepository
     {
-        IEnumerable<Group_User> GetAssignmentsByGroup();
-        int DueTodayCount();
-        int OverdueCount();
-        int UsersCreatedTodayCount();
+        IEnumerable<GroupOfUsers> GetAssignmentsByGroup();
+        int CountDueToday();
+        int CountOverdue();
+        int CountUsersCreatedToday();
 
-        IEnumerable<Group_InactiveModel> GetAllInactiveModels();
-        IEnumerable<Role> GetAllRoles(); 
+        IEnumerable<GroupOfModels> GetModelsByGroup(int? id);
+        IEnumerable<Role> GetAllRoles();
+        UserDetails GetUserDetails(int id);
+        string CheckStatus(DateTime dueDate);
         //int GetAssignedModels();
     }
 }

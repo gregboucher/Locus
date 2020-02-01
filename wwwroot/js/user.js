@@ -29,27 +29,27 @@ $(function() {
 
     $('#user').validate({
         rules: {
-            name: {
+            Name: {
                 required: true,
                 letterspaceonly: true,
                 maxlength: 64,
             },
-            email: {
+            Email: {
                 email: true,
                 maxlength: 128
             },
-            phone: {
+            Phone: {
                 number: true,
                 maxlength: 10
             },
-            absentee: {
+            Absentee: {
                 letterspaceonly: true,
                 maxlength: 64
             },
-            role: {
+            Role: {
                 required: true
             },
-            comments: {
+            Comment: {
                 maxlength: 256
             },
             checkboxAssigned: {
@@ -57,17 +57,17 @@ $(function() {
             }
         },
         messages: {
-            name: {
+            Name: {
                 required: "Please enter a name",
                 letterspaceonly: "A name must contain only letters",
             },
-            phone: {
+            Phone: {
                 number: "A phone number must contain only digits"
             },
-            absentee: {
+            Absentee: {
                 letterspaceonly: "A name must contain only letters"
             },
-            role: {
+            Role: {
                 required: "Please select a role",
             },
             checkboxAssigned: {
@@ -138,6 +138,9 @@ $(function() {
     }
     var resetDropdown = initDropdown(searchAssets);
 
+    //set default dropdown selection
+    searchAssets($('.dropdown__option.is-active').data('search'));
+
     //return all checkbox
     checkboxReturnAll.click(function(){
         var assigned = cards.filter('.is-assigned');
@@ -150,4 +153,5 @@ $(function() {
         }
     });
 
+    $('.user-assets__content').css('visibility', 'visible');
 });

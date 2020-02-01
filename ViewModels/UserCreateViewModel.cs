@@ -6,6 +6,6 @@ namespace Locus.ViewModels
     public class UserCreateViewModel
     {
         public IEnumerable<Role> Roles { get; set; }
-        public IEnumerable<Group_InactiveModel> Groups { get; set; }
+        public IEnumerable<GroupOfModels> Groups { get; set; }
     }
 }

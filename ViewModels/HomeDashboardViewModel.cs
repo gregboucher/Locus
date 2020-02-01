@@ -5,10 +5,10 @@ namespace Locus.ViewModels
 {
     public class HomeDashboardViewModel
     {
-        public int DueTodayCount { get; set; }
-        public int OverdueCount { get; set; }
-        public int CreatedTodayCount { get; set; }
-        public IEnumerable<Group_User> Groups { get; set; }
+        public int CountDueToday { get; set; }
+        public int CountOverdue { get; set; }
+        public int CountCreatedToday { get; set; }
+        public IEnumerable<GroupOfUsers> Groups { get; set; }
     }
 }
 

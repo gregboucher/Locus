@@ -51,6 +51,7 @@
                 .user-assets__header-check:checked + label:after {
                     content: '\e825'; }
         .user-assets__content {
+            visibility: hidden;
             display: flex;
             align-content: flex-start;
             flex-wrap: wrap;

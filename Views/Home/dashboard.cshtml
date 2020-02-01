@@ -5,7 +5,7 @@
 }
 
 @section side_bar {
-    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button navigation__button--selected">
+    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button navigation__button--blue">
         <i class="icon-home navigation__button-icon"></i>
         <div class="navigation__button-text">Dashboard</div>
     </a>
@@ -48,24 +48,24 @@
         <div class="overview">
             <div class="overview__card no-select" title="Filter by Assets due today">
                 <div class="overview__card-text">
-                    <div class="overview__card-quantity">@Model.DueTodayCount</div>
-                    <div class="overview__card-subject">Asset@(Model.DueTodayCount == 1 ? "" : "s")</div>
+                    <div class="overview__card-quantity">@Model.CountDueToday</div>
+                    <div class="overview__card-subject">Asset@(Model.CountDueToday == 1 ? "" : "s")</div>
                     <div class="overview__card-verb">Due Today</div>
                 </div>
                 <i class="icon-calendar-check-o overview__card-icon"></i>
             </div>
             <div class="overview__card no-select" title="Filter by overdue Assets">
                 <div class="overview__card-text">
-                    <div class="overview__card-quantity">@Model.OverdueCount</div>
-                    <div class="overview__card-subject">Asset@(Model.OverdueCount == 1 ? "" : "s")</div>
+                    <div class="overview__card-quantity">@Model.CountOverdue</div>
+                    <div class="overview__card-subject">Asset@(Model.CountOverdue == 1 ? "" : "s")</div>
                     <div class="overview__card-verb">Overdue</div>
                 </div>
                 <i class="icon-calendar-times-o overview__card-icon"></i>
             </div>
             <div class="overview__card no-select" title="Filter by Assets Assigned today">
                 <div class="overview__card-text">
-                    <div class="overview__card-quantity">@Model.CreatedTodayCount</div>
-                    <div class="overview__card-subject">User@(Model.CreatedTodayCount == 1 ? "" : "s")</div>
+                    <div class="overview__card-quantity">@Model.CountCreatedToday</div>
+                    <div class="overview__card-subject">User@(Model.CountCreatedToday== 1 ? "" : "s")</div>
                     <div class="overview__card-verb">Created Today</div>
                 </div>
                 <i class="icon-calendar-plus-o overview__card-icon"></i>
@@ -122,7 +122,7 @@
                             <td>
                                 @foreach (var asset in user.Assets)
                                 {
-                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToLower() no-select" title="@asset.Tag &#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
+                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToLower() no-select" title="SN: @asset.Id&#xA;Tag: @asset.Tag&#xA;Assigned: @asset.Assigned.ToString("dd-MM-yy")&#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
                                 }
                             </td>
                             <td>
