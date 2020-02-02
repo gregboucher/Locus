@@ -29,27 +29,27 @@ $(function() {
 
     $('#user').validate({
         rules: {
-            Name: {
+            "UserDetails.Name": {
                 required: true,
                 letterspaceonly: true,
                 maxlength: 64,
             },
-            Email: {
-                email: true,
-                maxlength: 128
-            },
-            Phone: {
+            //"UserDetails.Email": {
+            //    email: true,
+            //    maxlength: 256
+            //},
+            "UserDetails.Phone": {
                 number: true,
-                maxlength: 10
+                maxlength: 16
             },
-            Absentee: {
+            "UserDetails.Absentee": {
                 letterspaceonly: true,
                 maxlength: 64
             },
-            Role: {
+            "UserDetails.RoleId": {
                 required: true
             },
-            Comment: {
+            "UserDetails.Comment": {
                 maxlength: 256
             },
             checkboxAssigned: {
@@ -57,17 +57,17 @@ $(function() {
             }
         },
         messages: {
-            Name: {
+            "UserDetails.Name": {
                 required: "Please enter a name",
                 letterspaceonly: "A name must contain only letters",
             },
-            Phone: {
+            "UserDetails.Phone": {
                 number: "A phone number must contain only digits"
             },
-            Absentee: {
+            "UserDetails.Absentee": {
                 letterspaceonly: "A name must contain only letters"
             },
-            Role: {
+            "UserDetails.RoleId": {
                 required: "Please select a role",
             },
             checkboxAssigned: {

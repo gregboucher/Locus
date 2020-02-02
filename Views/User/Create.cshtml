@@ -36,25 +36,25 @@
             <div class="user-details">
                 <div class="user-details__row">
                     <div>Name</div>
-                    <input name="Name" class="user-details__input" type="text" placeholder="">
+                    <input name="UserDetails.Name" class="user-details__input" type="text" placeholder="">
                 </div>
                 <div class="user-details__row">
                     <div>Email</div>
-                    <input name="Email" class="user-details__input" type="text" placeholder="">
+                    <input name="UserDetails.Email" class="user-details__input" type="text" placeholder="">
                 </div>
                 <div class="user-details__row">
                     <div>Phone</div>
-                    <input name="Phone" class="user-details__input " type="text" placeholder="">
+                    <input name="UserDetails.Phone" class="user-details__input " type="text" placeholder="">
                 </div>
                 <div class="user-details__row">
                     <div>Absentee</div>
-                    <input name="Absentee" class="user-details__input" type="text" placeholder="">
+                    <input name="UserDetails.Absentee" class="user-details__input" type="text" placeholder="">
                 </div>
                 <div class="user-details__row">
                     <div>Role</div>
                     <div class="user-details__input-wrapper">
-                        <select name="Role" class="user-details__input user-details__input--select">
-                            <option hidden="hidden" disabled="disabled" selected="selected" value=""></option>
+                        <select name="UserDetails.RoleId" class="user-details__input user-details__input--select">
+                            <option hidden="hidden" disabled selected></option>
                             @foreach (var role in Model.Roles)
                             {
                                 <option value="@role.Id">@role.Name</option>
@@ -64,7 +64,7 @@
                 </div>
                 <div class="user-details__row user-details__row--grow">
                     <div>Comments</div>
-                    <textarea name="Comment" class="user-details__input user-details__input-comment"></textarea>
+                    <textarea name="UserDetails.Comment" class="user-details__input user-details__input-comment"></textarea>
                 </div>
             </div>
             <div class="user-assets">
@@ -95,10 +95,10 @@
                                     <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
-                                            <input type="hidden" class="user-assets__hidden" name="assetList.Index" value="@index" disabled="disabled" />
-                                            <input type="hidden" class="user-assets__hidden" name="assetList[@index].Id" value="@_model.Id" disabled="disabled" />
-                                            <input type="hidden" class="user-assets__hidden" name="assetList[@index].group" value="@group.Id" disabled="disabled" />
-                                            <input type="radio" class="user-assets__input is-assign" name="assetList[@index].action" value="assign" />
+                                            <input type="hidden" class="user-assets__hidden" name="NewAssignments.Index" value="@index" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="NewAssignments[@index].ModelId" value="@_model.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="NewAssignments[@index].GroupId" value="@group.Id" disabled/>
+                                            <input type="radio" class="user-assets__input is-assign" disabled/>
                                             ++index;
                                         }
                                         <div class="user-assets__card">
@@ -133,6 +133,7 @@
             <input type="button" value="Reset" class="user-footer__button">
             <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button">Cancel</a>
             <input type="hidden" id="checkboxAssigned" name="checkboxAssigned">
+            <div asp-validation-summary="All"></div>
         </div>
     </form>
 }

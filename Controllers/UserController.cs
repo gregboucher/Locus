@@ -15,10 +15,10 @@ namespace Locus.Controllers
             _repository = repository;
         }
 
+        [HttpGet]
         //[Route("~/")]
         [Route("")]
         [Route("[action]")]
-        [HttpGet]
         public ViewResult Create()
         {
             UserCreateViewModel model = new UserCreateViewModel
@@ -29,23 +29,42 @@ namespace Locus.Controllers
             return View(model);
         }
 
-        [Route("[action]")]
+
         [HttpPost]
-        public ViewResult Create(int temp)
+        [Route("[action]")]
+        public IActionResult Create(UserCreatePostModel model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                _repository.TestTransaction(model);
+                return RedirectToAction("Create"); //temp
+            }
+            return RedirectToAction("Create");
         }
 
-        [Route("[action]/{id}")]
-        public ViewResult Edit(int id)
+        [HttpGet]
+        [Route("[action]/{userId}")]
+        public ViewResult Edit(int userId)
         {
             UserEditViewModel model = new UserEditViewModel
             {
-                UserDetails = _repository.GetUserDetails(id),
+                UserDetails = _repository.GetUserDetails(userId),
                 Roles = _repository.GetAllRoles(),
-                Groups = _repository.GetModelsByGroup(id)
+                Groups = _repository.GetModelsByGroup(userId)
             };
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("[action]/{userId}")]
+        public IActionResult Edit(UserEditPostModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                return RedirectToAction("Edit", new { userId = model.UserId }); //temp
+            }
+            return RedirectToAction("Edit", new { userId = model.UserId });
         }
     }
 }

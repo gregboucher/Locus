@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Locus.Data;
 using System.Data;
 using System;
+using Locus.ViewModels;
 
 namespace Locus.Models
 {
@@ -229,6 +230,63 @@ namespace Locus.Models
                        WHERE U.Id = @userId;";
 
                return db.QuerySingle<UserDetails>(sql, new { userId = id});
+            }
+        }
+
+        public void TestTransaction(UserCreatePostModel model)
+        {
+            using (IDbConnection db = _connectionFactory.GetConnection())
+            {
+                var param = new DynamicParameters(model.UserDetails);
+                param.Add("@Id", 0, DbType.Int32, ParameterDirection.Output);
+                string sqlUser =
+                    @"INSERT INTO [dbo].[Users]
+                      VALUES (@Name,
+                              @Absentee,
+                              @Email,
+                              @Phone,
+                              GETDATE(),
+                              @Comment,
+                              @RoleId)
+                              SELECT @Id = SCOPE_IDENTITY();";
+
+                string sqlAsset =
+                    @"INSERT INTO [dbo].[Assignments]
+                      SELECT GETDATE(),
+	                         DATEADD(DAY, M.[Period], GETDATE()),
+	                         NULL,
+	                         @UserId,
+	                         (
+		                        SELECT TOP 1 Ast.Id
+                                  FROM [dbo].[Assets] AS Ast
+	                                   LEFT JOIN [dbo].[Assignments] AS Asg
+	                                   ON Ast.Id = Asg.AssetId
+                                 WHERE Asg.Id IS NULL
+		                           AND Ast.Deactivated IS NULL
+                                   AND Ast.GroupId = @GroupId
+                                   AND AST.ModelId = @ModelId
+                              ORDER BY NEWID()
+	                         )
+                        FROM [dbo].[Models] AS M
+                       WHERE M.Id = @ModelId;";
+
+                //db.Open();
+                //using (var transaction = db.BeginTransaction())
+                //{
+                int recordsUpdated = 0;
+                    //try
+                    //{
+                        recordsUpdated = db.Execute(sqlUser, param);
+                        int userId = param.Get<int>("@Id");
+                        
+                        //recordsUpdated = db.Execute(sql, model.NewAssignments, transaction);
+                        //transaction.Commit();
+                    //}  
+                    //catch (Exception ex)
+                    //{
+                        //transaction.Rollback();
+                    //}                   
+                //}
             }
         }
 

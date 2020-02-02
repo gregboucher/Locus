@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using Locus.ViewModels;
 
 namespace Locus.Models
 {
@@ -13,7 +14,9 @@ namespace Locus.Models
         IEnumerable<GroupOfModels> GetModelsByGroup(int? id);
         IEnumerable<Role> GetAllRoles();
         UserDetails GetUserDetails(int id);
+
+        void TestTransaction(UserCreatePostModel model);
+
         string CheckStatus(DateTime dueDate);
-        //int GetAssignedModels();
     }
 }

@@ -9,7 +9,7 @@ function initDropdown(callback) {
 
     //close dropdown on click anywhere other than itself, it's input field, or content scrollbar.
     $(document).click(e => {
-        console.log(e.target);
+        //console.log(e.target);
         var target = $(e.target);
         if (target.is(':not([class^=dropdown]), .dropdown__option')) {
             dropdownContent.hide();
