@@ -5,6 +5,7 @@ using Locus.Data;
 using System.Data;
 using System;
 using Locus.ViewModels;
+using System.Transactions;
 
 namespace Locus.Models
 {
@@ -235,11 +236,10 @@ namespace Locus.Models
 
         public void TestTransaction(UserCreatePostModel model)
         {
+            bool wasAssetAssigned = false;
             using (IDbConnection db = _connectionFactory.GetConnection())
-            {
-                var param = new DynamicParameters(model.UserDetails);
-                param.Add("@Id", 0, DbType.Int32, ParameterDirection.Output);
-                string sqlUser =
+            {        
+                string sql =
                     @"INSERT INTO [dbo].[Users]
                       VALUES (@Name,
                               @Absentee,
@@ -248,46 +248,59 @@ namespace Locus.Models
                               GETDATE(),
                               @Comment,
                               @RoleId)
-                              SELECT @Id = SCOPE_IDENTITY();";
+                       SELECT @UserId = SCOPE_IDENTITY();";
 
-                string sqlAsset =
-                    @"INSERT INTO [dbo].[Assignments]
-                      SELECT GETDATE(),
-	                         DATEADD(DAY, M.[Period], GETDATE()),
-	                         NULL,
-	                         @UserId,
-	                         (
-		                        SELECT TOP 1 Ast.Id
-                                  FROM [dbo].[Assets] AS Ast
-	                                   LEFT JOIN [dbo].[Assignments] AS Asg
-	                                   ON Ast.Id = Asg.AssetId
-                                 WHERE Asg.Id IS NULL
-		                           AND Ast.Deactivated IS NULL
-                                   AND Ast.GroupId = @GroupId
-                                   AND AST.ModelId = @ModelId
-                              ORDER BY NEWID()
-	                         )
-                        FROM [dbo].[Models] AS M
-                       WHERE M.Id = @ModelId;";
+                var parameters = new DynamicParameters(model.UserDetails);
+                parameters.Add("@UserId", 0, DbType.Int32, ParameterDirection.Output);
+                db.Open();
+                using (var transaction = db.BeginTransaction())
+                {
+                    try
+                    {
+                        db.Execute(sql, parameters, transaction);
+                    }
+                    catch (Exception ex)
+                    {
 
-                //db.Open();
-                //using (var transaction = db.BeginTransaction())
-                //{
-                int recordsUpdated = 0;
-                    //try
-                    //{
-                        recordsUpdated = db.Execute(sqlUser, param);
-                        int userId = param.Get<int>("@Id");
-                        
-                        //recordsUpdated = db.Execute(sql, model.NewAssignments, transaction);
-                        //transaction.Commit();
-                    //}  
-                    //catch (Exception ex)
-                    //{
-                        //transaction.Rollback();
-                    //}                   
-                //}
+                    }
+                    sql = @"INSERT INTO [dbo].[Assignments]
+                            SELECT GETDATE(),
+	                               DATEADD(DAY, M.[Period], GETDATE()),
+	                               NULL,
+	                               @UserId,
+	                               (
+		                             SELECT TOP 1 Ast.Id
+                                       FROM [dbo].[Assets] AS Ast
+	                                        LEFT JOIN [dbo].[Assignments] AS Asg
+	                                        ON Ast.Id = Asg.AssetId
+                                      WHERE Asg.Id IS NULL
+		                                AND Ast.Deactivated IS NULL
+                                        AND Ast.GroupId = @GroupId
+                                        AND AST.ModelId = @ModelId
+                                      ORDER BY NEWID()
+	                               )
+                              FROM [dbo].[Models] AS M
+                             WHERE M.Id = @ModelId;";
+
+                    int userId = parameters.Get<int>("@UserId");
+                    foreach (var _model in model.NewAssignments)
+                    {
+                        parameters = new DynamicParameters(_model);
+                        parameters.Add("@UserId", userId, DbType.Int32);
+                        try
+                        {
+                            db.Execute(sql, parameters, transaction);
+                            wasAssetAssigned = true;
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                    if (wasAssetAssigned) transaction.Commit();
+                }
             }
+
         }
 
         public string CheckStatus(DateTime dueDate)
