@@ -152,15 +152,17 @@ namespace Locus.Models
                         FROM [dbo].[Assets] AS Ast
                              LEFT JOIN [dbo].[Assignments] AS Asg
                              ON Ast.Id = Asg.AssetId
+                             AND Asg.Returned IS NULL
                              RIGHT JOIN (
 	                               SELECT Ast.GroupId,
                                           Ast.ModelId,
                                           MAX(CASE WHEN @userId IS NOT NULL AND Asg.UserId = @userId THEN Asg.UserId ELSE NULL END) AS [User],
                                           COUNT(*) AS Total,
-                                          SUM(CASE WHEN Asg.UserId IS NULL THEN 1 ELSE 0 END) AS Surplus
+                                          SUM(CASE WHEN Asg.UserId IS NULL OR Asg.Returned IS NOT NULL THEN 1 ELSE 0 END) AS Surplus
 		                             FROM [dbo].[Assets] AS Ast
 		                                  LEFT JOIN [dbo].[Assignments] AS Asg
 		                                  ON Asg.AssetId = Ast.Id
+                                          AND Asg.Returned IS NULL
 	                             GROUP BY Ast.GroupId, Ast.ModelId
 	                         ) AS Grouped
 	                         ON Grouped.[User] = Asg.UserId
@@ -206,11 +208,10 @@ namespace Locus.Models
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql =
-                    @"SELECT R.Id,
-                             R.Name
-                        FROM [dbo].[Roles] AS R
-                       WHERE R.Deactivated IS NULL;";
+                string sql = @"SELECT R.Id,
+                                      R.Name
+                                 FROM [dbo].[Roles] AS R
+                                WHERE R.Deactivated IS NULL;";
 
                 return db.Query<Role>(sql);
             }
@@ -220,35 +221,33 @@ namespace Locus.Models
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql =
-                    @"SELECT U.[Name],
-                             U.Email,
-                             U.Phone,
-                             U.RoleId,
-                             U.Absentee,
-                             U.Comment
-                        FROM [dbo].[Users] AS U
-                       WHERE U.Id = @userId;";
+                string sql = @"SELECT U.[Name],
+                                      U.Email,
+                                      U.Phone,
+                                      U.RoleId,
+                                      U.Absentee,
+                                      U.Comment
+                                 FROM [dbo].[Users] AS U
+                                WHERE U.Id = @userId;";
 
                return db.QuerySingle<UserDetails>(sql, new { userId = id});
             }
         }
 
-        public void TestTransaction(UserCreatePostModel model)
+        public void CreateNewUser(UserCreatePostModel model)
         {
             bool wasAssetAssigned = false;
             using (IDbConnection db = _connectionFactory.GetConnection())
             {        
-                string sql =
-                    @"INSERT INTO [dbo].[Users]
-                      VALUES (@Name,
-                              @Absentee,
-                              @Email,
-                              @Phone,
-                              GETDATE(),
-                              @Comment,
-                              @RoleId)
-                       SELECT @UserId = SCOPE_IDENTITY();";
+                string sql = @"INSERT INTO [dbo].[Users]
+                               VALUES (@Name,
+                                       @Absentee,
+                                       @Email,
+                                       @Phone,
+                                       GETDATE(),
+                                       @Comment,
+                                       @RoleId)
+                                SELECT @UserId = SCOPE_IDENTITY();";
 
                 var parameters = new DynamicParameters(model.UserDetails);
                 parameters.Add("@UserId", 0, DbType.Int32, ParameterDirection.Output);
@@ -272,15 +271,21 @@ namespace Locus.Models
 		                             SELECT TOP 1 Ast.Id
                                        FROM [dbo].[Assets] AS Ast
 	                                        LEFT JOIN [dbo].[Assignments] AS Asg
-	                                        ON Ast.Id = Asg.AssetId
-                                      WHERE Asg.Id IS NULL
-		                                AND Ast.Deactivated IS NULL
+                                            ON Ast.Id = Asg.AssetId
+                                      WHERE (Asg.AssetId NOT IN
+                                            (
+	                                           SELECT AssetId
+		                                         FROM [dbo].[Assignments]
+		                                        WHERE Returned IS NULL
+	                                        )
+	                                     OR Asg.AssetId IS NULL)
+                                        AND Ast.Deactivated IS NULL
                                         AND Ast.GroupId = @GroupId
-                                        AND AST.ModelId = @ModelId
+                                        AND Ast.ModelId = @ModelId
                                       ORDER BY NEWID()
-	                               )
-                              FROM [dbo].[Models] AS M
-                             WHERE M.Id = @ModelId;";
+	                                 )
+                                FROM [dbo].[Models] AS M
+                               WHERE M.Id = @ModelId;";
 
                     int userId = parameters.Get<int>("@UserId");
                     foreach (var _model in model.NewAssignments)
@@ -300,7 +305,100 @@ namespace Locus.Models
                     if (wasAssetAssigned) transaction.Commit();
                 }
             }
+        }
 
+        public void EditExistingUser(UserEditPostModel model)
+        {
+            using (IDbConnection db = _connectionFactory.GetConnection())
+            {
+
+                //TODO UPDATE USER DETAILS TODO
+
+                if (model.NewAssignments != null)
+                {
+                    string sql = @"INSERT INTO [dbo].[Assignments]
+                                   SELECT GETDATE(),
+	                                      DATEADD(DAY, M.[Period], GETDATE()),
+	                                      NULL,
+	                                      @UserId,
+	                                      (
+		                                    SELECT TOP 1 Ast.Id
+                                              FROM [dbo].[Assets] AS Ast
+	                                               LEFT JOIN [dbo].[Assignments] AS Asg
+                                                   ON Ast.Id = Asg.AssetId
+                                             WHERE (Asg.AssetId NOT IN
+                                                   (
+	                                                  SELECT AssetId
+		                                                FROM [dbo].[Assignments]
+		                                               WHERE Returned IS NULL
+	                                               )
+	                                            OR Asg.AssetId IS NULL)
+                                               AND Ast.Deactivated IS NULL
+                                               AND Ast.GroupId = @GroupId
+                                               AND Ast.ModelId = @ModelId
+                                             ORDER BY NEWID()
+	                                        )
+                                       FROM [dbo].[Models] AS M
+                                      WHERE M.Id = @ModelId;";
+
+                    foreach (var _model in model.NewAssignments)
+                    {
+                        var parameters = new DynamicParameters(_model);
+                        parameters.Add("@UserId", model.UserId, DbType.Int32);
+                        try
+                        {
+                            db.Execute(sql, parameters);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
+                
+                if (model.CurrentAssignments != null)
+                {
+                    string sqlReturn = 
+                          @"UPDATE [dbo].[Assignments]
+                               SET Returned = GETDATE()
+                             WHERE AssetId = @AssetId
+                               AND Returned IS NULL;";
+
+                    string sqlExtend =
+                          @"UPDATE [dbo].[Assignments]
+                           SET Due = DATEADD(DAY, M.[Period], GETDATE())
+                          FROM [dbo].[Assignments] AS Asg
+	                           INNER JOIN [dbo].[Assets] AS Ast
+	                           ON Ast.Id = Asg.AssetId
+	                              INNER JOIN [dbo].[Models] AS M
+		                          ON M.Id = Ast.ModelId
+                         WHERE Asg.AssetId = @AssetId
+                           AND Asg.Returned IS NULL
+                           AND Ast.Deactivated IS NULL;";
+
+                    foreach (var _model in model.CurrentAssignments)
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@AssetId", _model.AssetId, DbType.String);
+                        try
+                        {
+                            switch (_model.Action)
+                            {
+                                case "return":
+                                    db.Execute(sqlReturn, parameters);
+                                    break;
+                                case "extend":
+                                    db.Execute(sqlExtend, parameters);
+                                    break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
+            }
         }
 
         public string CheckStatus(DateTime dueDate)

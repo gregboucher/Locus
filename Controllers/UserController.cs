@@ -29,17 +29,16 @@ namespace Locus.Controllers
             return View(model);
         }
 
-
         [HttpPost]
         [Route("[action]")]
         public IActionResult Create(UserCreatePostModel model)
         {
             if (ModelState.IsValid)
             {
-                _repository.TestTransaction(model);
-                return RedirectToAction("Create"); //temp
+                _repository.CreateNewUser(model);
+                return RedirectToAction(); //temp
             }
-            return RedirectToAction("Create");
+            return RedirectToAction();
         }
 
         [HttpGet]
@@ -61,10 +60,10 @@ namespace Locus.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                return RedirectToAction("Edit", new { userId = model.UserId }); //temp
+                _repository.EditExistingUser(model);
+                return RedirectToAction();
             }
-            return RedirectToAction("Edit", new { userId = model.UserId });
+            return RedirectToAction();
         }
     }
 }
