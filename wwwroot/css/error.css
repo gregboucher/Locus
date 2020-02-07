@@ -1,0 +1,24 @@
+﻿.content-error {
+    text-align: center; }
+    .content-error__title {
+        color: #ff4747;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 21px; }
+    .content-error__message {
+        color: #868a95; }
+    .content-error__button {
+        display: inline-block;
+        margin-top: 21px;
+        padding: 10px 15px;
+        font-size: 0.875rem;
+        color: white;
+        background-color: #3471ff;
+        border-radius: 4px;
+        text-decoration: none;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        border: 0 none; }
+        .content-error__button:hover {
+            background-color: #4d83ff; }

@@ -20,6 +20,7 @@ namespace Locus
             services.AddControllersWithViews();
             services.AddSingleton<IConnectionFactory, ConnectionFactory>();
             services.AddSingleton<IRepository, Repository>();
+            services.AddSingleton<ILogger, Logger>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -27,9 +28,11 @@ namespace Locus
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            } else
+            } 
+            else
             {
-                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+                app.UseStatusCodePagesWithReExecute("/Error/Warning/{0}");
+                app.UseExceptionHandler("/Error/Warning");
             }
             app.UseStaticFiles();
             app.UseRouting();
@@ -37,13 +40,6 @@ namespace Locus
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                
-                //app.UseEndpoints(endpoints =>
-                //{
-                //    endpoints.MapControllerRoute(
-                //        name: "default",
-                //        pattern: "{controller=Dashboard}/{action=Index}/{id?}");
-                //});
             });
         }
     }

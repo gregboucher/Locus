@@ -1,4 +1,4 @@
-﻿using Locus.Models;
+﻿using Locus.Data;
 using Locus.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;

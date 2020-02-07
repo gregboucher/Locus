@@ -61,5 +61,12 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFile": "wwwroot/css/error.css",
+    "inputFile": "wwwroot/scss/error.scss",
+    "minify": {
+      "enabled": false
+    }
   }
 ]

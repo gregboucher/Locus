@@ -34,10 +34,10 @@ $(function() {
                 letterspaceonly: true,
                 maxlength: 64,
             },
-            //"UserDetails.Email": {
-            //    email: true,
-            //    maxlength: 256
-            //},
+            "UserDetails.Email": {
+                email: true,
+                maxlength: 256
+            },
             "UserDetails.Phone": {
                 number: true,
                 maxlength: 16

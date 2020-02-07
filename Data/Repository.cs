@@ -1,13 +1,12 @@
 using System.Linq;
 using Dapper;
 using System.Collections.Generic;
-using Locus.Data;
 using System.Data;
 using System;
 using Locus.ViewModels;
-using System.Transactions;
+using Locus.Models;
 
-namespace Locus.Models
+namespace Locus.Data
 {
     public class Repository : IRepository
     {
@@ -97,7 +96,7 @@ namespace Locus.Models
                          AND cast(GETDATE() as date) = cast(Asg.Due as date);";
 
                 return db.ExecuteScalar<int>(sql);
-            }     
+            }
         }
 
         public int CountOverdue()
@@ -260,7 +259,8 @@ namespace Locus.Models
                     }
                     catch (Exception ex)
                     {
-
+                        throw new Exception(
+                            @"An error occoured when attempting to create a new user.", ex);
                     }
                     sql = @"INSERT INTO [dbo].[Assignments]
                             SELECT GETDATE(),
@@ -297,12 +297,20 @@ namespace Locus.Models
                             db.Execute(sql, parameters, transaction);
                             wasAssetAssigned = true;
                         }
-                        catch (Exception ex)
+                        catch
                         {
-
+                            //only throw exception if no assets were assigned.
                         }
                     }
-                    if (wasAssetAssigned) transaction.Commit();
+                    if (wasAssetAssigned) {
+                        transaction.Commit();
+                    } 
+                    else
+                    {
+                        throw new Exception(
+                            @"No Assets were assigned. User was not created.");
+                    }
+                            
                 }
             }
         }
@@ -365,7 +373,7 @@ namespace Locus.Models
                                AND Returned IS NULL;";
 
                     string sqlExtend =
-                          @"UPDATE [dbo].[Assignments]
+                          @"UPDATE Asg
                            SET Due = DATEADD(DAY, M.[Period], GETDATE())
                           FROM [dbo].[Assignments] AS Asg
 	                           INNER JOIN [dbo].[Assets] AS Ast
@@ -373,8 +381,7 @@ namespace Locus.Models
 	                              INNER JOIN [dbo].[Models] AS M
 		                          ON M.Id = Ast.ModelId
                          WHERE Asg.AssetId = @AssetId
-                           AND Asg.Returned IS NULL
-                           AND Ast.Deactivated IS NULL;";
+                           AND Asg.Returned IS NULL;";
 
                     foreach (var _model in model.CurrentAssignments)
                     {

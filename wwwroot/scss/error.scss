@@ -1,0 +1,35 @@
+﻿@import "_variables.scss";
+
+.content-error {
+    text-align: center;
+
+    &__title {
+        color: map-get($colour-map, --red);
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: $content-spacing;
+    }
+
+    &__message {
+        color: map-get($colour-map, --font);
+    }
+
+    &__button {
+        display: inline-block;
+        margin-top: $content-spacing;
+        padding: 10px 15px;
+        font-size: 0.875rem;
+        color: white;
+        background-color: darken(map-get($colour-map, --blue), 5%);
+        border-radius: 4px;
+        text-decoration: none;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        border: 0 none;
+
+        &:hover {
+            background-color: map-get($colour-map, --blue);
+        }
+    }
+}

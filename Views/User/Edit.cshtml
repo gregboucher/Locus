@@ -5,7 +5,7 @@
 }
 
 @section side_bar {
-    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button navigation__button--selected">
+    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button">
         <i class="icon-home navigation__button-icon"></i>
         <div class="navigation__button-text">Dashboard</div>
     </a>
@@ -28,6 +28,10 @@
             <div class="navigation__button-text">Create Tool</div>
         </a>
     </div>
+    <a asp-controller="User" asp-action="Create" class="navigation__button">
+        <i class="icon-user-plus navigation__button-icon"></i>
+        <div class="navigation__button-text">New Assignment</div>
+    </a>
 }
 
 @section content {

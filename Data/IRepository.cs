@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System;
 using Locus.ViewModels;
+using Locus.Models;
 
-namespace Locus.Models
+namespace Locus.Data
 {
     public interface IRepository
     {
