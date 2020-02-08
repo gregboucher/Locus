@@ -32,7 +32,7 @@ namespace Locus
             else
             {
                 app.UseStatusCodePagesWithReExecute("/Error/Warning/{0}");
-                app.UseExceptionHandler("/Error/Warning");
+                app.UseExceptionHandler("/Error/Exception");
             }
             app.UseStaticFiles();
             app.UseRouting();

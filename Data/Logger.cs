@@ -21,21 +21,19 @@ namespace Locus.Data
             }
         }
 
-        public void WriteLog(LogEntry entry)
+        public void WriteLog(Exception ex)
         {
             try
             {
                 string dir = _dir + "\\LogFile.txt";
                 using (StreamWriter writer = new StreamWriter(dir, true, System.Text.Encoding.UTF8))
                 {
-                    if (!string.IsNullOrEmpty(entry.Message) & !string.IsNullOrEmpty(entry.Path))
+                    if (!string.IsNullOrEmpty(ex.Message))
                     {
                         writer.WriteLine(
                             "[" + DateTime.Now.ToString("dd-MM-yy HH:mm:ss") + "]"
                             + Environment.NewLine
-                            + "Path: " + entry.Path
-                            + Environment.NewLine
-                            + "Error: " + entry.Message
+                            + ex.ToString()
                             + Environment.NewLine);
                     }
                 }

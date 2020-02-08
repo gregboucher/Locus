@@ -36,8 +36,9 @@
 
 @section content {
     <div class="content-error">
-        <div class="content-error__title content-error__title--yellow">@(Model.StatusCode + " Error")</div>
+        <div class="content-error__title content-error__title--red">An error has occoured!</div>
         <div class="content-error__message">@Model.Message</div>
+        <div class="content-error__message">If this error persists, please contact your system administrator.</div>
         <a asp-controller="Home" asp-action="Dashboard" class="content-error__button">Return to Dashboard</a>
     </div>
 }

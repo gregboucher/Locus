@@ -1,51 +1,38 @@
 ﻿using Locus.ViewModels;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Locus.Data;
 
 namespace Locus.Controllers
 {
     [Route("[controller]")]
     public class ErrorController : Controller
     {
-        private readonly ILogger _logger;
-
-        public ErrorController(ILogger logger)
-        {
-            _logger = logger;
-        }
-
         [Route("[action]/{statusCode}")]
-        [Route("[action]")]
-        public IActionResult Warning(int? statusCode)
+        public IActionResult Warning(int statusCode)
         {
             ErrorWarningViewModel model = new ErrorWarningViewModel
             {
-                Message = null
+                StatusCode = statusCode
             };
-            
-            if (statusCode != null)
+            switch (statusCode)
             {
-                switch (statusCode)
-                {
-                    case 404:
-                        model.Message = statusCode.ToString() + ": The page you were trying to view is unavailable.";
-                        return View(model);
-                    default:
-                        model.Message = "An error has occurred. Status code: " + statusCode.ToString();
-                        return View(model);
-                }
+                case 404:
+                    model.Message = "The page you were trying to view is unavailable. Please confirm the URL and try again.";
+                    return View(model);
+                default:
+                    model.Message = "An error has occurred.";
+                    return View(model);
             }
+        }
 
+        [Route("[action]")]
+        public IActionResult Exception()
+        {
             var exception = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-            LogEntry entry = new LogEntry
+            ErrorWarningViewModel model = new ErrorWarningViewModel
             {
-                Path = exception.Path,
-                Message = (exception.Error.InnerException != null ? exception.Error.InnerException.Message : exception.Error.Message)
+                Message = exception.Error.Message
             };
-
-            _logger.WriteLog(entry);
-            model.Message = exception.Error.Message;
             return View(model);
         }
     }

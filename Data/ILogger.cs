@@ -1,8 +1,9 @@
-﻿
+﻿using System;
+
 namespace Locus.Data
 {
     public interface ILogger
     {
-        public void WriteLog(LogEntry entry);
+        public void WriteLog(Exception ex);
     }
 }
