@@ -17,7 +17,7 @@ namespace Locus.Data
             }
             catch
             {
-                //TODO
+                throw new LocusException("Unable to create log file.");
             }
         }
 
@@ -40,7 +40,7 @@ namespace Locus.Data
             }
             catch
             {
-                //TODO
+                throw new LocusException("Unable to write to log file.");
             }
         }
     }

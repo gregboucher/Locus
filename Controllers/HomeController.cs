@@ -24,8 +24,10 @@ namespace Locus.Controllers
                 CountDueToday = _repository.CountDueToday(),
                 CountOverdue = _repository.CountOverdue(),
                 CountCreatedToday = _repository.CountUsersCreatedToday(),
-                Groups = _repository.GetAssignmentsByGroup()
+                Groups = _repository.GetAssignmentsByGroup(),
+                Icon = "home"
             };
+            throw new System.Exception("hello");
             return View(model);
         }
     }

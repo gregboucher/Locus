@@ -85,7 +85,7 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw new Exception("Unable to populate assignment table.");
+                    throw new LocusException("Unable to populate assignment table.");
                 }
                 return groups;
             }
@@ -239,7 +239,7 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw new Exception("Unable to populate model list.");
+                    throw new LocusException("Unable to populate model list.");
                 }
                 return groups;
             }
@@ -265,7 +265,7 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw new Exception("Unable to populate role list.");
+                    throw new LocusException("Unable to populate role list.");
                 }
             }
         }
@@ -290,7 +290,7 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw new Exception("Unable to populate user details.");
+                    throw new LocusException("Unable to populate user details.");
                 }
             }
         }
@@ -322,7 +322,7 @@ namespace Locus.Data
                     catch (Exception ex)
                     {
                         _logger.WriteLog(ex);
-                        throw new Exception("Unable to create new user.");
+                        throw new LocusException("Unable to create new user.");
                     }
                     sql = @"INSERT INTO [dbo].[Assignments]
                             SELECT GETDATE(),
@@ -370,7 +370,7 @@ namespace Locus.Data
                     } 
                     else
                     {
-                        Exception ex = new Exception(
+                        LocusException ex = new LocusException(
                             @"Unfortunately, we were unable to assign any assets to this user.
                               The asset pool for the selected model(s) may have since been depleted.");
                         _logger.WriteLog(ex);
@@ -402,7 +402,7 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw new Exception("We were unable to modify the user's details.");
+                    throw new LocusException("We were unable to modify the user's details.");
                 }
 
                 if (model.NewAssignments != null)

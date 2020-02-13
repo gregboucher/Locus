@@ -5,5 +5,6 @@ namespace Locus.ViewModels
     {
         public string Message { get; set; }
         public int StatusCode { get; set; }
+        public string Icon { get; set; }
     }
 }

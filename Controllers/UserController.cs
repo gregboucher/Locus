@@ -24,7 +24,8 @@ namespace Locus.Controllers
             UserCreateViewModel model = new UserCreateViewModel
             {
                 Roles = _repository.GetAllRoles(),
-                Groups = _repository.GetModelsByGroup(null)
+                Groups = _repository.GetModelsByGroup(null),
+                Icon = "user-plus"
             };
             return View(model);
         }
@@ -49,7 +50,8 @@ namespace Locus.Controllers
             {
                 UserDetails = _repository.GetUserDetails(userId),
                 Roles = _repository.GetAllRoles(),
-                Groups = _repository.GetModelsByGroup(userId)
+                Groups = _repository.GetModelsByGroup(userId),
+                Icon = "edit"
             };
             return View(model);
         }

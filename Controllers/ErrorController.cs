@@ -1,4 +1,5 @@
-﻿using Locus.ViewModels;
+﻿using Locus.Data;
+using Locus.ViewModels;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,12 +8,20 @@ namespace Locus.Controllers
     [Route("[controller]")]
     public class ErrorController : Controller
     {
+        private readonly ILogger _logger;
+
+        public ErrorController(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         [Route("[action]/{statusCode}")]
         public IActionResult Warning(int statusCode)
         {
             ErrorWarningViewModel model = new ErrorWarningViewModel
             {
-                StatusCode = statusCode
+                StatusCode = statusCode,
+                Icon = "attention"
             };
             switch (statusCode)
             {
@@ -31,8 +40,14 @@ namespace Locus.Controllers
             var exception = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             ErrorWarningViewModel model = new ErrorWarningViewModel
             {
-                Message = exception.Error.Message
+                Message = exception.Error.Message,
+                Icon = "attention"
             };
+            if (!(exception.Error is LocusException))
+            {
+                _logger.WriteLog(exception.Error);
+                model.Message = "";
+            }
             return View(model);
         }
     }
