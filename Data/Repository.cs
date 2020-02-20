@@ -295,7 +295,7 @@ namespace Locus.Data
             }
         }
 
-        public void CreateNewUser(UserCreatePostModel model)
+        public IEnumerable<GroupOfAssignments> CreateNewUser(UserCreatePostModel model)
         {
             bool wasAssetAssigned = false;
             using (IDbConnection db = _connectionFactory.GetConnection())
@@ -347,35 +347,85 @@ namespace Locus.Data
                                       ORDER BY NEWID()
 	                               )
                               FROM [dbo].[Models] AS M
-                             WHERE M.Id = @ModelId;";
+                             WHERE M.Id = @ModelId
+
+                            SELECT @Due = Asg.Due, @Group = G.[Name], @Model = M.[Name], @Icon = I.[Name], @Tag = Ast.Tag
+							  FROM [dbo].[Assignments] AS Asg
+							       INNER JOIN [dbo].[Assets] AS Ast
+							          ON Ast.Id = Asg.AssetId
+                                         INNER JOIN [dbo].[Groups] AS G
+									        ON G.Id = Ast.GroupId
+								         INNER JOIN [dbo].[Models] AS M
+								            ON M.Id = Ast.ModelId
+                                               INNER JOIN [dbo].[Icons] as I
+                                                  ON I.Id = M.IconId
+							 WHERE Asg.Id = SCOPE_IDENTITY();";
 
                     int userId = parameters.Get<int>("@UserId");
+                    var groups = new List<GroupOfAssignments>();
+                    var groupDictionary = new Dictionary<int, int>();
                     foreach (var _model in model.NewAssignments)
                     {
                         parameters = new DynamicParameters(_model);
                         parameters.Add("@UserId", userId, DbType.Int32);
+                        parameters.Add("@Due", 0, DbType.DateTime, ParameterDirection.Output);
+                        parameters.Add("@Group", "", DbType.String, ParameterDirection.Output);
+                        parameters.Add("@Model", "", DbType.String, ParameterDirection.Output);
+                        parameters.Add("@Icon", "", DbType.String, ParameterDirection.Output);
+                        parameters.Add("@Tag", "", DbType.String, ParameterDirection.Output);
                         try
                         {
                             db.Execute(sql, parameters, transaction);
                             wasAssetAssigned = true;
+                            if (!groupDictionary.TryGetValue(_model.GroupId, out int groupIndex))
+                            {
+                                groupIndex = groups.Count();
+                                groupDictionary.Add(_model.GroupId, groupIndex);
+                                GroupOfAssignments currentGroup = new GroupOfAssignments
+                                {
+                                    Id = _model.GroupId,
+                                    Name = parameters.Get<string>("@Group"),
+                                    Assignments = new List<Assignment>()
+                                };
+                                groups.Add(currentGroup);
+                            }
+                            CompletedAssignment currentAssignment = new CompletedAssignment
+                            {
+                                Model = parameters.Get<string>("@Model"),
+                                Icon = parameters.Get<string>("@Icon"),
+                                Tag = parameters.Get<string>("@Tag"),
+                                Due = parameters.Get<DateTime>("@Due"),
+                                Action = "assign"
+                            };
+                            groups[groupIndex].Assignments.Add(currentAssignment);
                         }
                         catch
                         {
-                            //only throw exception if no assets were assigned.
-                            //TODO record assests that can not be assigned.
+
+
+
+
+                            //Assignment temp = new Assignment
+                            //{
+                            //    Model = "temp name",
+                            //    Icon = parameters.Get<string>("@Icon")
+                            //};
+                            //groups[groupIndex].Assignments.Add(temp);
+
+
+
+
                         }
                     }
                     if (wasAssetAssigned) {
                         transaction.Commit();
+                        return groups;
                     } 
-                    else
-                    {
-                        LocusException ex = new LocusException(
-                            @"Unfortunately, we were unable to assign any assets to this user.
-                              The asset pool for the selected model(s) may have since been depleted.");
-                        _logger.WriteLog(ex);
-                        throw ex;
-                    } 
+                    LocusException exception = new LocusException(
+                        @"Unfortunately, we were unable to assign any assets to this user.
+                          The asset pool for the selected model(s) may have since been depleted.");
+                    _logger.WriteLog(exception);
+                    throw exception;
                 }
             }
         }
@@ -447,7 +497,7 @@ namespace Locus.Data
                     }
                 }
                 
-                if (model.CurrentAssignments != null)
+                if (model.EditAssignments != null)
                 {
                     string sqlReturn = 
                           @"UPDATE [dbo].[Assignments]
@@ -466,7 +516,7 @@ namespace Locus.Data
                              WHERE Asg.AssetId = @AssetId
                                AND Asg.Returned IS NULL;";
 
-                    foreach (var _model in model.CurrentAssignments)
+                    foreach (var _model in model.EditAssignments)
                     {
                         parameters = new DynamicParameters();
                         parameters.Add("@AssetId", _model.AssetId, DbType.String);

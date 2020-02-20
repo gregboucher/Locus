@@ -16,7 +16,7 @@ namespace Locus.Data
         IEnumerable<Role> GetAllRoles();
         UserDetails GetUserDetails(int id);
 
-        void CreateNewUser(UserCreatePostModel model);
+        IEnumerable<GroupOfAssignments> CreateNewUser(UserCreatePostModel model);
         void EditExistingUser(UserEditPostModel model);
 
         string CheckStatus(DateTime dueDate);

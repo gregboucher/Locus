@@ -11,6 +11,6 @@ namespace Locus.ViewModels
         [Required]
         public UserDetails UserDetails { get; set; }
         public IEnumerable<NewAssignment> NewAssignments { get; set; }
-        public IEnumerable<CurrentAssignment> CurrentAssignments { get; set; }
+        public IEnumerable<EditAssignment> EditAssignments { get; set; }
     }
 }

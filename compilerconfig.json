@@ -68,5 +68,12 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFile": "wwwroot/css/summary.css",
+    "inputFile": "wwwroot/scss/summary.scss",
+    "minify": {
+      "enabled": false
+    }
   }
 ]

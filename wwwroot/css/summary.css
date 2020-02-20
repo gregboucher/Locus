@@ -1,0 +1,77 @@
+﻿.summary {
+    display: flex;
+    justify-content: center; }
+    .summary-content {
+        flex: 0 0 50%;
+        box-sizing: border-box;
+        font-size: 0.785rem;
+        color: #868a95; }
+    .summary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem; }
+        .summary-header__name {
+            font-size: 1rem; }
+        .summary-header__date {
+            font-size: 0.785rem; }
+        .summary-header__button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            font-size: 0.875rem;
+            color: white;
+            background-color: #3471ff;
+            border-radius: 4px;
+            text-decoration: none;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 0 none; }
+            .summary-header__button:hover {
+                background-color: #4d83ff; }
+    .summary-group__title {
+        font-size: 1rem;
+        padding: 10px;
+        border: 1px solid #313452;
+        background-color: #27293d; }
+    .summary-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem; }
+        .summary-item:nth-child(odd) {
+            background-color: #202032; }
+        .summary-item:not(:last-child):not(.summary-item--error) {
+            border-bottom: 1px solid #313452; }
+        .summary-item--error {
+            border: 1px dashed #ff4747;
+            background-color: #292030; }
+        .summary-item__status {
+            font-size: 1rem; }
+            .summary-item__status--red {
+                color: #ff4747; }
+            .summary-item__status--yellow {
+                color: #fbbc06; }
+            .summary-item__status--green {
+                color: #23af47; }
+        .summary-item__model {
+            flex-grow: 1;
+            margin-left: 0.5rem;
+            margin-right: 4rem;
+            font-variant: small-caps; }
+            .summary-item__model-icon {
+                margin-left: 0.5rem;
+                font-size: 1.75rem; }
+            .summary-item__model-tag {
+                font-size: 0.875rem; }
+            .summary-item__model-name {
+                color: #6c707c; }
+        .summary-item__info {
+            text-align: center;
+            margin-left: 4rem; }
+            .summary-item__info-title {
+                text-align: left;
+                color: #6c707c; }
+            .summary-item__info-value {
+                font-size: 0.875rem; }
+            .summary-item__info--error {
+                font-variant: small-caps; }

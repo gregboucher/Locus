@@ -2,7 +2,7 @@
 
 namespace Locus.Models
 {
-    public class CurrentAssignment
+    public class EditAssignment
     {
         [Required]
         public string AssetId { get; set; }

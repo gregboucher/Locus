@@ -122,10 +122,10 @@
                                 else
                                 {
                                     <div class="user-assets__card-wrapper is-assigned">
-                                        <input type="hidden" class="user-assets__hidden" name="CurrentAssignments.Index" value="@index" disabled/>
-                                        <input type="hidden" class="user-assets__hidden" name="CurrentAssignments[@index].AssetId" value="@_model.Asset.Id" disabled/>
-                                        <input type="radio" class="user-assets__input is-return" name="CurrentAssignments[@index].Action" value="return"/>
-                                        <input type="radio" class="user-assets__input is-extend" name="CurrentAssignments[@index].Action" value="extend"/>
+                                        <input type="hidden" class="user-assets__hidden" name="EditAssignments.Index" value="@index" disabled/>
+                                        <input type="hidden" class="user-assets__hidden" name="EditAssignments[@index].AssetId" value="@_model.Asset.Id" disabled/>
+                                        <input type="radio" class="user-assets__input is-return" name="EditAssignments[@index].Action" value="return"/>
+                                        <input type="radio" class="user-assets__input is-extend" name="EditAssignments[@index].Action" value="extend"/>
                                         <div class="user-assets__card">
                                             <i class="icon-@_model.Icon user-assets__icon"></i>
                                             <div class="user-assets__left">

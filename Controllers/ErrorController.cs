@@ -20,8 +20,10 @@ namespace Locus.Controllers
         {
             ErrorWarningViewModel model = new ErrorWarningViewModel
             {
-                StatusCode = statusCode,
-                Icon = "attention"
+                Controller = "Error",
+                Page = "Warning",
+                Icon = "attention",
+                StatusCode = statusCode
             };
             switch (statusCode)
             {
@@ -40,8 +42,10 @@ namespace Locus.Controllers
             var exception = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             ErrorWarningViewModel model = new ErrorWarningViewModel
             {
-                Message = exception.Error.Message,
-                Icon = "attention"
+                Controller = "Error",
+                Page = "Exception",
+                Icon = "attention",
+                Message = exception.Error.Message
             };
             if (!(exception.Error is LocusException))
             {

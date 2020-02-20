@@ -14,6 +14,8 @@
     .content-header__index {
         display: flex;
         font-size: 0.825rem; }
+    .content-header__controller {
+        margin-right: 0.2rem; }
     .content-header__action {
         color: #4d83ff;
         margin-left: 3px; }

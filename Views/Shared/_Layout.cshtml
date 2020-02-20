@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>@ViewContext.RouteData.Values["Action"]</title>
+    <title>@Model.Page</title>
     @RenderSection("stylesheet", required: false)
     <link rel="stylesheet" href="~/css/locus-font.css">
     <link rel="stylesheet" href="~/css/page_layout.css">
@@ -54,10 +54,11 @@
             <div class="content-header__group">
                 <div class="content-header__organisation">Nelson Park School</div>
                 <div class="content-header__index">
-                    <div class="content-header__controller">
-                        <i class="icon-@Model.Icon"></i>@(ViewContext.RouteData.Values["Controller"] + " /")
+                    <div>
+                        <i class="icon-@Model.Icon"></i>
+                        <span class="content-header__controller">@(Model.Controller + " /")</span>
                     </div>
-                    <div class="content-header__action">@ViewContext.RouteData.Values["Action"]</div>
+                    <div class="content-header__action">@Model.Page</div>
                 </div>
             </div>
             @RenderSection("content_header", required: false)

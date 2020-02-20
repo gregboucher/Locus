@@ -1,0 +1,125 @@
+﻿@import "_variables.scss";
+
+.summary {
+    display: flex;
+    justify-content: center;
+
+    &-content {
+        flex: 0 0 50%;
+        box-sizing: border-box;
+        font-size: 0.785rem;
+        color: map-get($colour-map, --font);
+    }
+
+    &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        &__name {
+            font-size: 1rem;
+        }
+
+        &__date {
+            font-size: 0.785rem;
+        }
+
+        &__button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            font-size: 0.875rem;
+            color: white;
+            background-color: darken(map-get($colour-map, --blue), 5%);
+            border-radius: 4px;
+            text-decoration: none;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 0 none;
+
+            &:hover {
+                background-color: map-get($colour-map, --blue);
+            }
+        }
+    }
+
+    &-group {
+        &__title {
+            font-size: 1rem;
+            padding: 10px;
+            border: 1px solid map-get($colour-map, --border);
+            background-color: map-get($colour-map, --foreground);
+        }
+    }
+
+    &-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+
+        &:nth-child(odd) {
+            background-color: lighten(map-get($colour-map, --background), 1%);
+        }
+
+        &:not(:last-child):not(&--error) {
+            border-bottom: 1px solid map-get($colour-map, --border);
+        }
+
+        &--error {
+            border: 1px dashed map-get($colour-map, --red);
+            background-color: mix(map-get($colour-map, --red), map-get($colour-map, --background), 5%);
+        }
+
+        &__status {
+            font-size: 1rem;
+            //red, yellow, green
+            @for $i from 1 through 3 {
+                $c: nth($colour-map, $i);
+
+                &#{nth($c, 1)} {
+                    color: nth($c, 2);
+                }
+            }
+        }
+
+        &__model {
+            flex-grow: 1;
+            margin-left: 0.5rem;
+            margin-right: 4rem;
+            font-variant: small-caps;
+
+            &-icon {
+                margin-left: 0.5rem;
+                font-size: 1.75rem;
+            }
+
+            &-tag {
+                font-size: 0.875rem;
+                //font-weight: 700;
+            }
+
+            &-name {
+                color: darken(map-get($colour-map, --font), 10%);
+            }
+        }
+
+        &__info {
+            text-align: center;
+            margin-left: 4rem;
+
+            &-title {
+                text-align: left;
+                color: darken(map-get($colour-map, --font), 10%);
+            }
+
+            &-value {
+                font-size: 0.875rem;
+            }
+
+            &--error {
+                font-variant: small-caps;
+            }
+        }
+    }
+}

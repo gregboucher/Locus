@@ -23,21 +23,29 @@ namespace Locus.Controllers
         {
             UserCreateViewModel model = new UserCreateViewModel
             {
+                Controller = "User",
+                Page = "Create",
+                Icon = "user-plus",
                 Roles = _repository.GetAllRoles(),
-                Groups = _repository.GetModelsByGroup(null),
-                Icon = "user-plus"
+                Groups = _repository.GetModelsByGroup(null)
             };
             return View(model);
         }
 
         [HttpPost]
         [Route("[action]")]
-        public IActionResult Create(UserCreatePostModel model)
+        public IActionResult Create(UserCreatePostModel postModel)
         {
             if (ModelState.IsValid)
             {
-                _repository.CreateNewUser(model);
-                return RedirectToAction(); //temp
+                UserSummaryViewModel viewModel = new UserSummaryViewModel
+                {
+                    Controller = "User",
+                    Page = "Summary",
+                    Icon = "doc-text-inv",
+                    Groups = _repository.CreateNewUser(postModel)
+                };
+                return View("Summary", viewModel);
             }
             return RedirectToAction();
         }
@@ -48,22 +56,32 @@ namespace Locus.Controllers
         {
             UserEditViewModel model = new UserEditViewModel
             {
+                Controller = "User",
+                Page = "Edit",
+                Icon = "edit",
                 UserDetails = _repository.GetUserDetails(userId),
                 Roles = _repository.GetAllRoles(),
-                Groups = _repository.GetModelsByGroup(userId),
-                Icon = "edit"
+                Groups = _repository.GetModelsByGroup(userId)
             };
             return View(model);
         }
 
         [HttpPost]
         [Route("[action]/{userId}")]
-        public IActionResult Edit(UserEditPostModel model)
+        public IActionResult Edit(UserEditPostModel postModel)
         {
             if (ModelState.IsValid)
             {
-                _repository.EditExistingUser(model);
-                return RedirectToAction();
+                _repository.EditExistingUser(postModel);
+
+                UserSummaryViewModel viewModel = new UserSummaryViewModel
+                {
+                    Controller = "User",
+                    Page = "Summary",
+                    Icon = "doc-text-inv"
+                };
+
+                return View("Summary", viewModel);
             }
             return RedirectToAction();
         }

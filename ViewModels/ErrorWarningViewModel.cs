@@ -1,10 +1,9 @@
 ﻿
 namespace Locus.ViewModels
 {
-    public class ErrorWarningViewModel
+    public class ErrorWarningViewModel : BaseViewModel
     {
         public string Message { get; set; }
         public int StatusCode { get; set; }
-        public string Icon { get; set; }
     }
 }

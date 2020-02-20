@@ -21,13 +21,14 @@ namespace Locus.Controllers
         {
             HomeDashboardViewModel model = new HomeDashboardViewModel
             {
+                Controller = "Home",
+                Page = "Dashboard",
+                Icon = "home",
                 CountDueToday = _repository.CountDueToday(),
                 CountOverdue = _repository.CountOverdue(),
                 CountCreatedToday = _repository.CountUsersCreatedToday(),
-                Groups = _repository.GetAssignmentsByGroup(),
-                Icon = "home"
+                Groups = _repository.GetAssignmentsByGroup()
             };
-            throw new System.Exception("hello");
             return View(model);
         }
     }
