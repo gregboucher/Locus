@@ -292,7 +292,7 @@ namespace Locus.Data
             }
         }
 
-        public IEnumerable<GroupOfAssignments> CreateNewUser(UserCreatePostModel model)
+        public QualifiedUser CreateNewUser(UserCreatePostModel model)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {        
@@ -304,10 +304,14 @@ namespace Locus.Data
                                        GETDATE(),
                                        @Comment,
                                        @RoleId)
-                                SELECT @UserId = SCOPE_IDENTITY();";
+                                SELECT @UserId = SCOPE_IDENTITY(),
+                                       @Created = Created
+							      FROM [dbo].[Users]
+								 WHERE Id = SCOPE_IDENTITY();";
 
                 var parameters = new DynamicParameters(model.UserDetails);
                 parameters.Add("@UserId", 0, DbType.Int32, ParameterDirection.Output);
+                parameters.Add("@Created", 0, DbType.DateTime, ParameterDirection.Output);
                 db.Open();
                 using (var transaction = db.BeginTransaction())
                 {
@@ -329,7 +333,13 @@ namespace Locus.Data
                     }
                     if (groups.Any()) {
                         transaction.Commit();
-                        return groups;
+                        QualifiedUser newUser = new QualifiedUser
+                        {
+                            Name = model.UserDetails.Name,
+                            Created = parameters.Get<DateTime>("@Created"),
+                            GroupedAssignments = groups
+                        };
+                        return newUser;
                     }
                     LocusException exception = new LocusException(
                         @"Unfortunately, we were unable to assign any assets to this user.
@@ -340,7 +350,7 @@ namespace Locus.Data
             }
         }
 
-        public IEnumerable<GroupOfAssignments> EditExistingUser(UserEditPostModel model)
+        public QualifiedUser EditExistingUser(UserEditPostModel model)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
@@ -350,14 +360,18 @@ namespace Locus.Data
                                       Email = @Email,
 	                                  Phone =	@Phone,
 	                                  Comment = @Comment,
-                                      RoleId = @RoleId
+                                      RoleId = @RoleId,
+                                      @Created = Created
                                 WHERE Id = @UserId;";
 
                 var parameters = new DynamicParameters(model.UserDetails);
                 parameters.Add("@UserId", model.UserId, DbType.Int32);
+                parameters.Add("@Created", 0, DbType.DateTime, ParameterDirection.Output);
+                DateTime created = new DateTime();
                 try
                 {
                     db.Execute(sql, parameters);
+                    created = parameters.Get<DateTime>("@Created");
                 }
                 catch (Exception ex)
                 {
@@ -378,16 +392,18 @@ namespace Locus.Data
                     foreach (var _model in model.EditAssignments)
                     {
                         sql = "";
+                        string errorMessage = "";
                         switch (_model.Action)
                         {
-                            case "return":
+                            case ActionType.Return:
                                 sql = @"UPDATE [dbo].[Assignments]
                                            SET Returned = GETDATE(),
                                                @AssignmentId = Id
                                          WHERE AssetId = @AssetId
                                            AND Returned IS NULL;";
+                                errorMessage = "Unable to return Asset";
                                 break;
-                            case "extend":
+                            case ActionType.Extend:
                                 sql = @"UPDATE Asg
                                            SET Due = DATEADD(DAY, M.[Period], GETDATE()),
                                                @AssignmentId = Asg.Id
@@ -398,6 +414,7 @@ namespace Locus.Data
 		                                                ON M.Id = Ast.ModelId
                                          WHERE Asg.AssetId = @AssetId
                                            AND Asg.Returned IS NULL;";
+                                errorMessage = "Unable to extend Assignment";
                                 break;
                         }
 
@@ -427,7 +444,7 @@ namespace Locus.Data
                                                               ON I.Id = M.IconId
                                          WHERE Asg.Id = @AssignmentId;";
 
-                                db.Query<GroupOfAssignments, CompletedAssignment, CompletedAssignment>
+                                db.Query<GroupOfAssignments, QualifiedAssignment, QualifiedAssignment>
                                 (sql, (group, assignment) =>
                                 {
                                     if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
@@ -438,6 +455,17 @@ namespace Locus.Data
                                         groups.Add(group);
                                     }
                                     assignment.Action = _model.Action;
+                                    if (_model.Action == ActionType.Return) 
+                                    {
+                                        ReturnedAssignment returned = new ReturnedAssignment
+                                        {
+                                            Model = assignment.Model,
+                                            Icon = assignment.Icon,
+                                            Tag = assignment.Tag
+                                        };
+                                        groups[groupIndex].Assignments.Add(returned);
+                                        return null;
+                                    }
                                     groups[groupIndex].Assignments.Add(assignment);
                                     return null;
                                 }, new { AssignmentId = parameters.Get<int>("@AssignmentId") }, splitOn: "Model");
@@ -467,7 +495,7 @@ namespace Locus.Data
                             parameters.Add("@AssetId", _model.AssetId, DbType.String);
                             try
                             {
-                                db.Query<GroupOfAssignments, Assignment, Assignment>
+                                db.Query<GroupOfAssignments, ErrorAssignment, ErrorAssignment>
                                 (sql, (group, assignment) =>
                                 {
                                     if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
@@ -477,6 +505,7 @@ namespace Locus.Data
                                         group.Assignments = new List<Assignment>();
                                         groups.Add(group);
                                     }
+                                    assignment.Message = errorMessage;
                                     groups[groupIndex].Assignments.Add(assignment);
                                     return null;
                                 }, parameters, splitOn: "Model");
@@ -488,7 +517,13 @@ namespace Locus.Data
                         }
                     }
                 }
-                return groups;
+                QualifiedUser newUser = new QualifiedUser
+                {
+                    Name = model.UserDetails.Name,
+                    Created = created,
+                    GroupedAssignments = groups
+                };
+                return newUser;
             }
         }
 
@@ -535,7 +570,7 @@ namespace Locus.Data
             parameters.Add("@UserId", userId, DbType.Int32);
             try
             {
-                db.Query<GroupOfAssignments, CompletedAssignment, CompletedAssignment>
+                db.Query<GroupOfAssignments, QualifiedAssignment, QualifiedAssignment>
                 (sql, (group, assignment) =>
                 {
                     if (!groupDictionary.TryGetValue(_model.GroupId, out int groupIndex))
@@ -545,7 +580,7 @@ namespace Locus.Data
                         group.Assignments = new List<Assignment>();
                         groups.Add(group);
                     }
-                    assignment.Action = "assign";
+                    assignment.Action = ActionType.Assign;
                     groups[groupIndex].Assignments.Add(assignment);
                     return null;
                 }, parameters, transaction, splitOn: "Model");
@@ -567,7 +602,7 @@ namespace Locus.Data
                 parameters.Add("@GroupId", _model.GroupId, DbType.Int32);
                 try
                 {
-                    db.Query<GroupOfAssignments, Assignment, Assignment>
+                    db.Query<GroupOfAssignments, ErrorAssignment, ErrorAssignment>
                     (sql, (group, assignment) =>
                     {
                         if (!groupDictionary.TryGetValue(_model.GroupId, out int groupIndex))
@@ -577,6 +612,7 @@ namespace Locus.Data
                             group.Assignments = new List<Assignment>();
                             groups.Add(group);
                         }
+                        assignment.Message = "Unable to assign Asset";
                         groups[groupIndex].Assignments.Add(assignment);
                         return null;
                     }, parameters, transaction, splitOn: "Model");

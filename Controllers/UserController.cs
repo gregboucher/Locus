@@ -43,7 +43,7 @@ namespace Locus.Controllers
                     Controller = "User",
                     Page = "Summary",
                     Icon = "doc-text-inv",
-                    Groups = _repository.CreateNewUser(postModel)
+                    User = _repository.CreateNewUser(postModel)
                 };
                 return View("Summary", viewModel);
             }
@@ -77,9 +77,9 @@ namespace Locus.Controllers
                     Controller = "User",
                     Page = "Summary",
                     Icon = "doc-text-inv",
-                    Groups = _repository.EditExistingUser(postModel)
+                    User = _repository.EditExistingUser(postModel)
                 };
-                if (viewModel.Groups.Any())
+                if (viewModel.User.GroupedAssignments.Any())
                 {
                     return View("Summary", viewModel);
                 }

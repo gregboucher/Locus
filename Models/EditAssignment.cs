@@ -7,6 +7,6 @@ namespace Locus.Models
         [Required]
         public string AssetId { get; set; }
         [Required]
-        public string Action { get; set; }
+        public ActionType Action { get; set; }
     }
 }

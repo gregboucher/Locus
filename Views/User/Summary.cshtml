@@ -20,8 +20,8 @@
         <div class="summary-content">
             <div class="summary-header">
                 <div>
-                    <div class="summary-header__name">Greg Boucher</div>
-                    <div class="summary-header__date">Created: 19-02-20</div>
+                    <div class="summary-header__name">@Model.User.Name</div>
+                    <div class="summary-header__date">@Model.User.Created.ToString("dd-MM-yy h:mm tt")</div>
                 </div>
                 <div>
                     <input type="button" value="Edit User" class="summary-header__button">
@@ -29,60 +29,71 @@
                 </div>
             </div>
             @{
-                foreach (var group in Model.Groups)
+                foreach (var group in Model.User.GroupedAssignments)
                 {
                         <div class="summary-group">
                             <div class="summary-group__title">@group.Name</div>
                             @foreach (var assignment in group.Assignments)
                             {
-                                if (assignment is CompletedAssignment)
+                                if (assignment is QualifiedAssignment)
                                 {
-                                    var assigned = assignment as CompletedAssignment;
+                                    var asset = assignment as QualifiedAssignment;
                                     <div class="summary-item">
-                                        @if (assigned.Action == "assign")
+                                        @if (asset.Action == ActionType.Assign)
                                         {
                                             <i class="icon-plus summary-item__status summary-item__status--green"></i>
                                         }
                                         else
                                         {
-                                            if (assigned.Action == "extend")
-                                            {
-                                                <i class="icon-forward summary-item__status summary-item__status--yellow"></i>
-                                            }
-                                            else
-                                            {
-                                                <i class="icon-cancel summary-item__status summary-item__status--red"></i>
-                                            }
+                                            <i class="icon-forward summary-item__status summary-item__status--yellow"></i>
                                         }
 
-                                        <i class="icon-@assigned.Icon summary-item__model-icon"></i>
+                                        <i class="icon-@asset.Icon summary-item__model-icon"></i>
                                         <div class="summary-item__model">
-                                            <div class="summary-item__model-name">@assigned.Model</div>
-                                            <div class="summary-item__model-tag">@assigned.Tag</div>
+                                            <div class="summary-item__model-name">@asset.Model</div>
+                                            <div class="summary-item__model-tag">@asset.Tag</div>
                                         </div>
                                         <div class="summary-item__info">
                                             <div class="summary-item__info-title">Password</div>
-                                            <div class="summary-item__info-value">@assigned.Password</div>
+                                            <div class="summary-item__info-value">@asset.Password</div>
                                         </div>
                                         <div class="summary-item__info">
                                             <div class="summary-item__info-title">Due</div>
-                                            <div class="summary-item__info-value">@assigned.Due.ToString("dd-MM-yy")</div>
+                                            <div class="summary-item__info-value">@asset.Due.ToString("dd-MM-yy")</div>
                                         </div>
                                     </div>
                                 }
                                 else
                                 {
-                                    <div class="summary-item summary-item--error">
-                                        <i class="icon-attention summary-item__status summary-item__status--red"></i>
-                                        <i class="icon-@assignment.Icon summary-item__model-icon"></i>
-                                        <div class="summary-item__model">
-                                            <div class="summary-item__model-name">@assignment.Model</div>
-                                            <div class="summary-item__model-tag">@assignment.Tag</div>
+                                    if (assignment is ReturnedAssignment)
+                                    {
+                                        var asset = assignment as ReturnedAssignment;
+                                        <div class="summary-item">
+                                            <i class="icon-cancel summary-item__status summary-item__status--red"></i>
+                                            <i class="icon-@asset.Icon summary-item__model-icon"></i>
+                                            <div class="summary-item__model">
+                                                <div class="summary-item__model-name">@asset.Model</div>
+                                                <div class="summary-item__model-tag">@asset.Tag</div>
+                                            </div>
                                         </div>
-                                        <div class="summary-item__info--error">
-                                            Error editing assignment
-                                        </div>
-                                    </div>
+                                    }
+                                    else
+                                    {
+                                        if (assignment is ErrorAssignment)
+                                        {
+                                            var error = assignment as ErrorAssignment;
+                                            <div class="summary-item summary-item--error">
+                                                <i class="icon-cancel summary-item__status summary-item__status--red"></i>
+                                                <i class="icon-@error.Icon summary-item__model-icon"></i>
+                                                <div class="summary-item__model">
+                                                    <div class="summary-item__model-name">@error.Model</div>
+                                                </div>
+                                                <div class="summary-item__info--error">
+                                                    @error.Message
+                                                </div>
+                                            </div>
+                                        }
+                                    }
                                 }
                             }
                         </div>
