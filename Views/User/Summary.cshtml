@@ -49,6 +49,10 @@
                                             {
                                                 <i class="icon-forward summary-item__status summary-item__status--yellow"></i>
                                             }
+                                            else
+                                            {
+                                                <i class="icon-cancel summary-item__status summary-item__status--red"></i>
+                                            }
                                         }
 
                                         <i class="icon-@assigned.Icon summary-item__model-icon"></i>
@@ -73,9 +77,10 @@
                                         <i class="icon-@assignment.Icon summary-item__model-icon"></i>
                                         <div class="summary-item__model">
                                             <div class="summary-item__model-name">@assignment.Model</div>
+                                            <div class="summary-item__model-tag">@assignment.Tag</div>
                                         </div>
                                         <div class="summary-item__info--error">
-                                            Unable to Assign
+                                            Error editing assignment
                                         </div>
                                     </div>
                                 }

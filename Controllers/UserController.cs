@@ -1,7 +1,7 @@
 ﻿using Locus.Data;
 using Locus.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Locus.Controllers
 {
@@ -72,16 +72,18 @@ namespace Locus.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repository.EditExistingUser(postModel);
-
                 UserSummaryViewModel viewModel = new UserSummaryViewModel
                 {
                     Controller = "User",
                     Page = "Summary",
-                    Icon = "doc-text-inv"
+                    Icon = "doc-text-inv",
+                    Groups = _repository.EditExistingUser(postModel)
                 };
-
-                return View("Summary", viewModel);
+                if (viewModel.Groups.Any())
+                {
+                    return View("Summary", viewModel);
+                }
+                return RedirectToAction("Dashboard", "Home");
             }
             return RedirectToAction();
         }

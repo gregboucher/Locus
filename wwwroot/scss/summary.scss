@@ -51,6 +51,10 @@
             border: 1px solid map-get($colour-map, --border);
             background-color: map-get($colour-map, --foreground);
         }
+
+        &:last-child {
+            border-bottom: 1px solid map-get($colour-map, --border);
+        }
     }
 
     &-item {
