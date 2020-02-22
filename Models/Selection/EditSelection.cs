@@ -2,7 +2,7 @@
 
 namespace Locus.Models
 {
-    public class EditAssignment
+    public class EditSelection : ISelection
     {
         [Required]
         public string AssetId { get; set; }

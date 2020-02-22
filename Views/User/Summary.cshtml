@@ -23,9 +23,22 @@
                     <div class="summary-header__name">@Model.User.Name</div>
                     <div class="summary-header__date">@Model.User.Created.ToString("dd-MM-yy h:mm tt")</div>
                 </div>
-                <div>
-                    <input type="button" value="Edit User" class="summary-header__button">
-                    <input type="button" value="Print Summary" class="summary-header__button">
+                <div class="summary-header__right">
+                    @if (Model.User.ActiveAssignments)
+                    {
+                        <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.User.Id" class="summary-header__button" title="Edit this User">Edit User</a>
+                        <input type="button" value="Print Assignments" class="summary-header__button">
+                    }
+                    else
+                    {
+                        <i class="icon-info summary-header__icon"></i>
+                        <div>
+                            <div>All outstanding assets have been returned</div>
+                            <div>User has been retired</div>
+                        </div>
+
+
+                    }
                 </div>
             </div>
             @{

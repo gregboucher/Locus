@@ -59,8 +59,8 @@
                         <div class="dropdown__content">
                             <input class="dropdown__search" type="text">
                             <div class="dropdown__scroll-group">
-                                <div class="dropdown__option is-active" data-search="">All<span class="dropdown__option-value">@{var count = 0; foreach (var group in Model.Groups) { count += group.Models.Count; } @count }</span></div>
-                                @foreach (var group in Model.Groups)
+                                <div class="dropdown__option is-active" data-search="">All<span class="dropdown__option-value">@{var count = 0; foreach (var group in Model.GroupedModels) { count += group.Models.Count; } @count }</span></div>
+                                @foreach (var group in Model.GroupedModels)
                                 {
                                     <div class="dropdown__option" data-search="@group.Name">@group.Name<span class="dropdown__option-value">@group.Models.Count</span></div>
                                 }
@@ -71,7 +71,7 @@
                 <div class="user-assets__content">
                     @{
                         int index = 0;
-                        foreach (var group in Model.Groups)
+                        foreach (var group in Model.GroupedModels)
                         {
                             foreach (var _model in group.Models)
                             {
@@ -80,9 +80,9 @@
                                     <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
-                                            <input type="hidden" class="user-assets__hidden" name="NewAssignments.Index" value="@index" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="NewAssignments[@index].ModelId" value="@_model.Id" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="NewAssignments[@index].GroupId" value="@group.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="NewSelections.Index" value="@index" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="NewSelections[@index].ModelId" value="@_model.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="NewSelections[@index].GroupId" value="@group.Id" disabled/>
                                             <input type="radio" class="user-assets__input is-assign" disabled/>
                                             ++index;
                                         }

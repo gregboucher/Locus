@@ -13,7 +13,10 @@
         margin-bottom: 0.5rem; }
         .summary-header__name {
             font-size: 1rem; }
-        .summary-header__date {
+        .summary-header__right {
+            display: flex;
+            align-items: center; }
+        .summary-header__date, .summary-header__message {
             font-size: 0.785rem; }
         .summary-header__button {
             margin-left: 10px;
@@ -29,6 +32,9 @@
             border: 0 none; }
             .summary-header__button:hover {
                 background-color: #4d83ff; }
+        .summary-header__icon {
+            font-size: 1.5rem;
+            color: #4d83ff; }
     .summary-group__title {
         font-size: 1rem;
         padding: 10px;

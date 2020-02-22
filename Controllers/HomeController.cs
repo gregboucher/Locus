@@ -19,7 +19,7 @@ namespace Locus.Controllers
         [Route("[action]")]
         public ViewResult Dashboard()
         {
-            HomeDashboardViewModel model = new HomeDashboardViewModel
+            HomeDashboardViewModel viewModel = new HomeDashboardViewModel
             {
                 Controller = "Home",
                 Page = "Dashboard",
@@ -27,9 +27,9 @@ namespace Locus.Controllers
                 CountDueToday = _repository.CountDueToday(),
                 CountOverdue = _repository.CountOverdue(),
                 CountCreatedToday = _repository.CountUsersCreatedToday(),
-                Groups = _repository.GetAssignmentsByGroup()
+                GroupedUsers = _repository.GetAssignmentsByGroup()
             };
-            return View(model);
+            return View(viewModel);
         }
     }
 }

@@ -21,7 +21,12 @@
             font-size: 1rem;
         }
 
-        &__date {
+        &__right {
+            display: flex;
+            align-items: center;
+        }
+
+        &__date, &__message {
             font-size: 0.785rem;
         }
 
@@ -41,6 +46,11 @@
             &:hover {
                 background-color: map-get($colour-map, --blue);
             }
+        }
+
+        &__icon {
+            font-size: 1.5rem;
+            color: map-get($colour-map, --blue);
         }
     }
 

@@ -6,13 +6,15 @@ namespace Locus.ViewModels
 {
     public class UserSummaryViewModel : BaseViewModel
     {
-        public QualifiedUser User { get; set; }
+        public UserSummary User { get; set; }
     }
 
-    public class QualifiedUser
+    public class UserSummary
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public DateTime Created { get; set; }
-        public IEnumerable<GroupOfAssignments> GroupedAssignments { get; set; }
+        public Boolean ActiveAssignments { get; set; }
+        public IEnumerable<GroupedAssignments> GroupedAssignments { get; set; }
     }
 }

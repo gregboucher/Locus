@@ -16,20 +16,19 @@ namespace Locus.Controllers
         }
 
         [HttpGet]
-        //[Route("~/")]
         [Route("")]
         [Route("[action]")]
         public ViewResult Create()
         {
-            UserCreateViewModel model = new UserCreateViewModel
+            UserCreateViewModel viewModel = new UserCreateViewModel
             {
                 Controller = "User",
                 Page = "Create",
                 Icon = "user-plus",
                 Roles = _repository.GetAllRoles(),
-                Groups = _repository.GetModelsByGroup(null)
+                GroupedModels = _repository.GetModelsByGroup(null)
             };
-            return View(model);
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -54,16 +53,16 @@ namespace Locus.Controllers
         [Route("[action]/{userId}")]
         public ViewResult Edit(int userId)
         {
-            UserEditViewModel model = new UserEditViewModel
+            UserEditViewModel viewModel = new UserEditViewModel
             {
                 Controller = "User",
                 Page = "Edit",
                 Icon = "edit",
                 UserDetails = _repository.GetUserDetails(userId),
                 Roles = _repository.GetAllRoles(),
-                Groups = _repository.GetModelsByGroup(userId)
+                GroupedModels = _repository.GetModelsByGroup(userId)
             };
-            return View(model);
+            return View(viewModel);
         }
 
         [HttpPost]

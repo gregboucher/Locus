@@ -18,7 +18,7 @@ namespace Locus.Controllers
         [Route("[action]/{statusCode}")]
         public IActionResult Warning(int statusCode)
         {
-            ErrorWarningViewModel model = new ErrorWarningViewModel
+            ErrorWarningViewModel viewModel = new ErrorWarningViewModel
             {
                 Controller = "Error",
                 Page = "Warning",
@@ -28,11 +28,11 @@ namespace Locus.Controllers
             switch (statusCode)
             {
                 case 404:
-                    model.Message = "The page you were trying to view is unavailable. Please confirm the URL and try again.";
-                    return View(model);
+                    viewModel.Message = "The page you were trying to view is unavailable. Please confirm the URL and try again.";
+                    return View(viewModel);
                 default:
-                    model.Message = "An error has occurred.";
-                    return View(model);
+                    viewModel.Message = "An error has occurred.";
+                    return View(viewModel);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Locus.Controllers
         public IActionResult Exception()
         {
             var exception = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-            ErrorWarningViewModel model = new ErrorWarningViewModel
+            ErrorWarningViewModel viewModel = new ErrorWarningViewModel
             {
                 Controller = "Error",
                 Page = "Exception",
@@ -50,9 +50,9 @@ namespace Locus.Controllers
             if (!(exception.Error is LocusException))
             {
                 _logger.WriteLog(exception.Error);
-                model.Message = "";
+                viewModel.Message = "";
             }
-            return View(model);
+            return View(viewModel);
         }
     }
 }

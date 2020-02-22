@@ -2,10 +2,8 @@
 
 namespace Locus.Models
 {
-    public class GroupOfAssignments
+    public class GroupedAssignments : Group
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
         public IList<Assignment> Assignments { get; set; }
     }
 }

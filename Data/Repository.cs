@@ -19,7 +19,7 @@ namespace Locus.Data
             _logger = logger;
         }
 
-        public IEnumerable<GroupOfUsers> GetAssignmentsByGroup()
+        public IEnumerable<GroupedUsers> GetAssignmentsByGroup()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
@@ -51,32 +51,32 @@ namespace Locus.Data
                        WHERE Asg.Returned IS NULL
                        ORDER BY G.Name, U.Id, Asg.Due;";
 
-                var groups = new List<GroupOfUsers>();
+                var groupedUsers = new List<GroupedUsers>();
                 var groupDictionary = new Dictionary<int, int>();
                 var userDictionary = new Dictionary<Tuple<int, int>, int>();
 
                 try
                 {
-                    db.Query<User, Asset, GroupOfUsers, User>
+                    db.Query<User, Asset, GroupedUsers, User>
                     (sql, (user, asset, group) =>
                     {
                         asset.Status = CheckStatus(asset.Due.Date);
                         if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
                         {
-                            groupIndex = groups.Count();
+                            groupIndex = groupedUsers.Count();
                             groupDictionary.Add(group.Id, groupIndex);
                             group.Users = new List<User>();
-                            groups.Add(group);
+                            groupedUsers.Add(group);
                         }
                         var key = new Tuple<int, int>(group.Id, user.Id);
                         if (!userDictionary.TryGetValue(key, out int userIndex))
                         {
-                            userIndex = groups[groupIndex].Users.Count();
+                            userIndex = groupedUsers[groupIndex].Users.Count();
                             userDictionary.Add(key, userIndex);
                             user.Assets = new List<Asset>();
-                            groups[groupIndex].Users.Add(user);
+                            groupedUsers[groupIndex].Users.Add(user);
                         }
-                        groups[groupIndex].Users[userIndex].Assets.Add(asset);
+                        groupedUsers[groupIndex].Users[userIndex].Assets.Add(asset);
                         return null;
                     });
                 }
@@ -85,7 +85,7 @@ namespace Locus.Data
                     _logger.WriteLog(ex);
                     throw new LocusException("Unable to populate assignment table.");
                 }
-                return groups;
+                return groupedUsers;
             }
         }
 
@@ -163,7 +163,7 @@ namespace Locus.Data
             }
         }
 
-        public IEnumerable<GroupOfModels> GetModelsByGroup(int? id)
+        public IEnumerable<GroupedModels> GetModelsByGroup(int? id)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
@@ -207,29 +207,29 @@ namespace Locus.Data
                                         ON I.Id = M.IconId
                     ORDER BY Grouped.GroupId, Asg.Due DESC;";
 
-                var groups = new List<GroupOfModels>();
+                var groupedModels = new List<GroupedModels>();
                 var groupDictionary = new Dictionary<int, int>();
 
                 try
                 {
-                    db.Query<GroupOfModels, Model, Asset, Asset>
+                    db.Query<GroupedModels, Model, Asset, Asset>
                     (sql, (group, model, asset) =>
                     {
                         if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
                         {
-                            groupIndex = groups.Count();
+                            groupIndex = groupedModels.Count();
                             groupDictionary.Add(group.Id, groupIndex);
                             group.Models = new List<Model>();
-                            groups.Add(group);
+                            groupedModels.Add(group);
                         }
                         if (asset != null)
                         {
                             asset.Status = CheckStatus(asset.Due.Date);
                             model.Asset = asset;
-                            ++groups[groupIndex].TotalAssigned;
+                            ++groupedModels[groupIndex].TotalAssigned;
                         }
-                        groups[groupIndex].Models.Add(model);
-                        groups[groupIndex].Total += model.Total;
+                        groupedModels[groupIndex].Models.Add(model);
+                        groupedModels[groupIndex].Total += model.Total;
                         return null;
                     }, new { userId = id });
                 }
@@ -238,7 +238,7 @@ namespace Locus.Data
                     _logger.WriteLog(ex);
                     throw new LocusException("Unable to populate model list.");
                 }
-                return groups;
+                return groupedModels;
             }
         }
 
@@ -292,7 +292,7 @@ namespace Locus.Data
             }
         }
 
-        public QualifiedUser CreateNewUser(UserCreatePostModel model)
+        public UserSummary CreateNewUser(UserCreatePostModel model)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {        
@@ -325,21 +325,28 @@ namespace Locus.Data
                         throw new LocusException("Unable to create new user.");
                     }
 
-                    var groups = new List<GroupOfAssignments>();
+                    var groupedAssignments = new List<GroupedAssignments>();
                     var groupDictionary = new Dictionary<int, int>();
-                    foreach (var _model in model.NewAssignments)
+                    int userId = parameters.Get<int>("@UserId");
+                    Boolean assetsAssigned = false;
+                    foreach (var _model in model.NewSelections)
                     {
-                        AddNewAssignment(db, transaction, groupDictionary, groups, _model, parameters.Get<int>("@UserId"));
-                    }
-                    if (groups.Any()) {
-                        transaction.Commit();
-                        QualifiedUser newUser = new QualifiedUser
+                        if (AddNewAssignment(db, transaction, groupDictionary, groupedAssignments, _model, userId))
                         {
+                            assetsAssigned = true;
+                        }
+                    }
+                    if (groupedAssignments.Any()) {
+                        transaction.Commit();
+                        UserSummary summary = new UserSummary
+                        {
+                            Id = userId,
                             Name = model.UserDetails.Name,
                             Created = parameters.Get<DateTime>("@Created"),
-                            GroupedAssignments = groups
+                            ActiveAssignments = assetsAssigned,
+                            GroupedAssignments = groupedAssignments
                         };
-                        return newUser;
+                        return summary;
                     }
                     LocusException exception = new LocusException(
                         @"Unfortunately, we were unable to assign any assets to this user.
@@ -350,7 +357,7 @@ namespace Locus.Data
             }
         }
 
-        public QualifiedUser EditExistingUser(UserEditPostModel model)
+        public UserSummary EditExistingUser(UserEditPostModel postModel)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
@@ -364,8 +371,8 @@ namespace Locus.Data
                                       @Created = Created
                                 WHERE Id = @UserId;";
 
-                var parameters = new DynamicParameters(model.UserDetails);
-                parameters.Add("@UserId", model.UserId, DbType.Int32);
+                var parameters = new DynamicParameters(postModel.UserDetails);
+                parameters.Add("@UserId", postModel.UserId, DbType.Int32);
                 parameters.Add("@Created", 0, DbType.DateTime, ParameterDirection.Output);
                 DateTime created = new DateTime();
                 try
@@ -376,24 +383,28 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw new LocusException("We were unable to modify the user's details.");
+                    throw new LocusException("We were unable to edit this User.");
                 }
-                var groups = new List<GroupOfAssignments>();
+                var groupedAssignments = new List<GroupedAssignments>();
                 var groupDictionary = new Dictionary<int, int>();
-                if (model.NewAssignments != null)
+                Boolean assetsAssigned = false;
+                if (postModel.NewSelections != null)
                 {
-                    foreach (var _model in model.NewAssignments)
+                    foreach (var selection in postModel.NewSelections)
                     {
-                        AddNewAssignment(db, null, groupDictionary, groups, _model, model.UserId);
+                        if (AddNewAssignment(db, null, groupDictionary, groupedAssignments, selection, postModel.UserId))
+                        {
+                            assetsAssigned = true;
+                        }
                     }
                 }
-                if (model.EditAssignments != null)
+                if (postModel.EditSelections != null)
                 {
-                    foreach (var _model in model.EditAssignments)
+                    foreach (var selection in postModel.EditSelections)
                     {
                         sql = "";
                         string errorMessage = "";
-                        switch (_model.Action)
+                        switch (selection.Action)
                         {
                             case ActionType.Return:
                                 sql = @"UPDATE [dbo].[Assignments]
@@ -419,7 +430,7 @@ namespace Locus.Data
                         }
 
                         parameters = new DynamicParameters();
-                        parameters.Add("@AssetId", _model.AssetId, DbType.String);
+                        parameters.Add("@AssetId", selection.AssetId, DbType.String);
                         parameters.Add("@AssignmentId", -1, DbType.Int32, ParameterDirection.Output);
                         int rowsChanged = -1;
                         try
@@ -444,18 +455,12 @@ namespace Locus.Data
                                                               ON I.Id = M.IconId
                                          WHERE Asg.Id = @AssignmentId;";
 
-                                db.Query<GroupOfAssignments, QualifiedAssignment, QualifiedAssignment>
+                                db.Query<GroupedAssignments, QualifiedAssignment, QualifiedAssignment>
                                 (sql, (group, assignment) =>
                                 {
-                                    if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
-                                    {
-                                        groupIndex = groups.Count();
-                                        groupDictionary.Add(group.Id, groupIndex);
-                                        group.Assignments = new List<Assignment>();
-                                        groups.Add(group);
-                                    }
-                                    assignment.Action = _model.Action;
-                                    if (_model.Action == ActionType.Return) 
+                                    int groupIndex = GetGroupIndex(group.Id, groupDictionary, groupedAssignments, group);
+                                    assignment.Action = selection.Action;
+                                    if (selection.Action == ActionType.Return) 
                                     {
                                         ReturnedAssignment returned = new ReturnedAssignment
                                         {
@@ -463,10 +468,11 @@ namespace Locus.Data
                                             Icon = assignment.Icon,
                                             Tag = assignment.Tag
                                         };
-                                        groups[groupIndex].Assignments.Add(returned);
+                                        groupedAssignments[groupIndex].Assignments.Add(returned);
                                         return null;
                                     }
-                                    groups[groupIndex].Assignments.Add(assignment);
+                                    groupedAssignments[groupIndex].Assignments.Add(assignment);
+                                    assetsAssigned = true;
                                     return null;
                                 }, new { AssignmentId = parameters.Get<int>("@AssignmentId") }, splitOn: "Model");
                             }
@@ -492,21 +498,15 @@ namespace Locus.Data
                                      WHERE Ast.Id = @AssetId";
 
                             parameters = new DynamicParameters();
-                            parameters.Add("@AssetId", _model.AssetId, DbType.String);
+                            parameters.Add("@AssetId", selection.AssetId, DbType.String);
                             try
                             {
-                                db.Query<GroupOfAssignments, ErrorAssignment, ErrorAssignment>
+                                db.Query<GroupedAssignments, ErrorAssignment, ErrorAssignment>
                                 (sql, (group, assignment) =>
                                 {
-                                    if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
-                                    {
-                                        groupIndex = groups.Count();
-                                        groupDictionary.Add(group.Id, groupIndex);
-                                        group.Assignments = new List<Assignment>();
-                                        groups.Add(group);
-                                    }
+                                    int groupIndex = GetGroupIndex(group.Id, groupDictionary, groupedAssignments, group);
                                     assignment.Message = errorMessage;
-                                    groups[groupIndex].Assignments.Add(assignment);
+                                    groupedAssignments[groupIndex].Assignments.Add(assignment);
                                     return null;
                                 }, parameters, splitOn: "Model");
                             }
@@ -517,17 +517,23 @@ namespace Locus.Data
                         }
                     }
                 }
-                QualifiedUser newUser = new QualifiedUser
+                UserSummary summary = new UserSummary
                 {
-                    Name = model.UserDetails.Name,
+                    Id = postModel.UserId,
+                    Name = postModel.UserDetails.Name,
                     Created = created,
-                    GroupedAssignments = groups
+                    ActiveAssignments = assetsAssigned,
+                    GroupedAssignments = groupedAssignments
                 };
-                return newUser;
+                return summary;
             }
         }
 
-        public void AddNewAssignment(IDbConnection db, IDbTransaction transaction, Dictionary<int, int> groupDictionary, List<GroupOfAssignments> groups, NewAssignment _model, int userId)
+        //++++++++++++++++++
+        //--HELPER METHODS--
+        //++++++++++++++++++
+
+        private Boolean AddNewAssignment(IDbConnection db, IDbTransaction transaction, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments, NewSelection selection, int userId)
         {
             string sql = @"INSERT INTO [dbo].[Assignments]
                             SELECT GETDATE(),
@@ -566,24 +572,19 @@ namespace Locus.Data
                                                   ON I.Id = M.IconId
 							 WHERE Asg.Id = SCOPE_IDENTITY();";
 
-            var parameters = new DynamicParameters(_model);
+            var parameters = new DynamicParameters(selection);
             parameters.Add("@UserId", userId, DbType.Int32);
             try
             {
-                db.Query<GroupOfAssignments, QualifiedAssignment, QualifiedAssignment>
+                db.Query<GroupedAssignments, QualifiedAssignment, QualifiedAssignment>
                 (sql, (group, assignment) =>
                 {
-                    if (!groupDictionary.TryGetValue(_model.GroupId, out int groupIndex))
-                    {
-                        groupIndex = groups.Count();
-                        groupDictionary.Add(_model.GroupId, groupIndex);
-                        group.Assignments = new List<Assignment>();
-                        groups.Add(group);
-                    }
+                    int groupIndex = GetGroupIndex(selection.GroupId, groupDictionary, groupedAssignments, group);
                     assignment.Action = ActionType.Assign;
-                    groups[groupIndex].Assignments.Add(assignment);
+                    groupedAssignments[groupIndex].Assignments.Add(assignment);
                     return null;
                 }, parameters, transaction, splitOn: "Model");
+                return true;
             }
             catch
             {
@@ -598,24 +599,19 @@ namespace Locus.Data
                            AND G.Id = @GroupId;";
 
                 parameters = new DynamicParameters();
-                parameters.Add("@ModelId", _model.ModelId, DbType.Int32);
-                parameters.Add("@GroupId", _model.GroupId, DbType.Int32);
+                parameters.Add("@ModelId", selection.ModelId, DbType.Int32);
+                parameters.Add("@GroupId", selection.GroupId, DbType.Int32);
                 try
                 {
-                    db.Query<GroupOfAssignments, ErrorAssignment, ErrorAssignment>
+                    db.Query<GroupedAssignments, ErrorAssignment, ErrorAssignment>
                     (sql, (group, assignment) =>
                     {
-                        if (!groupDictionary.TryGetValue(_model.GroupId, out int groupIndex))
-                        {
-                            groupIndex = groups.Count();
-                            groupDictionary.Add(_model.GroupId, groupIndex);
-                            group.Assignments = new List<Assignment>();
-                            groups.Add(group);
-                        }
+                        int groupIndex = GetGroupIndex(selection.GroupId, groupDictionary, groupedAssignments, group);
                         assignment.Message = "Unable to assign Asset";
-                        groups[groupIndex].Assignments.Add(assignment);
+                        groupedAssignments[groupIndex].Assignments.Add(assignment);
                         return null;
                     }, parameters, transaction, splitOn: "Model");
+                    return false;
                 }
                 catch
                 {
@@ -624,7 +620,19 @@ namespace Locus.Data
             }
         }
 
-        public string CheckStatus(DateTime dueDate)
+        private int GetGroupIndex(int groupId, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments, GroupedAssignments group)
+        {
+            if (!groupDictionary.TryGetValue(groupId, out int groupIndex))
+            {
+                groupIndex = groupedAssignments.Count();
+                groupDictionary.Add(groupId, groupIndex);
+                group.Assignments = new List<Assignment>();
+                groupedAssignments.Add(group);
+            }
+            return groupIndex;
+        }
+
+        private string CheckStatus(DateTime dueDate)
         {
             if (DateTime.Now.Date < dueDate)
             {

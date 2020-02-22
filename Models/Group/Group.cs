@@ -1,13 +1,11 @@
-using System.Diagnostics;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 
 namespace Locus.Models
 {
     [DebuggerDisplay("{Name, nq}")]
-    public class GroupOfUsers
+    public class Group
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public IList<User> Users { get; set; }
     }
 }
