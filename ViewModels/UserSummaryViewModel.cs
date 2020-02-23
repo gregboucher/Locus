@@ -14,7 +14,7 @@ namespace Locus.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime Created { get; set; }
-        public Boolean ActiveAssignments { get; set; }
+        public Status Status { get; set; }
         public IEnumerable<GroupedAssignments> GroupedAssignments { get; set; }
     }
 }

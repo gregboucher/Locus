@@ -20,24 +20,32 @@
         <div class="summary-content">
             <div class="summary-header">
                 <div>
-                    <div class="summary-header__name">@Model.User.Name</div>
-                    <div class="summary-header__date">@Model.User.Created.ToString("dd-MM-yy h:mm tt")</div>
+                    <div class="summary-header__name select--on">@Model.User.Name</div>
+                    <div class="summary-header__date select--on">@Model.User.Created.ToString("dd-MM-yy h:mm tt")</div>
                 </div>
                 <div class="summary-header__right">
-                    @if (Model.User.ActiveAssignments)
-                    {
-                        <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.User.Id" class="summary-header__button" title="Edit this User">Edit User</a>
-                        <input type="button" value="Print Assignments" class="summary-header__button">
-                    }
-                    else
-                    {
-                        <i class="icon-info summary-header__icon"></i>
-                        <div>
-                            <div>All outstanding assets have been returned</div>
-                            <div>User has been retired</div>
-                        </div>
-
-
+                    @{
+                        switch (Model.User.Status)
+                        {
+                            case Status.Active:
+                                <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.User.Id" class="summary-header__button" title="Edit this User">Edit User</a>
+                                <input type="button" value="Print Assignments" class="summary-header__button">
+                                break;
+                            case Status.Inactive:
+                                <i class="icon-info summary-header__icon summary-header__icon--blue"></i>
+                                <div>
+                                    <div>All outstanding assets have been returned</div>
+                                    <div>User is now inactive</div>
+                                </div>
+                                break;
+                            case Status.Error:
+                                <i class="icon-attention summary-header__icon summary-header__icon--yellow"></i>
+                                <div>
+                                    <div>An error has occoured!</div>
+                                    <div>Unable to count user assignments</div>
+                                </div>
+                                break;
+                        }
                     }
                 </div>
             </div>
@@ -47,66 +55,39 @@
                         <div class="summary-group">
                             <div class="summary-group__title">@group.Name</div>
                             @foreach (var assignment in group.Assignments)
+                        {
+                            switch (assignment)
                             {
-                                if (assignment is QualifiedAssignment)
-                                {
-                                    var asset = assignment as QualifiedAssignment;
-                                    <div class="summary-item">
-                                        @if (asset.Action == ActionType.Assign)
-                                        {
-                                            <i class="icon-plus summary-item__status summary-item__status--green"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="icon-forward summary-item__status summary-item__status--yellow"></i>
-                                        }
-
-                                        <i class="icon-@asset.Icon summary-item__model-icon"></i>
-                                        <div class="summary-item__model">
-                                            <div class="summary-item__model-name">@asset.Model</div>
-                                            <div class="summary-item__model-tag">@asset.Tag</div>
-                                        </div>
-                                        <div class="summary-item__info">
-                                            <div class="summary-item__info-title">Password</div>
-                                            <div class="summary-item__info-value">@asset.Password</div>
-                                        </div>
-                                        <div class="summary-item__info">
-                                            <div class="summary-item__info-title">Due</div>
-                                            <div class="summary-item__info-value">@asset.Due.ToString("dd-MM-yy")</div>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    if (assignment is ReturnedAssignment)
-                                    {
-                                        var asset = assignment as ReturnedAssignment;
+                                case ReturnedAssignment returned:
+                                    returned = assignment as ReturnedAssignment;
                                         <div class="summary-item">
                                             <i class="icon-cancel summary-item__status summary-item__status--red"></i>
-                                            <i class="icon-@asset.Icon summary-item__model-icon"></i>
+                                            <i class="icon-@returned.Icon summary-item__model-icon"></i>
                                             <div class="summary-item__model">
-                                                <div class="summary-item__model-name">@asset.Model</div>
-                                                <div class="summary-item__model-tag">@asset.Tag</div>
+                                                <div class="summary-item__model-name select--on">@returned.Model</div>
+                                                <div class="summary-item__model-tag select--on">@returned.Tag</div>
                                             </div>
                                         </div>
-                                    }
-                                    else
-                                    {
-                                        if (assignment is ErrorAssignment)
-                                        {
-                                            var error = assignment as ErrorAssignment;
-                                            <div class="summary-item summary-item--error">
-                                                <i class="icon-cancel summary-item__status summary-item__status--red"></i>
-                                                <i class="icon-@error.Icon summary-item__model-icon"></i>
-                                                <div class="summary-item__model">
-                                                    <div class="summary-item__model-name">@error.Model</div>
-                                                </div>
-                                                <div class="summary-item__info--error">
-                                                    @error.Message
-                                                </div>
+                                        break;
+                                    case ErrorAssignment error:
+                                        error = assignment as ErrorAssignment;
+                                        <div class="summary-item summary-item--error">
+                                            <i class="icon-cancel summary-item__status summary-item__status--red"></i>
+                                            <i class="icon-@error.Icon summary-item__model-icon"></i>
+                                            <div class="summary-item__model">
+                                                <div class="summary-item__model-name">@error.Model</div>
                                             </div>
-                                        }
-                                    }
+                                            <div class="summary-item__info--error">
+                                                @error.Message
+                                            </div>
+                                        </div>
+                                        break;
+                                    case NewAssignment asset:
+                                        sharedHTML<NewAssignment>("ok", "green", assignment as NewAssignment);
+                                        break;
+                                    case ExtendAssignment asset:
+                                        sharedHTML<ExtendAssignment>("forward", "yellow", assignment as ExtendAssignment);
+                                        break;
                                 }
                             }
                         </div>
@@ -114,6 +95,28 @@
             }
         </div>
     </div>
+}
+
+@functions {
+    void sharedHTML<T>(string statusIcon, string colour, T assignment) where T : QualifiedAssignment, new()
+    {
+        <div class="summary-item">
+            <i class="icon-@statusIcon summary-item__status summary-item__status--@colour"></i>
+            <i class="icon-@assignment.Icon summary-item__model-icon"></i>
+            <div class="summary-item__model">
+                <div class="summary-item__model-name select--on">@assignment.Model</div>
+                <div class="summary-item__model-tag select--on">@assignment.Tag</div>
+            </div>
+            <div class="summary-item__info">
+                <div class="summary-item__info-title">Password</div>
+                <div class="summary-item__info-value select--on">@assignment.Password</div>
+            </div>
+            <div class="summary-item__info">
+                <div class="summary-item__info-title">Due</div>
+                <div class="summary-item__info-value select--on">@assignment.Due.ToString("dd-MM-yy")</div>
+            </div>
+        </div>
+    }
 }
 
 @section stylesheet {

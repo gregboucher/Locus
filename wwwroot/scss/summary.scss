@@ -50,7 +50,14 @@
 
         &__icon {
             font-size: 1.5rem;
-            color: map-get($colour-map, --blue);
+
+            &--blue {
+                color: map-get($colour-map, --blue);
+            }
+
+            &--yellow {
+                color: map-get($colour-map, --yellow);
+            }
         }
     }
 

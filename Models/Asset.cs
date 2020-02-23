@@ -11,6 +11,6 @@ namespace Locus.Models
         public string Icon { get; set; }
         public DateTime Assigned { get; set; }
         public DateTime Due { get; set; }
-        public string Status { get; set; }
+        public Status Status { get; set; }
     }
 }

@@ -41,10 +41,16 @@
     min-height: calc(100vh - 60px);
     margin-left: 256px; }
 
-.no-select {
+.select--off {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none; }
+
+.select--on {
+    -webkit-touch-callout: initial;
+    -webkit-user-select: auto;
+    -moz-user-select: text;
+    -ms-user-select: initial;
+    user-select: text; }

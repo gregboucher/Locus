@@ -18,7 +18,7 @@
 @section content {
     <div class="content-error">
         <div class="content-error__title content-error__title--yellow">@(Model.StatusCode + " Error")</div>
-        <div class="content-error__message">@Model.Message</div>
+        <div class="content-error__message select--on">@Model.Message</div>
         <a asp-controller="Home" asp-action="Dashboard" class="content-error__button">Return to Dashboard</a>
     </div>
 }

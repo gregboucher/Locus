@@ -92,9 +92,9 @@
                                     <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
-                                            <input type="hidden" class="user-assets__hidden" name="NewSelections.Index" value="@index" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="NewSelections[@index].ModelId" value="@_model.Id" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="NewSelections[@index].GroupId" value="@group.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections.Index" value="@index" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections[@index].ModelId" value="@_model.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections[@index].GroupId" value="@group.Id" disabled/>
                                             <input type="radio" class="user-assets__input is-assign" disabled/>
                                             ++index;
                                         }
@@ -124,8 +124,8 @@
                                     <div class="user-assets__card-wrapper is-assigned">
                                         <input type="hidden" class="user-assets__hidden" name="EditSelections.Index" value="@index" disabled/>
                                         <input type="hidden" class="user-assets__hidden" name="EditSelections[@index].AssetId" value="@_model.Asset.Id" disabled/>
-                                        <input type="radio" class="user-assets__input is-return" name="EditSelections[@index].Action" value="1"/>
-                                        <input type="radio" class="user-assets__input is-extend" name="EditSelections[@index].Action" value="2"/>
+                                        <input type="radio" class="user-assets__input is-return" name="EditSelections[@index].Type" value="1"/>
+                                        <input type="radio" class="user-assets__input is-extend" name="EditSelections[@index].Type" value="2"/>
                                         <div class="user-assets__card">
                                             <i class="icon-@_model.Icon user-assets__icon"></i>
                                             <div class="user-assets__left">
@@ -143,7 +143,7 @@
                                                     <div>Due:</div>
                                                 </div>
                                                 <div class="user-assets__values">
-                                                    <div class="user-assets__values--@_model.Asset.Status.ToLower() searchable">@_model.Asset.Status</div>
+                                                    <div class="user-assets__values--@_model.Asset.Status.ToString().ToLower() searchable">@_model.Asset.Status</div>
                                                     <div>@_model.Asset.Assigned.ToString("dd-MM-yy")</div>
                                                     <div>@_model.Asset.Due.ToString("dd-MM-yy")</div>
                                                 </div>

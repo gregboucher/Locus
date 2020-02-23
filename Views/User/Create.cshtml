@@ -80,9 +80,9 @@
                                     <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
-                                            <input type="hidden" class="user-assets__hidden" name="NewSelections.Index" value="@index" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="NewSelections[@index].ModelId" value="@_model.Id" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="NewSelections[@index].GroupId" value="@group.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections.Index" value="@index" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections[@index].ModelId" value="@_model.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections[@index].GroupId" value="@group.Id" disabled/>
                                             <input type="radio" class="user-assets__input is-assign" disabled/>
                                             ++index;
                                         }
@@ -118,7 +118,6 @@
             <input type="button" value="Reset" class="user-footer__button">
             <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button">Cancel</a>
             <input type="hidden" id="checkboxAssigned" name="checkboxAssigned">
-            <div asp-validation-summary="All"></div>
         </div>
     </form>
 }

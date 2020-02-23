@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="~/css/content_header.css">
 
 </head>
-<body id="body">
+<body id="body" class="select--off">
     <section id="top-bar">
-        <div class="top-bar no-select">
+        <div class="top-bar">
             <div class="top-bar__brand-wrapper">
                 <i class="icon-compass top-bar__brand-icon"></i>
                 <div class="top-bar__brand-title">LOCUS</div>
@@ -26,7 +26,7 @@
         </div>
     </section>
     <nav id="side-bar">
-        <div class="navigation no-select">
+        <div class="navigation">
             @RenderSection("side_bar", required: true)
             <a class="navigation__button" href="#">
                 <i class="icon-book navigation__button-icon"></i>
@@ -50,7 +50,7 @@
         </div>
     </nav>
     <section id="content">
-        <div class="content-header no-select">
+        <div class="content-header">
             <div class="content-header__group">
                 <div class="content-header__organisation">Nelson Park School</div>
                 <div class="content-header__index">

@@ -27,7 +27,7 @@
 @section content {
     <div class="dashboard">
         <div class="overview">
-            <div class="overview__card no-select" title="Filter by Assets due today">
+            <div class="overview__card" title="Filter by Assets due today">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountDueToday</div>
                     <div class="overview__card-subject">Asset@(Model.CountDueToday == 1 ? "" : "s")</div>
@@ -35,7 +35,7 @@
                 </div>
                 <i class="icon-calendar-check-o overview__card-icon"></i>
             </div>
-            <div class="overview__card no-select" title="Filter by overdue Assets">
+            <div class="overview__card" title="Filter by overdue Assets">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountOverdue</div>
                     <div class="overview__card-subject">Asset@(Model.CountOverdue == 1 ? "" : "s")</div>
@@ -43,7 +43,7 @@
                 </div>
                 <i class="icon-calendar-times-o overview__card-icon"></i>
             </div>
-            <div class="overview__card no-select" title="Filter by Assets Assigned today">
+            <div class="overview__card" title="Filter by Assets Assigned today">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountCreatedToday</div>
                     <div class="overview__card-subject">User@(Model.CountCreatedToday== 1 ? "" : "s")</div>
@@ -51,7 +51,7 @@
                 </div>
                 <i class="icon-calendar-plus-o overview__card-icon"></i>
             </div>
-            <div class="overview__card no-select" title="Filter by Extended Assets">
+            <div class="overview__card" title="Filter by Extended Assets">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">0</div>
                     <div class="overview__card-subject">Subject</div>
@@ -92,24 +92,23 @@
                     foreach (var user in group.Users)
                     {
                         <tr>
-                            <td>@user.Name</td>
-                            <td>@group.Name</td>
-                            <td>@user.Role</td>
-                            <td class="@(DateTime.Now.ToString("dd-MM-yy") == user.Created.ToString("dd-MM-yy") ? "data-table__today" : "")">@user.Created.ToString("dd-MM-yy")</td>
+                            <td class="select--on">@user.Name</td>
+                            <td class="select--on">@group.Name</td>
+                            <td class="select--on">@user.Role</td>
+                            <td class="@(DateTime.Now.ToString("dd-MM-yy") == user.Created.ToString("dd-MM-yy") ? "data-table__today" : "") select--on">@user.Created.ToString("dd-MM-yy")</td>
                             <td>
-                                <div class="data-table__status data-table__status--@user.Assets[0].Status.ToLower() no-select">@user.Assets[0].Status</div>
+                                <div class="data-table__status data-table__status--@user.Assets[0].Status.ToString().ToLower()">@user.Assets[0].Status.ToString()</div>
                             </td>
-                            <td>@user.Assets[0].Due.ToString("dd-MM-yy")</td>
+                            <td class="select--on">@user.Assets[0].Due.ToString("dd-MM-yy")</td>
                             <td>
                                 @foreach (var asset in user.Assets)
                                 {
-                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToLower() no-select" title="SN: @asset.Id&#xA;Tag: @asset.Tag&#xA;Assigned: @asset.Assigned.ToString("dd-MM-yy")&#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
+                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToString().ToLower()" title="SN: @asset.Id&#xA;Tag: @asset.Tag&#xA;Assigned: @asset.Assigned.ToString("dd-MM-yy")&#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
                                 }
                             </td>
                             <td>
                                 <div class="data-table__action">
-                                    <a asp-controller="User" asp-action="Edit" asp-route-userId="@user.Id" class="data-table__action-button data-table__action-button--blue" title="Edit User details &#xA;Add/remove Assets">Edit</a>
-                                    <input type="button" value="Return All" class="data-table__action-button data-table__action-button--yellow" title="Mark those Assets belonging to this User and Group as returned"/>
+                                    <a asp-controller="User" asp-action="Edit" asp-route-userId="@user.Id" class="data-table__action-button data-table__action-button--blue" title="Edit user details &#xA;Add/remove assets">Edit</a>
                                 </div>
                             </td>
                         </tr>

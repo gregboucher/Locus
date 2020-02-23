@@ -35,18 +35,18 @@ namespace Locus.Data
                              Asg.Due,
                              G.Id,
                              G.Name
-                        FROM [dbo].[Assignments] AS Asg
-                             INNER JOIN [dbo].[Users] AS U
+                        FROM [dbo].[Assignment] AS Asg
+                             INNER JOIN [dbo].[User] AS U
                                 ON Asg.UserId = U.Id
-	                               INNER JOIN [dbo].[Roles] AS R
+	                               INNER JOIN [dbo].[Role] AS R
                                       ON U.RoleId = R.Id
-                             INNER JOIN [dbo].[Assets] AS Ast
+                             INNER JOIN [dbo].[Asset] AS Ast
                                 ON Asg.AssetId = Ast.Id
-                                   INNER JOIN [dbo].[Groups] AS G
+                                   INNER JOIN [dbo].[Group] AS G
                                       ON Ast.GroupId = G.Id
-	                               INNER JOIN [dbo].[Models] AS M
+	                               INNER JOIN [dbo].[Model] AS M
                                       ON Ast.ModelId = M.Id
-                                         INNER JOIN [dbo].[Icons] AS I
+                                         INNER JOIN [dbo].[Icon] AS I
                                             ON M.IconId = I.Id
                        WHERE Asg.Returned IS NULL
                        ORDER BY G.Name, U.Id, Asg.Due;";
@@ -95,10 +95,10 @@ namespace Locus.Data
             {
                 string sql =
                     @"SELECT COUNT(*)
-                        FROM [dbo].[Assignments] AS Asg 
-                             INNER JOIN [dbo].[Assets] AS Ast
+                        FROM [dbo].[Assignment] AS Asg 
+                             INNER JOIN [dbo].[Asset] AS Ast
 	                            ON Asg.AssetId = Ast.Id
-	                               INNER JOIN [dbo].[Models] AS M
+	                               INNER JOIN [dbo].[Model] AS M
 		                              ON Ast.ModelId = M.Id
                        WHERE Asg.Returned IS NULL 
                          AND cast(GETDATE() as date) = cast(Asg.Due as date);";
@@ -121,10 +121,10 @@ namespace Locus.Data
             {
                 string sql =
                     @"SELECT COUNT(*)
-                        FROM [dbo].[Assignments] AS Asg 
-                             INNER JOIN [dbo].[Assets] AS Ast
+                        FROM [dbo].[Assignment] AS Asg 
+                             INNER JOIN [dbo].[Asset] AS Ast
 	                            ON Asg.AssetId = Ast.Id
-	                               INNER JOIN [dbo].[Models] AS M
+	                               INNER JOIN [dbo].[Model] AS M
 		                              ON Ast.ModelId = M.Id
                        WHERE Asg.Returned IS NULL
                          AND cast(GETDATE() as date) > cast(Asg.Due as date);";
@@ -147,7 +147,7 @@ namespace Locus.Data
             {
                 string sql =
                     @"SELECT COUNT(DISTINCT Asg.UserId)
-                        FROM [dbo].[Assignments] As Asg
+                        FROM [dbo].[Assignment] As Asg
                        WHERE Asg.Returned IS NULL
                          AND cast(GETDATE() as date) = cast(Asg.Assigned as date);";
 
@@ -180,8 +180,8 @@ namespace Locus.Data
 	                         Ast.Tag,
 	                         Asg.Assigned,
 	                         Asg.Due
-                        FROM [dbo].[Assets] AS Ast
-                             LEFT JOIN [dbo].[Assignments] AS Asg
+                        FROM [dbo].[Asset] AS Ast
+                             LEFT JOIN [dbo].[Assignment] AS Asg
                                ON Ast.Id = Asg.AssetId
                               AND Asg.Returned IS NULL
                              RIGHT JOIN (
@@ -190,8 +190,8 @@ namespace Locus.Data
                                           MAX(CASE WHEN @userId IS NOT NULL AND Asg.UserId = @userId THEN Asg.UserId ELSE NULL END) AS [User],
                                           COUNT(*) AS Total,
                                           SUM(CASE WHEN Asg.UserId IS NULL OR Asg.Returned IS NOT NULL THEN 1 ELSE 0 END) AS Surplus
-		                             FROM [dbo].[Assets] AS Ast
-		                                  LEFT JOIN [dbo].[Assignments] AS Asg
+		                             FROM [dbo].[Asset] AS Ast
+		                                  LEFT JOIN [dbo].[Assignment] AS Asg
 		                                    ON Asg.AssetId = Ast.Id
                                            AND Asg.Returned IS NULL
 	                                GROUP BY Ast.GroupId, Ast.ModelId
@@ -199,11 +199,11 @@ namespace Locus.Data
 	                         ON Grouped.[User] = Asg.UserId
                             AND Grouped.GroupId = Ast.GroupId
                             AND Grouped.ModelId = Ast.ModelId
-	                            LEFT JOIN [dbo].[Groups] AS G
+	                            LEFT JOIN [dbo].[Group] AS G
                                   ON G.Id = Grouped.GroupId
-	                            LEFT JOIN [dbo].[Models] As M
+	                            LEFT JOIN [dbo].[Model] As M
                                   ON M.Id = Grouped.ModelId
-	                                 INNER JOIN [dbo].[Icons] AS I
+	                                 INNER JOIN [dbo].[Icon] AS I
                                         ON I.Id = M.IconId
                     ORDER BY Grouped.GroupId, Asg.Due DESC;";
 
@@ -248,7 +248,7 @@ namespace Locus.Data
             {
                 string sql = @"SELECT R.Id,
                                       R.Name
-                                 FROM [dbo].[Roles] AS R
+                                 FROM [dbo].[Role] AS R
                                 WHERE R.Deactivated IS NULL;";
                 try
                 {
@@ -262,7 +262,7 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw new LocusException("Unable to populate role list.");
+                    throw new LocusException("Unable to populate list of User Roles.");
                 }
             }
         }
@@ -277,7 +277,7 @@ namespace Locus.Data
                                       U.RoleId,
                                       U.Absentee,
                                       U.Comment
-                                 FROM [dbo].[Users] AS U
+                                 FROM [dbo].[User] AS U
                                 WHERE U.Id = @userId;";
 
                 try
@@ -292,11 +292,11 @@ namespace Locus.Data
             }
         }
 
-        public UserSummary CreateNewUser(UserCreatePostModel model)
+        public UserSummary CreateNewUser(UserCreatePostModel postModel)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {        
-                string sql = @"INSERT INTO [dbo].[Users]
+                string sql = @"INSERT INTO [dbo].[User]
                                VALUES (@Name,
                                        @Absentee,
                                        @Email,
@@ -306,10 +306,10 @@ namespace Locus.Data
                                        @RoleId)
                                 SELECT @UserId = SCOPE_IDENTITY(),
                                        @Created = Created
-							      FROM [dbo].[Users]
+							      FROM [dbo].[User]
 								 WHERE Id = SCOPE_IDENTITY();";
-
-                var parameters = new DynamicParameters(model.UserDetails);
+                
+                var parameters = new DynamicParameters(postModel.UserDetails);
                 parameters.Add("@UserId", 0, DbType.Int32, ParameterDirection.Output);
                 parameters.Add("@Created", 0, DbType.DateTime, ParameterDirection.Output);
                 db.Open();
@@ -328,22 +328,20 @@ namespace Locus.Data
                     var groupedAssignments = new List<GroupedAssignments>();
                     var groupDictionary = new Dictionary<int, int>();
                     int userId = parameters.Get<int>("@UserId");
-                    Boolean assetsAssigned = false;
-                    foreach (var _model in model.NewSelections)
+                    Status userStatus = Status.Inactive;
+                    foreach (var selection in postModel.AssignSelections)
                     {
-                        if (AddNewAssignment(db, transaction, groupDictionary, groupedAssignments, _model, userId))
-                        {
-                            assetsAssigned = true;
-                        }
+                        if (AddNewAssignment(db, transaction, groupDictionary, groupedAssignments, selection, userId))
+                            userStatus = Status.Active;
                     }
                     if (groupedAssignments.Any()) {
                         transaction.Commit();
                         UserSummary summary = new UserSummary
                         {
                             Id = userId,
-                            Name = model.UserDetails.Name,
+                            Name = postModel.UserDetails.Name,
                             Created = parameters.Get<DateTime>("@Created"),
-                            ActiveAssignments = assetsAssigned,
+                            Status = userStatus,
                             GroupedAssignments = groupedAssignments
                         };
                         return summary;
@@ -361,7 +359,7 @@ namespace Locus.Data
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = @"UPDATE [dbo].[Users]
+                string sql = @"UPDATE [dbo].[User]
                                   SET [Name] = @Name,
                                       Absentee = @Absentee,
                                       Email = @Email,
@@ -387,48 +385,67 @@ namespace Locus.Data
                 }
                 var groupedAssignments = new List<GroupedAssignments>();
                 var groupDictionary = new Dictionary<int, int>();
-                Boolean assetsAssigned = false;
-                if (postModel.NewSelections != null)
+                Status userStatus = Status.Inactive;
+                if (postModel.AssignSelections != null)
                 {
-                    foreach (var selection in postModel.NewSelections)
+                    foreach (var selection in postModel.AssignSelections)
                     {
                         if (AddNewAssignment(db, null, groupDictionary, groupedAssignments, selection, postModel.UserId))
-                        {
-                            assetsAssigned = true;
-                        }
+                            userStatus = Status.Active;
                     }
                 }
                 if (postModel.EditSelections != null)
                 {
-                    foreach (var selection in postModel.EditSelections)
+                    string sqlReturn = @"UPDATE [dbo].[Assignment]
+                                            SET Returned = GETDATE(),
+                                                @AssignmentId = Id
+                                          WHERE AssetId = @AssetId
+                                            AND Returned IS NULL;";
+
+                    string sqlExtend = @"UPDATE Asg
+                                            SET Due = DATEADD(DAY, M.[Period], GETDATE()),
+                                                @AssignmentId = Asg.Id
+                                           FROM [dbo].[Assignment] AS Asg
+	                                            INNER JOIN [dbo].[Asset] AS Ast
+	                                               ON Ast.Id = Asg.AssetId
+	                                                  INNER JOIN [dbo].[Model] AS M
+		                                                 ON M.Id = Ast.ModelId
+                                          WHERE Asg.AssetId = @AssetId
+                                            AND Asg.Returned IS NULL;";
+
+                    string sqlSelect = @"SELECT G.Id,
+                                                G.[Name],
+                                                M.[Name] AS Model,
+                                                I.[Name] AS Icon,
+                                                Ast.Tag,
+                                                Asg.Due
+                                           FROM [dbo].[Assignment] AS Asg
+                                                INNER JOIN [dbo].[Asset] AS Ast
+                                                   ON Ast.Id = Asg.AssetId
+                                                      INNER JOIN [dbo].[Group] AS G
+                                                         ON G.Id = Ast.GroupId
+                                                      INNER JOIN [dbo].[Model] AS M
+                                                         ON M.Id = Ast.ModelId
+                                                            INNER JOIN [dbo].[Icon] as I
+                                                               ON I.Id = M.IconId
+                                          WHERE Asg.Id = @AssignmentId;";
+
+                    int count = postModel.EditSelections.Count;
+                    for (int i = 0; i < count; i++)
                     {
-                        sql = "";
+                        EditSelection selection = postModel.EditSelections[i];
                         string errorMessage = "";
-                        switch (selection.Action)
+                        switch (selection.Type)
                         {
-                            case ActionType.Return:
-                                sql = @"UPDATE [dbo].[Assignments]
-                                           SET Returned = GETDATE(),
-                                               @AssignmentId = Id
-                                         WHERE AssetId = @AssetId
-                                           AND Returned IS NULL;";
+                            case SelectionType.Return:
+                                sql = sqlReturn;
                                 errorMessage = "Unable to return Asset";
                                 break;
-                            case ActionType.Extend:
-                                sql = @"UPDATE Asg
-                                           SET Due = DATEADD(DAY, M.[Period], GETDATE()),
-                                               @AssignmentId = Asg.Id
-                                          FROM [dbo].[Assignments] AS Asg
-	                                           INNER JOIN [dbo].[Assets] AS Ast
-	                                              ON Ast.Id = Asg.AssetId
-	                                                 INNER JOIN [dbo].[Models] AS M
-		                                                ON M.Id = Ast.ModelId
-                                         WHERE Asg.AssetId = @AssetId
-                                           AND Asg.Returned IS NULL;";
+                            case SelectionType.Extend:
+                                sql = sqlExtend;
                                 errorMessage = "Unable to extend Assignment";
                                 break;
                         }
-
                         parameters = new DynamicParameters();
                         parameters.Add("@AssetId", selection.AssetId, DbType.String);
                         parameters.Add("@AssignmentId", -1, DbType.Int32, ParameterDirection.Output);
@@ -438,46 +455,53 @@ namespace Locus.Data
                             rowsChanged = db.Execute(sql, parameters);
                             if (rowsChanged > 0)
                             {
-                                sql = @"SELECT G.Id,
-                                               G.[Name],
-                                               M.[Name] AS Model,
-                                               I.[Name] AS Icon,
-                                               Ast.Tag,
-                                               Asg.Due
-                                          FROM [dbo].[Assignments] AS Asg
-                                               INNER JOIN [dbo].[Assets] AS Ast
-                                                  ON Ast.Id = Asg.AssetId
-                                                     INNER JOIN [dbo].[Groups] AS G
-                                                        ON G.Id = Ast.GroupId
-                                                     INNER JOIN [dbo].[Models] AS M
-                                                        ON M.Id = Ast.ModelId
-                                                           INNER JOIN [dbo].[Icons] as I
-                                                              ON I.Id = M.IconId
-                                         WHERE Asg.Id = @AssignmentId;";
-
-                                db.Query<GroupedAssignments, QualifiedAssignment, QualifiedAssignment>
-                                (sql, (group, assignment) =>
+                                sql = sqlSelect;
+                                int assignmentId = parameters.Get<int>("@AssignmentId");
+                                parameters = new DynamicParameters();
+                                parameters.Add("@AssignmentId", assignmentId, DbType.Int32);
+                                
+                                switch (selection.Type)
                                 {
-                                    int groupIndex = GetGroupIndex(group.Id, groupDictionary, groupedAssignments, group);
-                                    assignment.Action = selection.Action;
-                                    if (selection.Action == ActionType.Return) 
+                                    case SelectionType.Return:
+                                        UpdateAssignment<ReturnedAssignment>("Model", null, parameters, sql, db, null, groupDictionary, groupedAssignments);
+                                        break;
+                                    case SelectionType.Extend:
+                                        if (UpdateAssignment<ExtendAssignment>("Model", null, parameters, sql, db, null, groupDictionary, groupedAssignments))
+                                            userStatus = Status.Active;
+                                        break;
+                                }
+                                //on the last iteration, if no assets have yet been assigned
+                                //query the db as to the number of assignments for this user
+                                if (i == count - 1 && userStatus != Status.Active)
+                                {
+                                    parameters = new DynamicParameters();
+                                    parameters.Add("@UserId", postModel.UserId, DbType.Int32);
+                                    int assetCount = CountUserAssignments(db, null, parameters);
+                                    if (assetCount > 0)
                                     {
-                                        ReturnedAssignment returned = new ReturnedAssignment
-                                        {
-                                            Model = assignment.Model,
-                                            Icon = assignment.Icon,
-                                            Tag = assignment.Tag
-                                        };
-                                        groupedAssignments[groupIndex].Assignments.Add(returned);
-                                        return null;
+                                        userStatus = Status.Active;
+                                    } else
+                                    {
+                                        if (assetCount < 0)
+                                            userStatus = Status.Error;
                                     }
-                                    groupedAssignments[groupIndex].Assignments.Add(assignment);
-                                    assetsAssigned = true;
-                                    return null;
-                                }, new { AssignmentId = parameters.Get<int>("@AssignmentId") }, splitOn: "Model");
+                                        
+                                }
                             }
                             else
                             {
+                                parameters = new DynamicParameters();
+                                parameters.Add("@UserId", postModel.UserId, DbType.Int32);
+                                int assetCount = CountUserAssignments(db, null, parameters);
+                                if (assetCount > 0)
+                                {
+                                    userStatus = Status.Active;
+                                }
+                                else
+                                {
+                                    if (assetCount < 0)
+                                        userStatus = Status.Error;
+                                }
                                 throw new Exception();
                             }
                         }
@@ -488,12 +512,12 @@ namespace Locus.Data
                                            M.[Name] AS Model,
                                            I.[Name] AS Icon,
                                            Ast.Tag
-                                      FROM [dbo].[Assets] AS Ast
-	                                       INNER JOIN [dbo].[Groups] AS G
+                                      FROM [dbo].[Asset] AS Ast
+	                                       INNER JOIN [dbo].[Group] AS G
 	                                          ON G.Id = Ast.GroupId
-                                           INNER JOIN [dbo].[Models] AS M
+                                           INNER JOIN [dbo].[Model] AS M
                                               ON M.Id = Ast.ModelId
-		                                         INNER JOIN [dbo].[Icons] AS I
+		                                         INNER JOIN [dbo].[Icon] AS I
 		                                            ON I.Id = M.IconId
                                      WHERE Ast.Id = @AssetId";
 
@@ -501,14 +525,7 @@ namespace Locus.Data
                             parameters.Add("@AssetId", selection.AssetId, DbType.String);
                             try
                             {
-                                db.Query<GroupedAssignments, ErrorAssignment, ErrorAssignment>
-                                (sql, (group, assignment) =>
-                                {
-                                    int groupIndex = GetGroupIndex(group.Id, groupDictionary, groupedAssignments, group);
-                                    assignment.Message = errorMessage;
-                                    groupedAssignments[groupIndex].Assignments.Add(assignment);
-                                    return null;
-                                }, parameters, splitOn: "Model");
+                                UpdateAssignment<ErrorAssignment>("Model", errorMessage, parameters, sql, db, null, groupDictionary, groupedAssignments);
                             }
                             catch
                             {
@@ -522,33 +539,33 @@ namespace Locus.Data
                     Id = postModel.UserId,
                     Name = postModel.UserDetails.Name,
                     Created = created,
-                    ActiveAssignments = assetsAssigned,
+                    Status = userStatus,
                     GroupedAssignments = groupedAssignments
                 };
                 return summary;
             }
         }
 
-        //++++++++++++++++++
-        //--HELPER METHODS--
-        //++++++++++++++++++
+        //+++++++++++++++++++
+        //--PRIVATE METHODS--
+        //+++++++++++++++++++
 
-        private Boolean AddNewAssignment(IDbConnection db, IDbTransaction transaction, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments, NewSelection selection, int userId)
+        private Boolean AddNewAssignment(IDbConnection db, IDbTransaction transaction, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments, AssignSelection selection, int userId)
         {
-            string sql = @"INSERT INTO [dbo].[Assignments]
+            string sql = @"INSERT INTO [dbo].[Assignment]
                             SELECT GETDATE(),
 	                               DATEADD(DAY, M.[Period], GETDATE()),
 	                               NULL,
 	                               @UserId,
 	                               (
 		                             SELECT TOP 1 Ast.Id
-                                       FROM [dbo].[Assets] AS Ast
-	                                        LEFT JOIN [dbo].[Assignments] AS Asg
+                                       FROM [dbo].[Asset] AS Ast
+	                                        LEFT JOIN [dbo].[Assignment] AS Asg
                                               ON Ast.Id = Asg.AssetId
                                       WHERE (Asg.AssetId NOT IN
                                             (
 	                                           SELECT AssetId
-		                                         FROM [dbo].[Assignments]
+		                                         FROM [dbo].[Assignment]
 		                                        WHERE Returned IS NULL
 	                                        )
 	                                     OR Asg.AssetId IS NULL)
@@ -557,18 +574,23 @@ namespace Locus.Data
                                         AND Ast.ModelId = @ModelId
                                       ORDER BY NEWID()
 	                               )
-                              FROM [dbo].[Models] AS M
+                              FROM [dbo].[Model] AS M
                              WHERE M.Id = @ModelId
 
-                            SELECT G.[Name], M.[Name] AS Model, I.[Name] AS Icon, Ast.Tag, Asg.Due
-							  FROM [dbo].[Assignments] AS Asg
-							       INNER JOIN [dbo].[Assets] AS Ast
+                            SELECT G.Id,
+                                   G.[Name],
+                                   M.[Name] AS Model,
+                                   I.[Name] AS Icon,
+                                   Ast.Tag,
+                                   Asg.Due
+							  FROM [dbo].[Assignment] AS Asg
+							       INNER JOIN [dbo].[Asset] AS Ast
 							          ON Ast.Id = Asg.AssetId
-                                         INNER JOIN [dbo].[Groups] AS G
+                                         INNER JOIN [dbo].[Group] AS G
 									        ON G.Id = Ast.GroupId
-								         INNER JOIN [dbo].[Models] AS M
+								         INNER JOIN [dbo].[Model] AS M
 								            ON M.Id = Ast.ModelId
-                                               INNER JOIN [dbo].[Icons] as I
+                                               INNER JOIN [dbo].[Icon] as I
                                                   ON I.Id = M.IconId
 							 WHERE Asg.Id = SCOPE_IDENTITY();";
 
@@ -576,25 +598,18 @@ namespace Locus.Data
             parameters.Add("@UserId", userId, DbType.Int32);
             try
             {
-                db.Query<GroupedAssignments, QualifiedAssignment, QualifiedAssignment>
-                (sql, (group, assignment) =>
-                {
-                    int groupIndex = GetGroupIndex(selection.GroupId, groupDictionary, groupedAssignments, group);
-                    assignment.Action = ActionType.Assign;
-                    groupedAssignments[groupIndex].Assignments.Add(assignment);
-                    return null;
-                }, parameters, transaction, splitOn: "Model");
-                return true;
+                return UpdateAssignment<NewAssignment>("Model", null, parameters, sql, db, transaction, groupDictionary, groupedAssignments);
             }
             catch
             {
-                sql = @"SELECT G.[Name],
+                sql = @"SELECT G.Id,
+                               G.[Name],
                                M.[Name] AS Model,
                                I.[Name] AS Icon
-                          FROM [dbo].[Models] AS M
-                               INNER JOIN [dbo].[Icons] AS I
+                          FROM [dbo].[Model] AS M
+                               INNER JOIN [dbo].[Icon] AS I
                                   ON I.Id = M.IconId
-                               CROSS JOIN [dbo].[Groups] AS G
+                               CROSS JOIN [dbo].[Group] AS G
                          WHERE M.Id = @ModelId
                            AND G.Id = @GroupId;";
 
@@ -603,14 +618,7 @@ namespace Locus.Data
                 parameters.Add("@GroupId", selection.GroupId, DbType.Int32);
                 try
                 {
-                    db.Query<GroupedAssignments, ErrorAssignment, ErrorAssignment>
-                    (sql, (group, assignment) =>
-                    {
-                        int groupIndex = GetGroupIndex(selection.GroupId, groupDictionary, groupedAssignments, group);
-                        assignment.Message = "Unable to assign Asset";
-                        groupedAssignments[groupIndex].Assignments.Add(assignment);
-                        return null;
-                    }, parameters, transaction, splitOn: "Model");
+                    UpdateAssignment<ErrorAssignment>("Model", "Unable to assign Asset", parameters, sql, db, transaction, groupDictionary, groupedAssignments);
                     return false;
                 }
                 catch
@@ -620,29 +628,54 @@ namespace Locus.Data
             }
         }
 
-        private int GetGroupIndex(int groupId, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments, GroupedAssignments group)
+        private Boolean UpdateAssignment<T>(string splitString, string errorMessage, DynamicParameters parameters, string sql, IDbConnection db, IDbTransaction transaction, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments) where T : Assignment, new()
         {
-            if (!groupDictionary.TryGetValue(groupId, out int groupIndex))
+            db.Query<GroupedAssignments, T, T>
+            (sql, (group, assignment) =>
             {
-                groupIndex = groupedAssignments.Count();
-                groupDictionary.Add(groupId, groupIndex);
-                group.Assignments = new List<Assignment>();
-                groupedAssignments.Add(group);
-            }
-            return groupIndex;
+                if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
+                {
+                    groupIndex = groupedAssignments.Count();
+                    groupDictionary.Add(group.Id, groupIndex);
+                    group.Assignments = new List<Assignment>();
+                    groupedAssignments.Add(group);
+                }
+                if (assignment is ErrorAssignment)
+                    (assignment as ErrorAssignment).Message = errorMessage;
+                groupedAssignments[groupIndex].Assignments.Add(assignment);
+                return null;
+            }, parameters, transaction, splitOn: splitString);
+            return true;
         }
 
-        private string CheckStatus(DateTime dueDate)
+        private int CountUserAssignments(IDbConnection db, IDbTransaction transaction, DynamicParameters parameters)
+        {
+            string sql = @"SELECT COUNT(*)
+					         FROM [dbo].[Assignment]
+						    WHERE UserId = @UserId
+						      AND Returned IS NULL;";
+            try
+            {
+                return db.ExecuteScalar<int>(sql, parameters, transaction);
+            }
+            catch (Exception ex)
+            {
+                _logger.WriteLog(ex);
+                return -1;
+            }
+        }
+
+        private Status CheckStatus(DateTime dueDate)
         {
             if (DateTime.Now.Date < dueDate)
             {
-                return "Active";
+                return Status.Active;
             }
             else if (DateTime.Now.Date == dueDate)
             {
-                return "Due";
+                return Status.Due;
             }
-            else { return "Overdue"; }
+            else { return Status.Overdue; }
         }
     }
 }

@@ -33,8 +33,11 @@
             .summary-header__button:hover {
                 background-color: #4d83ff; }
         .summary-header__icon {
-            font-size: 1.5rem;
-            color: #4d83ff; }
+            font-size: 1.5rem; }
+            .summary-header__icon--blue {
+                color: #4d83ff; }
+            .summary-header__icon--yellow {
+                color: #fbbc06; }
     .summary-group__title {
         font-size: 1rem;
         padding: 10px;

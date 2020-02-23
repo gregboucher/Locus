@@ -14,6 +14,7 @@ namespace Locus.Controllers
             _repository = repository;
         }
 
+        [HttpGet]
         [Route("~/")]
         [Route("")]
         [Route("[action]")]
