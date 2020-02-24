@@ -28,7 +28,7 @@ namespace Locus.Controllers
             switch (statusCode)
             {
                 case 404:
-                    viewModel.Message = "The page you were trying to view is unavailable. Please confirm the URL and try again.";
+                    viewModel.Message = "The page you were trying to view is unavailable.";
                     return View(viewModel);
                 default:
                     viewModel.Message = "An error has occurred.";

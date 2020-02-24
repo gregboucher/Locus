@@ -35,7 +35,7 @@
                                 <i class="icon-info summary-header__icon summary-header__icon--blue"></i>
                                 <div>
                                     <div>All outstanding assets have been returned</div>
-                                    <div>User is now inactive</div>
+                                    <div>User is INACTIVE</div>
                                 </div>
                                 break;
                             case Status.Error:
@@ -76,6 +76,7 @@
                                             <i class="icon-@error.Icon summary-item__model-icon"></i>
                                             <div class="summary-item__model">
                                                 <div class="summary-item__model-name">@error.Model</div>
+                                                <div class="summary-item__model-tag select--on">@error.Tag</div>
                                             </div>
                                             <div class="summary-item__info--error">
                                                 @error.Message

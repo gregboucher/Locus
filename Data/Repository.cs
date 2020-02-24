@@ -91,9 +91,7 @@ namespace Locus.Data
 
         public int CountDueToday()
         {
-            using (IDbConnection db = _connectionFactory.GetConnection())
-            {
-                string sql =
+            string sql =
                     @"SELECT COUNT(*)
                         FROM [dbo].[Assignment] AS Asg 
                              INNER JOIN [dbo].[Asset] AS Ast
@@ -102,25 +100,13 @@ namespace Locus.Data
 		                              ON Ast.ModelId = M.Id
                        WHERE Asg.Returned IS NULL 
                          AND cast(GETDATE() as date) = cast(Asg.Due as date);";
-
-                try
-                {
-                    return db.ExecuteScalar<int>(sql);
-                }
-                catch (Exception ex)
-                {
-                    _logger.WriteLog(ex);
-                    return -1;
-                }
-            }
+            return GetScalar(sql);
         }
 
         public int CountOverdue()
         {
-            using (IDbConnection db = _connectionFactory.GetConnection())
-            {
-                string sql =
-                    @"SELECT COUNT(*)
+            string sql =
+                     @"SELECT COUNT(*)
                         FROM [dbo].[Assignment] AS Asg 
                              INNER JOIN [dbo].[Asset] AS Ast
 	                            ON Asg.AssetId = Ast.Id
@@ -128,39 +114,17 @@ namespace Locus.Data
 		                              ON Ast.ModelId = M.Id
                        WHERE Asg.Returned IS NULL
                          AND cast(GETDATE() as date) > cast(Asg.Due as date);";
-
-                try
-                {
-                    return db.ExecuteScalar<int>(sql);
-                }
-                catch (Exception ex)
-                {
-                    _logger.WriteLog(ex);
-                    return -1;
-                }
-            }
+            return GetScalar(sql);
         }
 
         public int CountUsersCreatedToday()
         {
-            using (IDbConnection db = _connectionFactory.GetConnection())
-            {
-                string sql =
-                    @"SELECT COUNT(DISTINCT Asg.UserId)
+            string sql =
+                     @"SELECT COUNT(DISTINCT Asg.UserId)
                         FROM [dbo].[Assignment] As Asg
                        WHERE Asg.Returned IS NULL
                          AND cast(GETDATE() as date) = cast(Asg.Assigned as date);";
-
-                try
-                {
-                    return db.ExecuteScalar<int>(sql);
-                }
-                catch (Exception ex)
-                {
-                    _logger.WriteLog(ex);
-                    return -1;
-                }
-            }
+            return GetScalar(sql);
         }
 
         public IEnumerable<GroupedModels> GetModelsByGroup(int? id)
@@ -328,7 +292,7 @@ namespace Locus.Data
                     var groupedAssignments = new List<GroupedAssignments>();
                     var groupDictionary = new Dictionary<int, int>();
                     int userId = parameters.Get<int>("@UserId");
-                    Status userStatus = Status.Inactive;
+                    var userStatus = Status.Inactive;
                     foreach (var selection in postModel.AssignSelections)
                     {
                         if (AddNewAssignment(db, transaction, groupDictionary, groupedAssignments, selection, userId))
@@ -336,7 +300,7 @@ namespace Locus.Data
                     }
                     if (groupedAssignments.Any()) {
                         transaction.Commit();
-                        UserSummary summary = new UserSummary
+                        var summary = new UserSummary
                         {
                             Id = userId,
                             Name = postModel.UserDetails.Name,
@@ -346,7 +310,7 @@ namespace Locus.Data
                         };
                         return summary;
                     }
-                    LocusException exception = new LocusException(
+                    var exception = new LocusException(
                         @"Unfortunately, we were unable to assign any assets to this user.
                           The asset pool for the selected model(s) may have since been depleted.");
                     _logger.WriteLog(exception);
@@ -372,7 +336,7 @@ namespace Locus.Data
                 var parameters = new DynamicParameters(postModel.UserDetails);
                 parameters.Add("@UserId", postModel.UserId, DbType.Int32);
                 parameters.Add("@Created", 0, DbType.DateTime, ParameterDirection.Output);
-                DateTime created = new DateTime();
+                var created = new DateTime();
                 try
                 {
                     db.Execute(sql, parameters);
@@ -385,7 +349,7 @@ namespace Locus.Data
                 }
                 var groupedAssignments = new List<GroupedAssignments>();
                 var groupDictionary = new Dictionary<int, int>();
-                Status userStatus = Status.Inactive;
+                var userStatus = Status.Inactive;
                 if (postModel.AssignSelections != null)
                 {
                     foreach (var selection in postModel.AssignSelections)
@@ -397,7 +361,7 @@ namespace Locus.Data
                 if (postModel.EditSelections != null)
                 {
                     //UPDATE will not throw and exception by default if it can't set.
-                    //Most likely cause would be if the asset has already been returned
+                    //Most likely cause would be if the asset has already been returned.
                     //If @AssignmentId is null, the appended select query will return no rows
                     //and an Assignment object will be created with null members.
                     //hence we bypass this by manually throwing an exception if @AssignmentId is null.
@@ -469,10 +433,10 @@ namespace Locus.Data
                             switch (selection.Type)
                             {
                                 case SelectionType.Return:
-                                    AppendAssignment<ReturnedAssignment>("Model", null, parameters, sql, db, null, groupDictionary, groupedAssignments);
+                                    UpdateAssignment<ReturnedAssignment>("Model", null, parameters, sql, db, null, groupDictionary, groupedAssignments);
                                     break;
                                 case SelectionType.Extend:
-                                    if (AppendAssignment<ExtendAssignment>("Model", null, parameters, sql, db, null, groupDictionary, groupedAssignments))
+                                    if (UpdateAssignment<ExtendAssignment>("Model", null, parameters, sql, db, null, groupDictionary, groupedAssignments))
                                         userStatus = Status.Active;
                                     break;
                             }
@@ -497,7 +461,7 @@ namespace Locus.Data
                             parameters.Add("@AssetId", selection.AssetId, DbType.String);
                             try
                             {
-                                AppendAssignment<ErrorAssignment>("Model", errorMessage, parameters, sql, db, null, groupDictionary, groupedAssignments);
+                                UpdateAssignment<ErrorAssignment>("Model", errorMessage, parameters, sql, db, null, groupDictionary, groupedAssignments);
                             }
                             catch (Exception ex)
                             {
@@ -509,13 +473,11 @@ namespace Locus.Data
                         //if > 0, return Status.active
                         if (i == count - 1 && userStatus != Status.Active)
                         {
-                            parameters = new DynamicParameters();
-                            parameters.Add("@UserId", postModel.UserId, DbType.Int32);
-                            userStatus = UserStatus(db, null, parameters);
+                            userStatus = UserStatus(postModel.UserId, db, null);
                         }
                     }
                 }
-                UserSummary summary = new UserSummary
+                var summary = new UserSummary
                 {
                     Id = postModel.UserId,
                     Name = postModel.UserDetails.Name,
@@ -527,9 +489,9 @@ namespace Locus.Data
             }
         }
 
-        //+++++++++++++++++++
-        //--PRIVATE METHODS--
-        //+++++++++++++++++++
+        //++++++++++++++++++
+        //--HELPER METHODS--
+        //++++++++++++++++++
 
         private Boolean AddNewAssignment(IDbConnection db, IDbTransaction transaction, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments, AssignSelection selection, int userId)
         {
@@ -579,7 +541,7 @@ namespace Locus.Data
             parameters.Add("@UserId", userId, DbType.Int32);
             try
             {
-                return AppendAssignment<NewAssignment>("Model", null, parameters, sql, db, transaction, groupDictionary, groupedAssignments);
+                return UpdateAssignment<NewAssignment>("Model", null, parameters, sql, db, transaction, groupDictionary, groupedAssignments);
             }
             catch
             {
@@ -599,7 +561,7 @@ namespace Locus.Data
                 parameters.Add("@GroupId", selection.GroupId, DbType.Int32);
                 try
                 {
-                    AppendAssignment<ErrorAssignment>("Model", "Unable to assign Asset", parameters, sql, db, transaction, groupDictionary, groupedAssignments);
+                    UpdateAssignment<ErrorAssignment>("Model", "Unable to assign Asset", parameters, sql, db, transaction, groupDictionary, groupedAssignments);
                     return false;
                 }
                 catch (Exception ex)
@@ -610,7 +572,7 @@ namespace Locus.Data
             }
         }
 
-        private Boolean AppendAssignment<T>(string splitString, string errorMessage, DynamicParameters parameters, string sql, IDbConnection db, IDbTransaction transaction, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments) where T : Assignment, new()
+        private Boolean UpdateAssignment<T>(string splitString, string errorMessage, DynamicParameters parameters, string sql, IDbConnection db, IDbTransaction transaction, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments) where T : Assignment, new()
         {
             db.Query<GroupedAssignments, T, T>
             (sql, (group, assignment) =>
@@ -630,35 +592,38 @@ namespace Locus.Data
             return true;
         }
 
-        private Status UserStatus(IDbConnection db, IDbTransaction transaction, DynamicParameters parameters)
+        public Status UserStatus(int userId, IDbConnection db, IDbTransaction transaction)
         {
-            string sql = @"SELECT COUNT(*)
+            if (db == null)
+                db = _connectionFactory.GetConnection();
+
+            using (db)
+            {
+                string sql = @"SELECT COUNT(*)
 					         FROM [dbo].[Assignment]
 						    WHERE UserId = @UserId
 						      AND Returned IS NULL;";
-            try
-            {
-                int assetCount = db.ExecuteScalar<int>(sql, parameters, transaction);
-                if (assetCount > 0)
+
+                var parameters = new DynamicParameters();
+                parameters.Add("@UserId", userId, DbType.Int32);
+                try
                 {
-                    return Status.Active;
-                }
-                else
-                {
-                    if (assetCount == 0)
+                    int assetCount = db.ExecuteScalar<int>(sql, parameters, transaction);
+                    if (assetCount > 0)
+                    {
+                        return Status.Active;
+                    }
+                    else if (assetCount == 0)
                     {
                         return Status.Inactive;
-                    } else
-                    {
-                        return Status.Error;
                     }
-                        
+                    else return Status.Error;
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.WriteLog(ex);
-                return Status.Error;
+                catch (Exception ex)
+                {
+                    _logger.WriteLog(ex);
+                    return Status.Error;
+                }
             }
         }
 
@@ -672,7 +637,23 @@ namespace Locus.Data
             {
                 return Status.Due;
             }
-            else { return Status.Overdue; }
+            else return Status.Overdue;
+        }
+
+        private int GetScalar(string sql)
+        {
+            using (IDbConnection db = _connectionFactory.GetConnection())
+            {
+                try
+                {
+                    return db.ExecuteScalar<int>(sql);
+                }
+                catch (Exception ex)
+                {
+                    _logger.WriteLog(ex);
+                    return -1;
+                }
+            }
         }
     }
 }

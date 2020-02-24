@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Locus.ViewModels;
 using Locus.Models;
+using System.Data;
 
 namespace Locus.Data
 {
@@ -17,5 +18,8 @@ namespace Locus.Data
 
         UserSummary CreateNewUser(UserCreatePostModel model);
         UserSummary EditExistingUser(UserEditPostModel model);
+
+        Status UserStatus(int userId, IDbConnection db, IDbTransaction transaction);
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Locus.Data;
+using Locus.Models;
 using Locus.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -51,18 +52,23 @@ namespace Locus.Controllers
 
         [HttpGet]
         [Route("[action]/{userId}")]
-        public ViewResult Edit(int userId)
+        public IActionResult Edit(int userId)
         {
-            UserEditViewModel viewModel = new UserEditViewModel
+            //ensure the user is active, else 404
+            if (_repository.UserStatus(userId, null, null) == Status.Active)
             {
-                Controller = "User",
-                Page = "Edit",
-                Icon = "edit",
-                UserDetails = _repository.GetUserDetails(userId),
-                Roles = _repository.GetAllRoles(),
-                GroupedModels = _repository.GetModelsByGroup(userId)
-            };
-            return View(viewModel);
+                UserEditViewModel viewModel = new UserEditViewModel
+                {
+                    Controller = "User",
+                    Page = "Edit",
+                    Icon = "edit",
+                    UserDetails = _repository.GetUserDetails(userId),
+                    Roles = _repository.GetAllRoles(),
+                    GroupedModels = _repository.GetModelsByGroup(userId)
+                };
+                return View(viewModel);
+            }
+            return RedirectToAction("Warning", "Error", new { StatusCode = 404 });
         }
 
         [HttpPost]
