@@ -3,7 +3,7 @@
 namespace Locus.Models
 {
     [DebuggerDisplay("{Name, nq}")]
-    public class Group
+    public class Division
     {
         public int Id { get; set; }
         public string Name { get; set; }

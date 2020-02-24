@@ -55,7 +55,7 @@ namespace Locus.Controllers
         public IActionResult Edit(int userId)
         {
             //ensure the user is active, else 404
-            if (_repository.UserStatus(userId, null, null) == Status.Active)
+            if (_repository.UserStatus(userId, null) == Status.Active)
             {
                 UserEditViewModel viewModel = new UserEditViewModel
                 {
@@ -84,7 +84,7 @@ namespace Locus.Controllers
                     Icon = "doc-text-inv",
                     User = _repository.EditExistingUser(postModel)
                 };
-                if (viewModel.User.GroupedAssignments.Any())
+                if (viewModel.User.GroupedSummaries.Any())
                 {
                     return View("Summary", viewModel);
                 }

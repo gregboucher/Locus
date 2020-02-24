@@ -1,6 +1,6 @@
 ﻿namespace Locus.Models
 {
-    public class Assignment
+    public class Summary
     {
         public string Model { get; set; }
         public string Icon { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Locus.Models
 {
-    public class ErrorAssignment : Assignment
+    public class ErrorSummary : Summary
     {
         public string Message { get; set; }
     }

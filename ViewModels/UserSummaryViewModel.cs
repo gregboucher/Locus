@@ -15,6 +15,6 @@ namespace Locus.ViewModels
         public string Name { get; set; }
         public DateTime Created { get; set; }
         public Status Status { get; set; }
-        public IEnumerable<GroupedAssignments> GroupedAssignments { get; set; }
+        public IEnumerable<GroupedAssignments> GroupedSummaries { get; set; }
     }
 }

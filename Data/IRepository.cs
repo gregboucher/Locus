@@ -7,7 +7,7 @@ namespace Locus.Data
 {
     public interface IRepository
     {
-        IEnumerable<GroupedUsers> GetAssignmentsByGroup();
+        IEnumerable<GroupTByDivision<User>> GetAssignmentsByGroup();
         int CountDueToday();
         int CountOverdue();
         int CountUsersCreatedToday();
@@ -19,7 +19,7 @@ namespace Locus.Data
         UserSummary CreateNewUser(UserCreatePostModel model);
         UserSummary EditExistingUser(UserEditPostModel model);
 
-        Status UserStatus(int userId, IDbConnection db, IDbTransaction transaction);
+        Status UserStatus(int userId, IDbConnection db);
 
     }
 }

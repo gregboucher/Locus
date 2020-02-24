@@ -50,48 +50,48 @@
                 </div>
             </div>
             @{
-                foreach (var group in Model.User.GroupedAssignments)
+                foreach (var group in Model.User.GroupedSummaries)
                 {
-                        <div class="summary-group">
-                            <div class="summary-group__title">@group.Name</div>
-                            @foreach (var assignment in group.Assignments)
+                    <div class="summary-group">
+                        <div class="summary-group__title">@group.Name</div>
+                        @foreach (var summary in group.Summaries)
                         {
-                            switch (assignment)
+                            switch (summary)
                             {
-                                case ReturnedAssignment returned:
-                                    returned = assignment as ReturnedAssignment;
-                                        <div class="summary-item">
-                                            <i class="icon-cancel summary-item__status summary-item__status--red"></i>
-                                            <i class="icon-@returned.Icon summary-item__model-icon"></i>
-                                            <div class="summary-item__model">
-                                                <div class="summary-item__model-name select--on">@returned.Model</div>
-                                                <div class="summary-item__model-tag select--on">@returned.Tag</div>
-                                            </div>
+                                case ReturnedSummary returned:
+                                    returned = summary as ReturnedSummary;
+                                    <div class="summary-item">
+                                        <i class="icon-cancel summary-item__status summary-item__status--red"></i>
+                                        <i class="icon-@returned.Icon summary-item__model-icon"></i>
+                                        <div class="summary-item__model">
+                                            <div class="summary-item__model-name select--on">@returned.Model</div>
+                                            <div class="summary-item__model-tag select--on">@returned.Tag</div>
                                         </div>
-                                        break;
-                                    case ErrorAssignment error:
-                                        error = assignment as ErrorAssignment;
-                                        <div class="summary-item summary-item--error">
-                                            <i class="icon-cancel summary-item__status summary-item__status--red"></i>
-                                            <i class="icon-@error.Icon summary-item__model-icon"></i>
-                                            <div class="summary-item__model">
-                                                <div class="summary-item__model-name">@error.Model</div>
-                                                <div class="summary-item__model-tag select--on">@error.Tag</div>
-                                            </div>
-                                            <div class="summary-item__info--error">
-                                                @error.Message
-                                            </div>
+                                    </div>
+                                    break;
+                                case ErrorSummary error:
+                                    error = summary as ErrorSummary;
+                                    <div class="summary-item summary-item--error">
+                                        <i class="icon-cancel summary-item__status summary-item__status--red"></i>
+                                        <i class="icon-@error.Icon summary-item__model-icon"></i>
+                                        <div class="summary-item__model">
+                                            <div class="summary-item__model-name">@error.Model</div>
+                                            <div class="summary-item__model-tag select--on">@error.Tag</div>
                                         </div>
-                                        break;
-                                    case NewAssignment asset:
-                                        sharedHTML<NewAssignment>("ok", "green", assignment as NewAssignment);
-                                        break;
-                                    case ExtendAssignment asset:
-                                        sharedHTML<ExtendAssignment>("forward", "yellow", assignment as ExtendAssignment);
-                                        break;
-                                }
+                                        <div class="summary-item__info--error">
+                                            @error.Message
+                                        </div>
+                                    </div>
+                                    break;
+                                case AssignmentSummary asset:
+                                    sharedHTML<AssignmentSummary>("ok", "green", summary as AssignmentSummary);
+                                    break;
+                                case ExtensionSummary asset:
+                                    sharedHTML<ExtensionSummary>("forward", "yellow", summary as ExtensionSummary);
+                                    break;
                             }
-                        </div>
+                        }
+                    </div>
                 }
             }
         </div>
@@ -99,22 +99,28 @@
 }
 
 @functions {
-    void sharedHTML<T>(string statusIcon, string colour, T assignment) where T : QualifiedAssignment, new()
+    void sharedHTML<T>(string statusIcon, string colour, T summary)
+        where T : DetailedSummary, new()
     {
         <div class="summary-item">
             <i class="icon-@statusIcon summary-item__status summary-item__status--@colour"></i>
-            <i class="icon-@assignment.Icon summary-item__model-icon"></i>
+            <i class="icon-@summary.Icon summary-item__model-icon"></i>
             <div class="summary-item__model">
-                <div class="summary-item__model-name select--on">@assignment.Model</div>
-                <div class="summary-item__model-tag select--on">@assignment.Tag</div>
+                <div class="summary-item__model-name select--on">@summary.Model</div>
+                <div class="summary-item__model-tag select--on">@summary.Tag</div>
             </div>
-            <div class="summary-item__info">
-                <div class="summary-item__info-title">Password</div>
-                <div class="summary-item__info-value select--on">@assignment.Password</div>
-            </div>
+            @{
+                foreach (var property in summary.CustomProperties)
+                {
+                    <div class="summary-item__info">
+                        <div class="summary-item__info-title">@property.Name</div>
+                        <div class="summary-item__info-value select--on">@property.Value</div>
+                    </div>
+                }
+            }
             <div class="summary-item__info">
                 <div class="summary-item__info-title">Due</div>
-                <div class="summary-item__info-value select--on">@assignment.Due.ToString("dd-MM-yy")</div>
+                <div class="summary-item__info-value select--on">@summary.Due.ToString("dd-MM-yy")</div>
             </div>
         </div>
     }
