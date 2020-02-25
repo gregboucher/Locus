@@ -50,16 +50,16 @@
                 </div>
             </div>
             @{
-                foreach (var group in Model.User.GroupedSummaries)
+                foreach (var collection in Model.User.CollectionsOfReportItems)
                 {
-                    <div class="summary-group">
-                        <div class="summary-group__title">@group.Name</div>
-                        @foreach (var summary in group.Summaries)
+                    <div class="summary-collection">
+                        <div class="summary-collection__title">@collection.Name</div>
+                        @foreach (var item in collection.TList)
                         {
-                            switch (summary)
+                            switch (item)
                             {
-                                case ReturnedSummary returned:
-                                    returned = summary as ReturnedSummary;
+                                case ReturnedReportItem returned:
+                                    returned = item as ReturnedReportItem;
                                     <div class="summary-item">
                                         <i class="icon-cancel summary-item__status summary-item__status--red"></i>
                                         <i class="icon-@returned.Icon summary-item__model-icon"></i>
@@ -69,8 +69,8 @@
                                         </div>
                                     </div>
                                     break;
-                                case ErrorSummary error:
-                                    error = summary as ErrorSummary;
+                                case ErrorReportItem error:
+                                    error = item as ErrorReportItem;
                                     <div class="summary-item summary-item--error">
                                         <i class="icon-cancel summary-item__status summary-item__status--red"></i>
                                         <i class="icon-@error.Icon summary-item__model-icon"></i>
@@ -83,11 +83,11 @@
                                         </div>
                                     </div>
                                     break;
-                                case AssignmentSummary asset:
-                                    sharedHTML<AssignmentSummary>("ok", "green", summary as AssignmentSummary);
+                                case AssignmentReportItem asset: //DO WE NEED THIS CASE???? TODO
+                                    sharedHTML<AssignmentReportItem>("ok", "green", item as AssignmentReportItem);
                                     break;
-                                case ExtensionSummary asset:
-                                    sharedHTML<ExtensionSummary>("forward", "yellow", summary as ExtensionSummary);
+                                case ExtensionReportItem asset:
+                                    sharedHTML<ExtensionReportItem>("forward", "yellow", item as ExtensionReportItem);
                                     break;
                             }
                         }
@@ -99,28 +99,31 @@
 }
 
 @functions {
-    void sharedHTML<T>(string statusIcon, string colour, T summary)
-        where T : DetailedSummary, new()
+    void sharedHTML<T>(string statusIcon, string colour, T item)
+        where T : DetailedReportItem, new()
     {
         <div class="summary-item">
             <i class="icon-@statusIcon summary-item__status summary-item__status--@colour"></i>
-            <i class="icon-@summary.Icon summary-item__model-icon"></i>
+            <i class="icon-@item.Icon summary-item__model-icon"></i>
             <div class="summary-item__model">
-                <div class="summary-item__model-name select--on">@summary.Model</div>
-                <div class="summary-item__model-tag select--on">@summary.Tag</div>
+                <div class="summary-item__model-name select--on">@item.Model</div>
+                <div class="summary-item__model-tag select--on">@item.Tag</div>
             </div>
             @{
-                foreach (var property in summary.CustomProperties)
+                if (item.CustomProperties != null)
                 {
+                    foreach (var property in item.CustomProperties)
+                    {
                     <div class="summary-item__info">
                         <div class="summary-item__info-title">@property.Name</div>
                         <div class="summary-item__info-value select--on">@property.Value</div>
                     </div>
+                    }
                 }
             }
             <div class="summary-item__info">
                 <div class="summary-item__info-title">Due</div>
-                <div class="summary-item__info-value select--on">@summary.Due.ToString("dd-MM-yy")</div>
+                <div class="summary-item__info-value select--on">@item.Due.ToString("dd-MM-yy")</div>
             </div>
         </div>
     }

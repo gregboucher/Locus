@@ -34,15 +34,15 @@ function initDropdown(callback) {
         });
     });
 
-    //click selection of group
+    //click selection of collection
     dropdownOptions.click(function() {
         dropdownOptions.removeClass('is-active');
         var $this = $(this);
         $this.addClass('is-active');
         dropdown.text($this.contents().get(0).nodeValue);
-        var group = $this.data('search');
+        var collection = $this.data('search');
         //callback function from caller defines context based behaviour.
-        callback(group);
+        callback(collection);
     });
 
     dropdownWrapper.css('visibility', 'visible');

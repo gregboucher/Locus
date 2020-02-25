@@ -2,11 +2,11 @@
 
 namespace Locus.Models
 {
-    public class EditSelection : ISelection
+    public class EditOperation
     {
         [Required]
         public string AssetId { get; set; }
         [Required]
-        public SelectionType Type { get; set; }
+        public OperationType Type { get; set; }
     }
 }

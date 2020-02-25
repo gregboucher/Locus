@@ -27,7 +27,7 @@ namespace Locus.Controllers
                 Page = "Create",
                 Icon = "user-plus",
                 Roles = _repository.GetAllRoles(),
-                GroupedModels = _repository.GetModelsByGroup(null)
+                CollectionsOfModels = _repository.GetModelsByCollection(null)
             };
             return View(viewModel);
         }
@@ -64,7 +64,7 @@ namespace Locus.Controllers
                     Icon = "edit",
                     UserDetails = _repository.GetUserDetails(userId),
                     Roles = _repository.GetAllRoles(),
-                    GroupedModels = _repository.GetModelsByGroup(userId)
+                    CollectionsOfModels = _repository.GetModelsByCollection(userId)
                 };
                 return View(viewModel);
             }
@@ -84,7 +84,7 @@ namespace Locus.Controllers
                     Icon = "doc-text-inv",
                     User = _repository.EditExistingUser(postModel)
                 };
-                if (viewModel.User.GroupedSummaries.Any())
+                if (viewModel.User.CollectionsOfReportItems.Any())
                 {
                     return View("Summary", viewModel);
                 }

@@ -32,7 +32,7 @@
         .navigation__button--blue {
             color: #4d83ff; }
     .navigation__submenu {
-        max-height: 0;
+        display: none;
         overflow: hidden;
         transition: max-height 0.2s ease-in-out; }
         .navigation__submenu > .navigation__button {

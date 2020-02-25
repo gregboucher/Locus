@@ -32,12 +32,12 @@ $(function() {
     tableContainer.css('flex-grow', 0);
     dataTable.page.len(maxRows).draw();
 
-    //define callback function for behaviour when dropdown group is selected, and initialize dropdown.
-    var dropdownCallback = function(group) {
+    //define callback function for behaviour when dropdown collection is selected, and initialize dropdown.
+    var dropdownCallback = function (collection) {
         overviewCards.removeClass('is-active');
         $.fn.dataTable.ext.search.pop();
-        dataTable.column(1).search(group).draw();
-        changePlaceholder(group);
+        dataTable.column(1).search(collection).draw();
+        changePlaceholder(collection);
     }
     var resetDropdown = initDropdown(dropdownCallback);
 
@@ -75,9 +75,9 @@ $(function() {
         }
     });
 
-    function changePlaceholder(group) {
-        if (group.length != 0) {
-            searchInput.attr('placeholder', 'Search within subset: ' + group);
+    function changePlaceholder(collection) {
+        if (collection.length != 0) {
+            searchInput.attr('placeholder', 'Search within subset: ' + collection);
         } else {
             searchInput.attr('placeholder', 'Search All Assignments');
         }

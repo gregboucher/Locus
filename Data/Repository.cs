@@ -20,7 +20,7 @@ namespace Locus.Data
             _logger = logger;
         }
 
-        public IEnumerable<GroupTByDivision<User>> GetAssignmentsByGroup()
+        public IEnumerable<CollectionOfGenerics<User>> GetUsersByCollection()
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
@@ -34,8 +34,8 @@ namespace Locus.Data
                              I.[Name] AS Icon,
                              Asg.Assigned,
                              Asg.Due,
-                             D.Id,
-                             D.[Name]
+                             C.Id,
+                             C.[Name]
                         FROM [dbo].[Assignment] AS Asg
                              INNER JOIN [dbo].[User] AS U
                                 ON Asg.UserId = U.Id
@@ -43,41 +43,41 @@ namespace Locus.Data
                                       ON U.RoleId = R.Id
                              INNER JOIN [dbo].[Asset] AS Ast
                                 ON Asg.AssetId = Ast.Id
-                                   INNER JOIN [dbo].[Division] AS D
-                                      ON Ast.DivisionId = D.Id
+                                   INNER JOIN [dbo].[Collection] AS C
+                                      ON Ast.CollectionId = C.Id
 	                               INNER JOIN [dbo].[Model] AS M
                                       ON Ast.ModelId = M.Id
                                          INNER JOIN [dbo].[Icon] AS I
                                             ON M.IconId = I.Id
                        WHERE Asg.Returned IS NULL
-                       ORDER BY D.Name, U.Id, Asg.Due;";
+                       ORDER BY C.[Name], U.Id, Asg.Due;";
 
-                var listOfDivisions = new List<GroupTByDivision<User>>();
-                var divisionListDictionary = new Dictionary<int, int>();
-                var userListDictionary = new Dictionary<Tuple<int, int>, int>();
-
+                var collectionsOfUsers = new List<CollectionOfGenerics<User>>();
+                var collectionDictionary = new Dictionary<int, int>();
+                var userDictionary = new Dictionary<Tuple<int, int>, int>();
+                
                 try
                 {
-                    db.Query<User, Asset, GroupTByDivision<User>, User>
-                    (sql, (user, asset, division) =>
+                    db.Query<User, Asset, CollectionOfGenerics<User>, User>
+                    (sql, (user, asset, collection) =>
                     {
                         asset.Status = AssetStatus(asset.Due.Date);
-                        if (!divisionListDictionary.TryGetValue(division.Id, out int divisionIndex))
+                        if (!collectionDictionary.TryGetValue(collection.Id, out int collectionIndex))
                         {
-                            divisionIndex = listOfDivisions.Count();
-                            divisionListDictionary.Add(division.Id, divisionIndex);
-                            division.ListOfGeneric = new List<User>();
-                            listOfDivisions.Add(division);
+                            collectionIndex = collectionsOfUsers.Count();
+                            collectionDictionary.Add(collection.Id, collectionIndex);
+                            collection.TList = new List<User>();
+                            collectionsOfUsers.Add(collection);
                         }
-                        var key = new Tuple<int, int>(division.Id, user.Id);
-                        if (!userListDictionary.TryGetValue(key, out int userIndex))
+                        var key = new Tuple<int, int>(collection.Id, user.Id);
+                        if (!userDictionary.TryGetValue(key, out int userIndex))
                         {
-                            userIndex = listOfDivisions[divisionIndex].ListOfGeneric.Count();
-                            userListDictionary.Add(key, userIndex);
+                            userIndex = collectionsOfUsers[collectionIndex].TList.Count();
+                            userDictionary.Add(key, userIndex);
                             user.Assets = new List<Asset>();
-                            listOfDivisions[divisionIndex].ListOfGeneric.Add(user);
+                            collectionsOfUsers[collectionIndex].TList.Add(user);
                         }
-                        listOfDivisions[divisionIndex].ListOfGeneric[userIndex].Assets.Add(asset);
+                        collectionsOfUsers[collectionIndex].TList[userIndex].Assets.Add(asset);
                         return null;
                     });
                 }
@@ -86,7 +86,7 @@ namespace Locus.Data
                     _logger.WriteLog(ex);
                     throw new LocusException("Unable to populate assignment table.");
                 }
-                return listOfDivisions;
+                return collectionsOfUsers;
             }
         }
 
@@ -128,13 +128,13 @@ namespace Locus.Data
             return GetScalar(sql);
         }
 
-        public IEnumerable<GroupedModels> GetModelsByGroup(int? id)
+        public IEnumerable<CollectionOfModels<Model>> GetModelsByCollection(int? id)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
                 string sql =
-                    @"SELECT Grouped.DivisionId AS Id,
-	                         D.[Name],
+                    @"SELECT Grouped.CollectionId AS Id,
+	                         C.[Name],
 	                         Grouped.ModelId AS Id,
 	                         M.[Name],
 	                         I.[Name] As Icon,
@@ -150,7 +150,7 @@ namespace Locus.Data
                                ON Ast.Id = Asg.AssetId
                               AND Asg.Returned IS NULL
                              RIGHT JOIN (
-	                               SELECT Ast.DivisionId,
+	                               SELECT Ast.CollectionId,
                                           Ast.ModelId,
                                           MAX(CASE WHEN @userId IS NOT NULL AND Asg.UserId = @userId THEN Asg.UserId ELSE NULL END) AS [User],
                                           COUNT(*) AS Total,
@@ -159,42 +159,42 @@ namespace Locus.Data
 		                                  LEFT JOIN [dbo].[Assignment] AS Asg
 		                                    ON Asg.AssetId = Ast.Id
                                            AND Asg.Returned IS NULL
-	                                GROUP BY Ast.DivisionId, Ast.ModelId
+	                                GROUP BY Ast.CollectionId, Ast.ModelId
 	                         ) AS Grouped
 	                         ON Grouped.[User] = Asg.UserId
-                            AND Grouped.DivisionId = Ast.DivisionId
+                            AND Grouped.CollectionId = Ast.CollectionId
                             AND Grouped.ModelId = Ast.ModelId
-	                            LEFT JOIN [dbo].[Division] AS D
-                                  ON D.Id = Grouped.DivisionId
+	                            LEFT JOIN [dbo].[Collection] AS C
+                                  ON C.Id = Grouped.CollectionId
 	                            LEFT JOIN [dbo].[Model] As M
                                   ON M.Id = Grouped.ModelId
 	                                 INNER JOIN [dbo].[Icon] AS I
                                         ON I.Id = M.IconId
-                    ORDER BY Grouped.DivisionId, Asg.Due DESC;";
+                    ORDER BY Grouped.CollectionId, Asg.Due DESC;";
 
-                var groupedModels = new List<GroupedModels>();
-                var groupDictionary = new Dictionary<int, int>();
+                var collectionsOfModels = new List<CollectionOfModels<Model>>();
+                var collectionDictionary = new Dictionary<int, int>();
 
                 try
                 {
-                    db.Query<GroupedModels, Model, Asset, Asset>
-                    (sql, (group, model, asset) =>
+                    db.Query<CollectionOfModels<Model>, Model, Asset, Asset>
+                    (sql, (collection, model, asset) =>
                     {
-                        if (!groupDictionary.TryGetValue(group.Id, out int groupIndex))
+                        if (!collectionDictionary.TryGetValue(collection.Id, out int collectionIndex))
                         {
-                            groupIndex = groupedModels.Count();
-                            groupDictionary.Add(group.Id, groupIndex);
-                            group.Models = new List<Model>();
-                            groupedModels.Add(group);
+                            collectionIndex = collectionsOfModels.Count();
+                            collectionDictionary.Add(collection.Id, collectionIndex);
+                            collection.TList = new List<Model>();
+                            collectionsOfModels.Add(collection);
                         }
                         if (asset != null)
                         {
                             asset.Status = AssetStatus(asset.Due.Date);
                             model.Asset = asset;
-                            ++groupedModels[groupIndex].TotalAssigned;
+                            ++collectionsOfModels[collectionIndex].TotalAssigned;
                         }
-                        groupedModels[groupIndex].Models.Add(model);
-                        groupedModels[groupIndex].Total += model.Total;
+                        collectionsOfModels[collectionIndex].TList.Add(model);
+                        collectionsOfModels[collectionIndex].Total += model.Total;
                         return null;
                     }, new { userId = id });
                 }
@@ -203,7 +203,7 @@ namespace Locus.Data
                     _logger.WriteLog(ex);
                     throw new LocusException("Unable to populate model list.");
                 }
-                return groupedModels;
+                return collectionsOfModels;
             }
         }
 
@@ -261,8 +261,8 @@ namespace Locus.Data
         {
             using (var scope = new TransactionScope())
             {
-                var groupedAssignments = new List<GroupedAssignments>();
-                var groupDictionary = new Dictionary<int, int>();
+                var collectionsOfReportItems = new List<CollectionOfGenerics<ReportItem>>();
+                var collectionDictionary = new Dictionary<int, int>();
                 var userStatus = Status.Inactive;
                 var parameters = new DynamicParameters(postModel.UserDetails);
                 using (var db = _connectionFactory.GetConnection())
@@ -292,13 +292,13 @@ namespace Locus.Data
                         throw new LocusException("Unable to create new user.");
                     }
 
-                    foreach (var selection in postModel.AssignSelections)
+                    foreach (var operation in postModel.AssignmentOperations)
                     {
-                        if (AddNewAssignment(db, groupDictionary, groupedAssignments, selection, parameters.Get<int>("@UserId")))
+                        if (CreateNewAssignment(db, collectionDictionary, collectionsOfReportItems, operation, parameters.Get<int>("@UserId")))
                             userStatus = Status.Active;
                     }
                 }
-                if (groupedAssignments.Any())
+                if (collectionsOfReportItems.Any())
                 {
                     scope.Complete();
                     var summary = new UserSummary
@@ -307,7 +307,7 @@ namespace Locus.Data
                         Name = postModel.UserDetails.Name,
                         Created = parameters.Get<DateTime>("@Created"),
                         Status = userStatus,
-                        GroupedSummaries = groupedAssignments
+                        CollectionsOfReportItems = collectionsOfReportItems
                     };
                     return summary;
                 }
@@ -347,18 +347,18 @@ namespace Locus.Data
                     _logger.WriteLog(ex);
                     throw new LocusException("We were unable to edit this User.");
                 }
-                var groupedAssignments = new List<GroupedAssignments>();
-                var groupDictionary = new Dictionary<int, int>();
+                var collectionsOfReportItems = new List<CollectionOfGenerics<ReportItem>>();
+                var collectionDictionary = new Dictionary<int, int>();
                 var userStatus = Status.Inactive;
-                if (postModel.AssignSelections != null)
+                if (postModel.AssignmentOperations != null)
                 {
-                    foreach (var selection in postModel.AssignSelections)
+                    foreach (var operation in postModel.AssignmentOperations)
                     {
-                        if (AddNewAssignment(db, groupDictionary, groupedAssignments, selection, postModel.UserId))
+                        if (CreateNewAssignment(db, collectionDictionary, collectionsOfReportItems, operation, postModel.UserId))
                             userStatus = Status.Active;
                     }
                 }
-                if (postModel.EditSelections != null)
+                if (postModel.EditOperations != null)
                 {
                     //UPDATE will not throw and exception by default if it can't set.
                     //Most likely cause would be if the asset has already been returned.
@@ -390,25 +390,25 @@ namespace Locus.Data
                                                 'AssignmentId is null',
                                                 1;";
 
-                    int count = postModel.EditSelections.Count;
+                    int count = postModel.EditOperations.Count;
                     for (int i = 0; i < count; i++)
                     {
-                        EditSelection selection = postModel.EditSelections[i];
+                        var operation = postModel.EditOperations[i];
                         string errorMessage = "";
-                        switch (selection.Type)
+                        switch (operation.Type)
                         {
-                            case SelectionType.Return:
+                            case OperationType.Return:
                                 sql = sqlReturn;
                                 errorMessage = "Unable to return this Asset";
                                 break;
-                            case SelectionType.Extend:
+                            case OperationType.Extension:
                                 sql = sqlExtend;
                                 errorMessage = @"Unable to extend this Assignment";
                                 break;
                         }
 
-                        sql += Environment.NewLine + @"SELECT D.Id,
-                                                              D.[Name],
+                        sql += Environment.NewLine + @"SELECT C.Id,
+                                                              C.[Name],
                                                               M.[Name] AS Model,
                                                               M.Id AS ModelId,
                                                               I.[Name] AS Icon,
@@ -417,8 +417,8 @@ namespace Locus.Data
                                                          FROM [dbo].[Assignment] AS Asg
                                                               INNER JOIN [dbo].[Asset] AS Ast
                                                                  ON Ast.Id = Asg.AssetId
-                                                                    INNER JOIN [dbo].[Division] AS D
-                                                                       ON D.Id = Ast.DivisionId
+                                                                    INNER JOIN [dbo].[Collection] AS C
+                                                                       ON C.Id = Ast.CollectionId
                                                                     INNER JOIN [dbo].[Model] AS M
                                                                        ON M.Id = Ast.ModelId
                                                                           INNER JOIN [dbo].[Icon] as I
@@ -426,34 +426,34 @@ namespace Locus.Data
                                                         WHERE Asg.Id = @AssignmentId;";
 
                         parameters = new DynamicParameters();
-                        parameters.Add("@AssetId", selection.AssetId, DbType.String);
+                        parameters.Add("@AssetId", operation.AssetId, DbType.String);
                         parameters.Add("@AssignmentId", -1, DbType.Int32, ParameterDirection.Output);
                         try
                         {
-                            switch (selection.Type)
+                            switch (operation.Type)
                             {
-                                case SelectionType.Return:
-                                    var pendingReturn = dbQuery<ReturnedSummary>(sql, "Model", db, parameters);
-                                    AppendToSynopsis(pendingReturn, groupDictionary, groupedAssignments);
+                                case OperationType.Return:
+                                    var returnItem = DbQuery<ReturnedReportItem>(sql, "Model", null, db, parameters);
+                                    CommitReportItemToSummary(returnItem, collectionDictionary, collectionsOfReportItems);
                                     break;
-                                case SelectionType.Extend:
-                                    var pendingExtension = dbQuery<ExtensionSummary>(sql, "Model", db, parameters);
-                                    AppendCustomeProperties(pendingExtension, db);
-                                    AppendToSynopsis(pendingExtension, groupDictionary, groupedAssignments);
+                                case OperationType.Extension:
+                                    var extensionItem = DbQuery<ExtensionReportItem>(sql, "Model", null, db, parameters);
+                                    AppendCustomeProperties(extensionItem, db);
+                                    CommitReportItemToSummary(extensionItem, collectionDictionary, collectionsOfReportItems);
                                     userStatus = Status.Active;
                                     break;
                             }
                         }
                         catch
                         {
-                            sql = @"SELECT D.Id,
-	                                       D.[Name],
+                            sql = @"SELECT C.Id,
+	                                       C.[Name],
                                            M.[Name] AS Model,
                                            I.[Name] AS Icon,
                                            Ast.Tag
                                       FROM [dbo].[Asset] AS Ast
-	                                       INNER JOIN [dbo].[Division] AS D
-	                                          ON D.Id = Ast.DivisionId
+	                                       INNER JOIN [dbo].[Collection] AS C
+	                                          ON C.Id = Ast.CollectionId
                                            INNER JOIN [dbo].[Model] AS M
                                               ON M.Id = Ast.ModelId
 		                                         INNER JOIN [dbo].[Icon] AS I
@@ -461,11 +461,11 @@ namespace Locus.Data
                                      WHERE Ast.Id = @AssetId";
 
                             parameters = new DynamicParameters();
-                            parameters.Add("@AssetId", selection.AssetId, DbType.String);
+                            parameters.Add("@AssetId", operation.AssetId, DbType.String);
                             try
                             {
-                                var pendingError = dbQuery<ErrorSummary>(sql, "Model", db, parameters);
-                                AppendToSynopsis(pendingError, groupDictionary, groupedAssignments);
+                                var errorItem = DbQuery<ErrorReportItem>(sql, "Model", errorMessage, db, parameters);
+                                CommitReportItemToSummary(errorItem, collectionDictionary, collectionsOfReportItems);
                             }
                             catch (Exception ex)
                             {
@@ -487,7 +487,7 @@ namespace Locus.Data
                     Name = postModel.UserDetails.Name,
                     Created = created,
                     Status = userStatus,
-                    GroupedSummaries = groupedAssignments
+                    CollectionsOfReportItems = collectionsOfReportItems
                 };
                 return summary;
             }
@@ -497,7 +497,7 @@ namespace Locus.Data
         //--HELPER METHODS--
         //++++++++++++++++++
 
-        private Boolean AddNewAssignment(IDbConnection db, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments, AssignSelection selection, int userId)
+        private Boolean CreateNewAssignment(IDbConnection db, Dictionary<int, int> collectionDictionary, List<CollectionOfGenerics<ReportItem>> collectionsOfReportItems, AssignmentOperation operation, int userId)
         {
             string sql = @"INSERT INTO [dbo].[Assignment]
                             SELECT GETDATE(),
@@ -517,15 +517,15 @@ namespace Locus.Data
 	                                        )
 	                                     OR Asg.AssetId IS NULL)
                                         AND Ast.Deactivated IS NULL
-                                        AND Ast.DivisionId = @DivisionId
+                                        AND Ast.CollectionId = @CollectionId
                                         AND Ast.ModelId = @ModelId
                                       ORDER BY NEWID()
 	                               )
                               FROM [dbo].[Model] AS M
                              WHERE M.Id = @ModelId
 
-                            SELECT D.Id,
-                                   D.[Name],
+                            SELECT C.Id,
+                                   C.[Name],
                                    M.[Name] AS Model,
                                    M.Id AS ModelId,
                                    I.[Name] AS Icon,
@@ -534,43 +534,43 @@ namespace Locus.Data
 							  FROM [dbo].[Assignment] AS Asg
 							       INNER JOIN [dbo].[Asset] AS Ast
 							          ON Ast.Id = Asg.AssetId
-                                         INNER JOIN [dbo].[Division] AS D
-									        ON D.Id = Ast.DivisionId
+                                         INNER JOIN [dbo].[Collection] AS C
+									        ON C.Id = Ast.CollectionId
 								         INNER JOIN [dbo].[Model] AS M
 								            ON M.Id = Ast.ModelId
                                                INNER JOIN [dbo].[Icon] as I
                                                   ON I.Id = M.IconId
 							 WHERE Asg.Id = SCOPE_IDENTITY();";
 
-            var parameters = new DynamicParameters(selection);
+            var parameters = new DynamicParameters(operation);
             parameters.Add("@UserId", userId, DbType.Int32);
             try
             {
-                var pendingAssignment = dbQuery<AssignmentSummary>(sql, "Model", db, parameters);
-                AppendCustomeProperties(pendingAssignment, db);
-                AppendToSynopsis(pendingAssignment, groupDictionary, groupedAssignments);
+                var assignmentItem = DbQuery<AssignmentReportItem>(sql, "Model", null, db, parameters);
+                AppendCustomeProperties(assignmentItem, db);
+                CommitReportItemToSummary(assignmentItem, collectionDictionary, collectionsOfReportItems);
                 return true;
             }
             catch
             {
-                sql = @"SELECT D.Id,
-                               D.[Name],
+                sql = @"SELECT C.Id,
+                               C.[Name],
                                M.[Name] AS Model,
                                I.[Name] AS Icon
                           FROM [dbo].[Model] AS M
                                INNER JOIN [dbo].[Icon] AS I
                                   ON I.Id = M.IconId
-                               CROSS JOIN [dbo].[Division] AS D
+                               CROSS JOIN [dbo].[Collection] AS C
                          WHERE M.Id = @ModelId
-                           AND D.Id = @DivisionId;";
+                           AND C.Id = @CollectionId;";
 
                 parameters = new DynamicParameters();
-                parameters.Add("@ModelId", selection.ModelId, DbType.Int32);
-                parameters.Add("@DivisionId", selection.GroupId, DbType.Int32);
+                parameters.Add("@ModelId", operation.ModelId, DbType.Int32);
+                parameters.Add("@CollectionId", operation.CollectionId, DbType.Int32);
                 try
                 {
-                    var pendingError = dbQuery<ErrorSummary>(sql, "Model", db, parameters);
-                    AppendToSynopsis(pendingError, groupDictionary, groupedAssignments);
+                    var errorItem = DbQuery<ErrorReportItem>(sql, "Model", "Unable to Assign asset", db, parameters);
+                    CommitReportItemToSummary(errorItem, collectionDictionary, collectionsOfReportItems);
                     return false;
                 }
                 catch (Exception ex)
@@ -581,62 +581,75 @@ namespace Locus.Data
             }
         }
 
-        private PendingSummary<T> dbQuery<T>(string sql, string splitString, IDbConnection db, DynamicParameters parameters)
-            where T : Summary
+        private PendingReportItem<T> DbQuery<T>(string sql, string splitString, string errorMessage, IDbConnection db, DynamicParameters parameters)
+            where T : ReportItem
         {
-            var newSummary = db.Query<Group, T, PendingSummary<T>>
-            (sql, (group, assignment) =>
+            var item = db.Query<Collection, T, PendingReportItem<T>>
+            (sql, (collection, reportItem) =>
             {
-                var summary = new PendingSummary<T>
+                if (typeof(T) == typeof(ErrorReportItem))
+                    (reportItem as ErrorReportItem).Message = errorMessage;
+                var newItem = new PendingReportItem<T>
                 {
-                    Group = group,
-                    Assignment = assignment
+                    Collection = collection,
+                    ReportItem = reportItem
                 };
-                return summary;
+                return newItem;
             }, parameters, splitOn: splitString).Single();
-            return newSummary;
+            return item;
         }
 
-        private void AppendCustomeProperties<T>(PendingSummary<T> summary, IDbConnection db)
-            where T : DetailedSummary
+        private void AppendCustomeProperties<T>(PendingReportItem<T> item, IDbConnection db)
+            where T : DetailedReportItem
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@ModelId", summary.Assignment.ModelId, DbType.Int32);
+            parameters.Add("@ModelId", item.ReportItem.ModelId, DbType.Int32);
             
             string sql = @"SELECT [Name],
                                   QueryString AS [Value]
                              FROM [dbo].[Query]
                             WHERE ModelId = @ModelId";
-
-            var queries = db.Query<CustomProperty>(sql, parameters);
-            summary.Assignment.CustomProperties = new List<CustomProperty>();
-            foreach (var query in queries)
+            try
             {
-                var property = new CustomProperty
+                var queries = db.Query<CustomProperty>(sql, parameters);
+                if (queries.Any())
                 {
-                    Name = query.Name,
-                    Value = db.ExecuteScalar<string>(query.Value)
-                };
-                summary.Assignment.CustomProperties.Add(property);
+                    item.ReportItem.CustomProperties = new List<CustomProperty>();
+                    foreach (var query in queries)
+                    {
+                        var property = new CustomProperty
+                        {
+                            Name = query.Name,
+                            Value = db.ExecuteScalar<string>(query.Value)
+                        };
+                        item.ReportItem.CustomProperties.Add(property);
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.WriteLog(ex);
+                throw;
+            }
+            
         }
 
-        private void AppendToSynopsis<T>(PendingSummary<T> summary, Dictionary<int, int> groupDictionary, List<GroupedAssignments> groupedAssignments)
-            where T : Summary
+        private void CommitReportItemToSummary<T>(PendingReportItem<T> item, Dictionary<int, int> collectionDictionary, List<CollectionOfGenerics<ReportItem>> collectionsOfReportItems)
+            where T : ReportItem
         {
-            if (!groupDictionary.TryGetValue(summary.Group.Id, out int groupIndex))
+            if (!collectionDictionary.TryGetValue(item.Collection.Id, out int collectionIndex))
             {
-                groupIndex = groupedAssignments.Count();
-                groupDictionary.Add(summary.Group.Id, groupIndex);
-                var group = new GroupedAssignments
+                collectionIndex = collectionsOfReportItems.Count();
+                collectionDictionary.Add(item.Collection.Id, collectionIndex);
+                var collection = new CollectionOfGenerics<ReportItem>
                 {
-                    Id = summary.Group.Id,
-                    Name = summary.Group.Name,
-                    Summaries= new List<Summary>()
+                    Id = item.Collection.Id,
+                    Name = item.Collection.Name,
+                    TList = new List<ReportItem>()
                 };
-                groupedAssignments.Add(group);
+                collectionsOfReportItems.Add(collection);
             }
-            groupedAssignments[groupIndex].Summaries.Add(summary.Assignment);
+            collectionsOfReportItems[collectionIndex].TList.Add(item.ReportItem);
         }
 
         public Status UserStatus(int userId, IDbConnection db)

@@ -10,7 +10,7 @@ namespace Locus.ViewModels
         public int UserId { get; set; }
         [Required]
         public UserDetails UserDetails { get; set; }
-        public IEnumerable<AssignSelection> AssignSelections { get; set; }
-        public IList<EditSelection> EditSelections { get; set; }
+        public IEnumerable<AssignmentOperation> AssignmentOperations { get; set; }
+        public IList<EditOperation> EditOperations { get; set; }
     }
 }

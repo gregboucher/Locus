@@ -7,12 +7,12 @@ namespace Locus.Data
 {
     public interface IRepository
     {
-        IEnumerable<GroupTByDivision<User>> GetAssignmentsByGroup();
+        IEnumerable<CollectionOfGenerics<User>> GetUsersByCollection();
         int CountDueToday();
         int CountOverdue();
         int CountUsersCreatedToday();
 
-        IEnumerable<GroupedModels> GetModelsByGroup(int? id);
+        IEnumerable<CollectionOfModels<Model>> GetModelsByCollection(int? id);
         IEnumerable<Role> GetAllRoles();
         UserDetails GetUserDetails(int id);
 

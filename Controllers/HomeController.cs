@@ -28,7 +28,7 @@ namespace Locus.Controllers
                 CountDueToday = _repository.CountDueToday(),
                 CountOverdue = _repository.CountOverdue(),
                 CountCreatedToday = _repository.CountUsersCreatedToday(),
-                GroupedUsers = _repository.GetAssignmentsByGroup()
+                CollectionsOfUsers = _repository.GetUsersByCollection()
             };
             return View(viewModel);
         }

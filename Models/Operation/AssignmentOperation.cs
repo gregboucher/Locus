@@ -2,11 +2,11 @@
 
 namespace Locus.Models
 {
-    public class AssignSelection : ISelection
+    public class AssignmentOperation
     {
         [Required]
         public int ModelId { get; set; }
         [Required]
-        public int GroupId { get; set; }
+        public int CollectionId { get; set; }
     }
 }

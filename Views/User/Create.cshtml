@@ -1,7 +1,7 @@
 ﻿@model UserCreateViewModel
 
 @section top_bar {
-    <input class="top-bar__input" id="top-bar__input" type="text" placeholder="Search Assets by Model, Tag, Status or Group">
+    <input class="top-bar__input" id="top-bar__input" type="text" placeholder="Search Assets by Model, Tag, Status or Collection">
 }
 
 @section side_bar {
@@ -59,10 +59,10 @@
                         <div class="dropdown__content">
                             <input class="dropdown__search" type="text">
                             <div class="dropdown__scroll-group">
-                                <div class="dropdown__option is-active" data-search="">All<span class="dropdown__option-value">@{var count = 0; foreach (var group in Model.GroupedModels) { count += group.Models.Count; } @count }</span></div>
-                                @foreach (var group in Model.GroupedModels)
+                                <div class="dropdown__option is-active" data-search="">All<span class="dropdown__option-value">@{var count = 0; foreach (var collection in Model.CollectionsOfModels) { count += collection.TList.Count; } @count }</span></div>
+                                @foreach (var collection in Model.CollectionsOfModels)
                                 {
-                                    <div class="dropdown__option" data-search="@group.Name">@group.Name<span class="dropdown__option-value">@group.Models.Count</span></div>
+                                    <div class="dropdown__option" data-search="@collection.Name">@collection.Name<span class="dropdown__option-value">@collection.TList.Count</span></div>
                                 }
                             </div>
                         </div>
@@ -71,18 +71,18 @@
                 <div class="user-assets__content">
                     @{
                         int index = 0;
-                        foreach (var group in Model.GroupedModels)
+                        foreach (var collection in Model.CollectionsOfModels)
                         {
-                            foreach (var _model in group.Models)
+                            foreach (var _model in collection.TList)
                             {
                                 if (_model.Asset == null)
                                 {
                                     <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
-                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections.Index" value="@index" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections[@index].ModelId" value="@_model.Id" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="AssignSelections[@index].GroupId" value="@group.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations.Index" value="@index" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled/>
                                             <input type="radio" class="user-assets__input is-assign" disabled/>
                                             ++index;
                                         }
@@ -90,7 +90,7 @@
                                             <i class="icon-@_model.Icon user-assets__icon"></i>
                                             <div class="user-assets__left">
                                                 <div class="user-assets__model searchable">@_model.Name</div>
-                                                <div class="user-assets__group searchable">@group.Name</div>
+                                                <div class="user-assets__collection searchable">@collection.Name</div>
                                             </div>
                                             <div class="user-assets__right">
                                                 <div class="user-assets__names">

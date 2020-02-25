@@ -9,6 +9,6 @@ namespace Locus.ViewModels
         [Required]
         public UserDetails UserDetails { get; set; }
         [Required]
-        public IEnumerable<AssignSelection> AssignSelections { get; set; }
+        public IEnumerable<AssignmentOperation> AssignmentOperations { get; set; }
     }
 }

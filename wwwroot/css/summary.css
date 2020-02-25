@@ -38,12 +38,12 @@
                 color: #4d83ff; }
             .summary-header__icon--yellow {
                 color: #fbbc06; }
-    .summary-group__title {
+    .summary-collection__title {
         font-size: 1rem;
         padding: 10px;
         border: 1px solid #313452;
         background-color: #27293d; }
-    .summary-group:last-child {
+    .summary-collection:last-child {
         border-bottom: 1px solid #313452; }
     .summary-item {
         display: flex;

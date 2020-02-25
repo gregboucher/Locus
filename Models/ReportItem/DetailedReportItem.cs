@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Locus.Models
 {
-    public class DetailedSummary : Summary
+    public class DetailedReportItem : ReportItem
     {
         public int ModelId { get; set; }
         public DateTime Due { get; set; }

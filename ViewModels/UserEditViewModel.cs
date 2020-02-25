@@ -7,6 +7,6 @@ namespace Locus.ViewModels
     {
         public UserDetails UserDetails { get; set; }
         public IEnumerable<Role> Roles { get; set; }
-        public IEnumerable<GroupedModels> GroupedModels { get; set; }
+        public IEnumerable<CollectionOfModels<Model>> CollectionsOfModels { get; set; }
     }
 }

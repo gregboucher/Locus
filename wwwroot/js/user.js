@@ -111,7 +111,7 @@ $(function() {
 
     });
 
-    //define callback function for search behaviour when dropdown group is selected,
+    //define callback function for search behaviour when dropdown collection is selected,
     //or input field is changed, and then initialize dropdown.
     var searchAssets = function(phrase) {
         cards.each(function() {
@@ -136,7 +136,7 @@ $(function() {
             show ? $this.show() : $this.hide();
         });
     }
-    var resetDropdown = initDropdown(searchAssets);
+    initDropdown(searchAssets);
 
     //set default dropdown selection
     searchAssets($('.dropdown__option.is-active').data('search'));

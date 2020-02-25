@@ -65,10 +65,10 @@
             <div class="dropdown__content">
                 <input class="dropdown__search" type="text">
                 <div class="dropdown__scroll-group">
-                    <div class="dropdown__option is-active" data-search="">No Filter<span class="dropdown__option-value">@{var assignmentCount = 0; foreach (var group in Model.GroupedUsers) { assignmentCount += group.Users.Count; } @assignmentCount }</span></div>
-                    @foreach (var group in Model.GroupedUsers)
+                    <div class="dropdown__option is-active" data-search="">No Filter<span class="dropdown__option-value">@{var assignmentCount = 0; foreach (var collection in Model.CollectionsOfUsers) { assignmentCount += collection.TList.Count; } @assignmentCount }</span></div>
+                    @foreach (var collection in Model.CollectionsOfUsers)
                     {
-                        <div class="dropdown__option" data-search="@group.Name">@group.Name<span class="dropdown__option-value">@group.Users.Count</span></div>
+                        <div class="dropdown__option" data-search="@collection.Name">@collection.Name<span class="dropdown__option-value">@collection.TList.Count</span></div>
                     }
                 </div>
             </div>
@@ -78,7 +78,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Group</th>
+                        <th>Collection</th>
                         <th>Role</th>
                         <th>Created</th>
                         <th>Status</th>
@@ -87,13 +87,13 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                @foreach (var group in Model.GroupedUsers)
+                @foreach (var collection in Model.CollectionsOfUsers)
                 {
-                    foreach (var user in group.Users)
+                    foreach (var user in collection.TList)
                     {
                         <tr>
                             <td class="select--on">@user.Name</td>
-                            <td class="select--on">@group.Name</td>
+                            <td class="select--on">@collection.Name</td>
                             <td class="select--on">@user.Role</td>
                             <td class="@(DateTime.Now.ToString("dd-MM-yy") == user.Created.ToString("dd-MM-yy") ? "data-table__today" : "") select--on">@user.Created.ToString("dd-MM-yy")</td>
                             <td>
