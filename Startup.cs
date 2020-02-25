@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Locus.Models;
 using Locus.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -21,6 +14,8 @@ namespace Locus
             services.AddSingleton<IConnectionFactory, ConnectionFactory>();
             services.AddSingleton<IRepository, Repository>();
             services.AddSingleton<ILogger, Logger>();
+            services.AddSingleton<ILogger, Logger>();
+            services.AddSingleton(typeof(IActionTransferObject<>), typeof(ActionTransferObject<>));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

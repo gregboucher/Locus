@@ -1,4 +1,4 @@
-﻿@model UserSummaryViewModel
+﻿@model UserReportViewModel
 
 @section top_bar {
     <input class="top-bar__input" id="top-bar__input" type="text" placeholder="" disabled>
@@ -16,30 +16,30 @@
 }
 
 @section content {
-    <div class="summary">
-        <div class="summary-content">
-            <div class="summary-header">
+    <div class="report">
+        <div class="report-content">
+            <div class="report-header">
                 <div>
-                    <div class="summary-header__name select--on">@Model.User.Name</div>
-                    <div class="summary-header__date select--on">@Model.User.Created.ToString("dd-MM-yy h:mm tt")</div>
+                    <div class="report-header__name select--on">@Model.Report.UserName</div>
+                    <div class="report-header__date select--on">@Model.Report.UserCreated.ToString("dd-MM-yy h:mm tt")</div>
                 </div>
-                <div class="summary-header__right">
+                <div class="report-header__right">
                     @{
-                        switch (Model.User.Status)
+                        switch (Model.Report.UserStatus)
                         {
                             case Status.Active:
-                                <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.User.Id" class="summary-header__button" title="Edit this User">Edit User</a>
-                                <input type="button" value="Print Assignments" class="summary-header__button">
+                                <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Report.UserId" class="report-header__button" title="Edit this User">Edit User</a>
+                                <input type="button" value="Print Assignments" class="report-header__button">
                                 break;
                             case Status.Inactive:
-                                <i class="icon-info summary-header__icon summary-header__icon--blue"></i>
+                                <i class="icon-info report-header__icon report-header__icon--blue"></i>
                                 <div>
                                     <div>All outstanding assets have been returned</div>
                                     <div>User is INACTIVE</div>
                                 </div>
                                 break;
                             case Status.Error:
-                                <i class="icon-attention summary-header__icon summary-header__icon--yellow"></i>
+                                <i class="icon-attention report-header__icon report-header__icon--yellow"></i>
                                 <div>
                                     <div>An error has occoured!</div>
                                     <div>Unable to count user assignments</div>
@@ -50,35 +50,35 @@
                 </div>
             </div>
             @{
-                foreach (var collection in Model.User.CollectionsOfReportItems)
+                foreach (var collection in Model.Report.CollectionsOfReportItems)
                 {
-                    <div class="summary-collection">
-                        <div class="summary-collection__title">@collection.Name</div>
+                    <div class="report-collection">
+                        <div class="report-collection__title">@collection.Name</div>
                         @foreach (var item in collection.TList)
                         {
                             switch (item)
                             {
                                 case ReturnedReportItem returned:
                                     returned = item as ReturnedReportItem;
-                                    <div class="summary-item">
-                                        <i class="icon-cancel summary-item__status summary-item__status--red"></i>
-                                        <i class="icon-@returned.Icon summary-item__model-icon"></i>
-                                        <div class="summary-item__model">
-                                            <div class="summary-item__model-name select--on">@returned.Model</div>
-                                            <div class="summary-item__model-tag select--on">@returned.Tag</div>
+                                    <div class="report-item">
+                                        <i class="icon-cancel report-item__status report-item__status--red"></i>
+                                        <i class="icon-@returned.Icon report-item__model-icon"></i>
+                                        <div class="report-item__model">
+                                            <div class="report-item__model-name select--on">@returned.Model</div>
+                                            <div class="report-item__model-tag select--on">@returned.Tag</div>
                                         </div>
                                     </div>
                                     break;
                                 case ErrorReportItem error:
                                     error = item as ErrorReportItem;
-                                    <div class="summary-item summary-item--error">
-                                        <i class="icon-cancel summary-item__status summary-item__status--red"></i>
-                                        <i class="icon-@error.Icon summary-item__model-icon"></i>
-                                        <div class="summary-item__model">
-                                            <div class="summary-item__model-name">@error.Model</div>
-                                            <div class="summary-item__model-tag select--on">@error.Tag</div>
+                                    <div class="report-item report-item--error">
+                                        <i class="icon-cancel report-item__status report-item__status--red"></i>
+                                        <i class="icon-@error.Icon report-item__model-icon"></i>
+                                        <div class="report-item__model">
+                                            <div class="report-item__model-name">@error.Model</div>
+                                            <div class="report-item__model-tag select--on">@error.Tag</div>
                                         </div>
-                                        <div class="summary-item__info--error">
+                                        <div class="report-item__info--error">
                                             @error.Message
                                         </div>
                                     </div>
@@ -102,35 +102,35 @@
     void sharedHTML<T>(string statusIcon, string colour, T item)
         where T : DetailedReportItem, new()
     {
-        <div class="summary-item">
-            <i class="icon-@statusIcon summary-item__status summary-item__status--@colour"></i>
-            <i class="icon-@item.Icon summary-item__model-icon"></i>
-            <div class="summary-item__model">
-                <div class="summary-item__model-name select--on">@item.Model</div>
-                <div class="summary-item__model-tag select--on">@item.Tag</div>
+        <div class="report-item">
+            <i class="icon-@statusIcon report-item__status report-item__status--@colour"></i>
+            <i class="icon-@item.Icon report-item__model-icon"></i>
+            <div class="report-item__model">
+                <div class="report-item__model-name select--on">@item.Model</div>
+                <div class="report-item__model-tag select--on">@item.Tag</div>
             </div>
             @{
                 if (item.CustomProperties != null)
                 {
                     foreach (var property in item.CustomProperties)
                     {
-                    <div class="summary-item__info">
-                        <div class="summary-item__info-title">@property.Name</div>
-                        <div class="summary-item__info-value select--on">@property.Value</div>
+                    <div class="report-item__info">
+                        <div class="report-item__info-title">@property.Name</div>
+                        <div class="report-item__info-value select--on">@property.Value</div>
                     </div>
                     }
                 }
             }
-            <div class="summary-item__info">
-                <div class="summary-item__info-title">Due</div>
-                <div class="summary-item__info-value select--on">@item.Due.ToString("dd-MM-yy")</div>
+            <div class="report-item__info">
+                <div class="report-item__info-title">Due</div>
+                <div class="report-item__info-value select--on">@item.Due.ToString("dd-MM-yy")</div>
             </div>
         </div>
     }
 }
 
 @section stylesheet {
-    <link rel="stylesheet" href="~/css/summary.css">
+    <link rel="stylesheet" href="~/css/report.css">
 }
 
 @section javascript {

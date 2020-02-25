@@ -239,10 +239,12 @@
 
         &__collection {
             font-size: 0.7rem;
+        }
 
-            &-tag {
-                color: darken(map-get($colour-map, --font), 10%);
-            }
+        &__tag {
+            color: darken(map-get($colour-map, --font), 10%);
+            font-size: 0.875rem;
+            margin-left: 0.1rem;
         }
 
         &__icon {
@@ -273,6 +275,11 @@
             &:not(:last-child) {
                 margin-bottom: 24px;
             }
+        }
+
+        &__icon {
+            margin-right: 0.3rem;
+            font-size: 1rem;
         }
 
         &__input {

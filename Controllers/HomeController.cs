@@ -20,7 +20,7 @@ namespace Locus.Controllers
         [Route("[action]")]
         public ViewResult Dashboard()
         {
-            HomeDashboardViewModel viewModel = new HomeDashboardViewModel
+            var viewModel = new HomeDashboardViewModel
             {
                 Controller = "Home",
                 Page = "Dashboard",

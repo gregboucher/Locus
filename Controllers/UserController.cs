@@ -10,10 +10,13 @@ namespace Locus.Controllers
     public class UserController : Controller
     {
         private readonly IRepository _repository;
+        private IActionTransferObject<Report> _actionTransferObject;
+        //private static Report _report;
 
-        public UserController(IRepository repository)
+        public UserController(IRepository repository, IActionTransferObject<Report> actionTransferObject)
         {
             _repository = repository;
+            _actionTransferObject = actionTransferObject;
         }
 
         [HttpGet]
@@ -21,7 +24,7 @@ namespace Locus.Controllers
         [Route("[action]")]
         public ViewResult Create()
         {
-            UserCreateViewModel viewModel = new UserCreateViewModel
+            var viewModel = new UserCreateViewModel
             {
                 Controller = "User",
                 Page = "Create",
@@ -38,14 +41,9 @@ namespace Locus.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserSummaryViewModel viewModel = new UserSummaryViewModel
-                {
-                    Controller = "User",
-                    Page = "Summary",
-                    Icon = "doc-text-inv",
-                    User = _repository.CreateNewUser(postModel)
-                };
-                return View("Summary", viewModel);
+                _actionTransferObject.Model = _repository.CreateNewUser(postModel);
+                //_report = _repository.CreateNewUser(postModel);
+                return RedirectToAction("Report");
             }
             return RedirectToAction();
         }
@@ -57,7 +55,7 @@ namespace Locus.Controllers
             //ensure the user is active, else 404
             if (_repository.UserStatus(userId, null) == Status.Active)
             {
-                UserEditViewModel viewModel = new UserEditViewModel
+                var viewModel = new UserEditViewModel
                 {
                     Controller = "User",
                     Page = "Edit",
@@ -77,20 +75,39 @@ namespace Locus.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserSummaryViewModel viewModel = new UserSummaryViewModel
+                var viewModel = new UserReportViewModel
                 {
                     Controller = "User",
-                    Page = "Summary",
+                    Page = "Report",
                     Icon = "doc-text-inv",
-                    User = _repository.EditExistingUser(postModel)
+                    Report = _repository.EditExistingUser(postModel)
                 };
-                if (viewModel.User.CollectionsOfReportItems.Any())
+                if (viewModel.Report.CollectionsOfReportItems.Any())
                 {
-                    return View("Summary", viewModel);
+                    _actionTransferObject.Model = _repository.EditExistingUser(postModel);
+                    //_report = _repository.EditExistingUser(postModel);
+                    return RedirectToAction("Report");
                 }
                 return RedirectToAction("Dashboard", "Home");
             }
             return RedirectToAction();
+        }
+
+        [Route("[action]")]
+        public IActionResult Report()
+        {
+            if (_actionTransferObject.Model != null)
+            {
+                var viewModel = new UserReportViewModel
+                {
+                    Controller = "User",
+                    Page = "Report",
+                    Icon = "doc-text-inv",
+                    Report = _actionTransferObject.Model
+                };
+                return View(viewModel);
+            }
+            return RedirectToAction("Warning", "Error", new { StatusCode = 404 });
         }
     }
 }

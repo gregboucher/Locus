@@ -18,7 +18,7 @@ namespace Locus.Controllers
         [Route("[action]/{statusCode}")]
         public IActionResult Warning(int statusCode)
         {
-            ErrorWarningViewModel viewModel = new ErrorWarningViewModel
+            var viewModel = new ErrorWarningViewModel
             {
                 Controller = "Error",
                 Page = "Warning",
@@ -40,7 +40,7 @@ namespace Locus.Controllers
         public IActionResult Exception()
         {
             var exception = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-            ErrorWarningViewModel viewModel = new ErrorWarningViewModel
+            var viewModel = new ErrorWarningViewModel
             {
                 Controller = "Error",
                 Page = "Exception",

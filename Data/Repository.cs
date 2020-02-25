@@ -257,7 +257,7 @@ namespace Locus.Data
             }
         }
 
-        public UserSummary CreateNewUser(UserCreatePostModel postModel)
+        public Report CreateNewUser(UserCreatePostModel postModel)
         {
             using (var scope = new TransactionScope())
             {
@@ -301,12 +301,12 @@ namespace Locus.Data
                 if (collectionsOfReportItems.Any())
                 {
                     scope.Complete();
-                    var summary = new UserSummary
+                    var summary = new Report
                     {
-                        Id = parameters.Get<int>("@UserId"),
-                        Name = postModel.UserDetails.Name,
-                        Created = parameters.Get<DateTime>("@Created"),
-                        Status = userStatus,
+                        UserId = parameters.Get<int>("@UserId"),
+                        UserName = postModel.UserDetails.Name,
+                        UserCreated = parameters.Get<DateTime>("@Created"),
+                        UserStatus = userStatus,
                         CollectionsOfReportItems = collectionsOfReportItems
                     };
                     return summary;
@@ -319,7 +319,7 @@ namespace Locus.Data
             }
         }
 
-        public UserSummary EditExistingUser(UserEditPostModel postModel)
+        public Report EditExistingUser(UserEditPostModel postModel)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
@@ -444,8 +444,10 @@ namespace Locus.Data
                                     break;
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            _logger.WriteLog(ex);
+
                             sql = @"SELECT C.Id,
 	                                       C.[Name],
                                            M.[Name] AS Model,
@@ -467,9 +469,9 @@ namespace Locus.Data
                                 var errorItem = DbQuery<ErrorReportItem>(sql, "Model", errorMessage, db, parameters);
                                 CommitReportItemToSummary(errorItem, collectionDictionary, collectionsOfReportItems);
                             }
-                            catch (Exception ex)
+                            catch (Exception exception)
                             {
-                                _logger.WriteLog(ex);
+                                _logger.WriteLog(exception);
                                 throw;
                             }
                         }
@@ -481,12 +483,12 @@ namespace Locus.Data
                         }
                     }
                 }
-                var summary = new UserSummary
+                var summary = new Report
                 {
-                    Id = postModel.UserId,
-                    Name = postModel.UserDetails.Name,
-                    Created = created,
-                    Status = userStatus,
+                    UserId = postModel.UserId,
+                    UserName = postModel.UserDetails.Name,
+                    UserCreated = created,
+                    UserStatus = userStatus,
                     CollectionsOfReportItems = collectionsOfReportItems
                 };
                 return summary;
@@ -551,8 +553,10 @@ namespace Locus.Data
                 CommitReportItemToSummary(assignmentItem, collectionDictionary, collectionsOfReportItems);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.WriteLog(ex);
+                
                 sql = @"SELECT C.Id,
                                C.[Name],
                                M.[Name] AS Model,
@@ -573,9 +577,9 @@ namespace Locus.Data
                     CommitReportItemToSummary(errorItem, collectionDictionary, collectionsOfReportItems);
                     return false;
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
-                    _logger.WriteLog(ex);
+                    _logger.WriteLog(exception);
                     throw;
                 }
             }
@@ -609,30 +613,22 @@ namespace Locus.Data
                                   QueryString AS [Value]
                              FROM [dbo].[Query]
                             WHERE ModelId = @ModelId";
-            try
+            
+            var queries = db.Query<CustomProperty>(sql, parameters);
+            if (queries.Any())
             {
-                var queries = db.Query<CustomProperty>(sql, parameters);
-                if (queries.Any())
+                item.ReportItem.CustomProperties = new List<CustomProperty>();
+                foreach (var query in queries)
                 {
-                    item.ReportItem.CustomProperties = new List<CustomProperty>();
-                    foreach (var query in queries)
+                    var property = new CustomProperty
                     {
-                        var property = new CustomProperty
-                        {
-                            Name = query.Name,
-                            Value = db.ExecuteScalar<string>(query.Value)
-                        };
-                        item.ReportItem.CustomProperties.Add(property);
-                    }
+                        Name = query.Name,
+                        Value = db.ExecuteScalar<string>(query.Value)
+                    };
+                    item.ReportItem.CustomProperties.Add(property);
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.WriteLog(ex);
-                throw;
-            }
-            
-        }
+        }     
 
         private void CommitReportItemToSummary<T>(PendingReportItem<T> item, Dictionary<int, int> collectionDictionary, List<CollectionOfGenerics<ReportItem>> collectionsOfReportItems)
             where T : ReportItem

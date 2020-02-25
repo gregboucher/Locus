@@ -1,24 +1,24 @@
-﻿.summary {
+﻿.report {
     display: flex;
     justify-content: center; }
-    .summary-content {
+    .report-content {
         flex: 0 0 50%;
         box-sizing: border-box;
         font-size: 0.785rem;
         color: #868a95; }
-    .summary-header {
+    .report-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 0.5rem; }
-        .summary-header__name {
+        .report-header__name {
             font-size: 1rem; }
-        .summary-header__right {
+        .report-header__right {
             display: flex;
             align-items: center; }
-        .summary-header__date, .summary-header__message {
+        .report-header__date, .report-header__message {
             font-size: 0.785rem; }
-        .summary-header__button {
+        .report-header__button {
             margin-left: 10px;
             padding: 10px 15px;
             font-size: 0.875rem;
@@ -30,59 +30,59 @@
             white-space: nowrap;
             cursor: pointer;
             border: 0 none; }
-            .summary-header__button:hover {
+            .report-header__button:hover {
                 background-color: #4d83ff; }
-        .summary-header__icon {
+        .report-header__icon {
             font-size: 1.5rem; }
-            .summary-header__icon--blue {
+            .report-header__icon--blue {
                 color: #4d83ff; }
-            .summary-header__icon--yellow {
+            .report-header__icon--yellow {
                 color: #fbbc06; }
-    .summary-collection__title {
+    .report-collection__title {
         font-size: 1rem;
         padding: 10px;
         border: 1px solid #313452;
         background-color: #27293d; }
-    .summary-collection:last-child {
+    .report-collection:last-child {
         border-bottom: 1px solid #313452; }
-    .summary-item {
+    .report-item {
         display: flex;
         align-items: center;
         padding: 0.5rem; }
-        .summary-item:nth-child(odd) {
+        .report-item:nth-child(odd) {
             background-color: #202032; }
-        .summary-item:not(:last-child):not(.summary-item--error) {
+        .report-item:not(:last-child):not(.report-item--error) {
             border-bottom: 1px solid #313452; }
-        .summary-item--error {
+        .report-item--error {
             border: 1px dashed #ff4747;
             background-color: #292030; }
-        .summary-item__status {
+        .report-item__status {
             font-size: 1rem; }
-            .summary-item__status--red {
+            .report-item__status--red {
                 color: #ff4747; }
-            .summary-item__status--yellow {
+            .report-item__status--yellow {
                 color: #fbbc06; }
-            .summary-item__status--green {
+            .report-item__status--green {
                 color: #23af47; }
-        .summary-item__model {
+        .report-item__model {
             flex-grow: 1;
             margin-left: 0.5rem;
             margin-right: 4rem;
             font-variant: small-caps; }
-            .summary-item__model-icon {
+            .report-item__model-icon {
                 margin-left: 0.5rem;
                 font-size: 1.75rem; }
-            .summary-item__model-tag {
+            .report-item__model-tag {
                 font-size: 0.875rem; }
-            .summary-item__model-name {
+            .report-item__model-name {
                 color: #6c707c; }
-        .summary-item__info {
+        .report-item__info {
             text-align: center;
-            margin-left: 4rem; }
-            .summary-item__info-title {
+            margin-left: 2rem; }
+            .report-item__info-title {
                 text-align: left;
                 color: #6c707c; }
-            .summary-item__info-value {
+            .report-item__info-value {
                 font-size: 0.875rem; }
-            .summary-item__info--error {
+            .report-item__info--error {
                 font-variant: small-caps; }

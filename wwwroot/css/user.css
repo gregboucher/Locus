@@ -155,8 +155,10 @@
             font-variant: small-caps; }
         .user-assets__collection {
             font-size: 0.7rem; }
-            .user-assets__collection-tag {
-                color: #6c707c; }
+        .user-assets__tag {
+            color: #6c707c;
+            font-size: 0.875rem;
+            margin-left: 0.1rem; }
         .user-assets__icon {
             font-size: 1.75rem; }
     .user-details {
@@ -176,6 +178,9 @@
                 flex-grow: 1; }
             .user-details__row:not(:last-child) {
                 margin-bottom: 24px; }
+        .user-details__icon {
+            margin-right: 0.3rem;
+            font-size: 1rem; }
         .user-details__input {
             margin-top: 6px;
             padding: 14px;

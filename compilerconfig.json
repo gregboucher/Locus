@@ -70,8 +70,8 @@
     }
   },
   {
-    "outputFile": "wwwroot/css/summary.css",
-    "inputFile": "wwwroot/scss/summary.scss",
+    "outputFile": "wwwroot/css/report.css",
+    "inputFile": "wwwroot/scss/report.scss",
     "minify": {
       "enabled": false
     }

@@ -16,10 +16,9 @@ namespace Locus.Data
         IEnumerable<Role> GetAllRoles();
         UserDetails GetUserDetails(int id);
 
-        UserSummary CreateNewUser(UserCreatePostModel model);
-        UserSummary EditExistingUser(UserEditPostModel model);
+        Report CreateNewUser(UserCreatePostModel model);
+        Report EditExistingUser(UserEditPostModel model);
 
         Status UserStatus(int userId, IDbConnection db);
-
     }
 }

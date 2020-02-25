@@ -27,7 +27,7 @@
 @section content {
     <div class="dashboard">
         <div class="overview">
-            <div class="overview__card" title="Filter by Assets due today">
+            <div class="overview__card" title="Show only users with assets that are due today">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountDueToday</div>
                     <div class="overview__card-subject">Asset@(Model.CountDueToday == 1 ? "" : "s")</div>
@@ -35,7 +35,7 @@
                 </div>
                 <i class="icon-calendar-check-o overview__card-icon"></i>
             </div>
-            <div class="overview__card" title="Filter by overdue Assets">
+            <div class="overview__card" title="Show only users with assets that are overdue">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountOverdue</div>
                     <div class="overview__card-subject">Asset@(Model.CountOverdue == 1 ? "" : "s")</div>
@@ -43,7 +43,7 @@
                 </div>
                 <i class="icon-calendar-times-o overview__card-icon"></i>
             </div>
-            <div class="overview__card" title="Filter by Assets Assigned today">
+            <div class="overview__card" title="Show only users with assets that were assigned today">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountCreatedToday</div>
                     <div class="overview__card-subject">User@(Model.CountCreatedToday== 1 ? "" : "s")</div>
@@ -51,11 +51,11 @@
                 </div>
                 <i class="icon-calendar-plus-o overview__card-icon"></i>
             </div>
-            <div class="overview__card" title="Filter by Extended Assets">
+            <div class="overview__card" title="Show only users with long-term assignments">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">0</div>
-                    <div class="overview__card-subject">Subject</div>
-                    <div class="overview__card-verb">Verb</div>
+                    <div class="overview__card-subject">Long-Term</div>
+                    <div class="overview__card-verb">Assignments</div>
                 </div>
                 <i class="icon-calendar overview__card-icon"></i>
             </div>
@@ -108,7 +108,7 @@
                             </td>
                             <td>
                                 <div class="data-table__action">
-                                    <a asp-controller="User" asp-action="Edit" asp-route-userId="@user.Id" class="data-table__action-button data-table__action-button--blue" title="Edit user details &#xA;Add/remove assets">Edit</a>
+                                    <a asp-controller="User" asp-action="Edit" asp-route-userId="@user.Id" class="data-table__action-button data-table__action-button--blue" title="Click to edit this user's details&#xA;or add, extend, or remove assets">Edit</a>
                                 </div>
                             </td>
                         </tr>

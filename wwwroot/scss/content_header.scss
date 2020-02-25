@@ -17,20 +17,26 @@
             font-size: 2rem;
             font-weight: 600;
             margin-bottom: 5px;
+            font-variant-caps: small-caps;
         }
 
         &__index {
             display: flex;
             font-size: 0.825rem;
+            align-items: center;
+        }
+
+        &__icon {
+            font-size: 1rem;
         }
 
         &__controller {
             margin-right: 0.2rem;
         }
 
-        &__action {
+        &__page {
             color: map-get($colour-map, --blue);
-            margin-left: 3px;
+            //margin-left: 3px;
         }
     }
 }
