@@ -31,12 +31,12 @@
         }
 
         &__button {
-            margin-left: 10px;
-            padding: 10px 15px;
+            margin-left: 0.625rem;
+            padding: 0.625rem 1rem;
             font-size: 0.875rem;
             color: white;
             background-color: darken(map-get($colour-map, --blue), 5%);
-            border-radius: 4px;
+            border-radius: 0.25rem;
             text-decoration: none;
             overflow: hidden;
             white-space: nowrap;
@@ -64,7 +64,7 @@
     &-collection {
         &__title {
             font-size: 1rem;
-            padding: 10px;
+            padding: 0.625rem;
             border: 1px solid map-get($colour-map, --border);
             background-color: map-get($colour-map, --foreground);
         }

@@ -3,19 +3,19 @@
     flex-direction: column;
     flex-grow: 1; }
     .dashboard > div:not(:last-child) {
-        margin-bottom: 21px; }
+        margin-bottom: 1.3125rem; }
     .dashboard-header__button {
         display: flex;
         background-color: #3471ff;
         font-size: 0.875rem;
         color: white;
-        padding: 10px 15px;
+        padding: 0.625rem 1rem;
         text-decoration: none;
         cursor: pointer;
-        border-radius: 4px; }
+        border-radius: 0.25rem; }
         .dashboard-header__button:hover {
             background-color: #4d83ff; }
     .dashboard-header__button-text {
-        margin-left: 5px;
+        margin-left: 0.25rem;
         overflow: hidden;
         white-space: nowrap; }

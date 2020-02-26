@@ -18,11 +18,11 @@
             box-sizing: border-box; }
         .data-table__status {
             display: inline-block;
-            padding: 3px 9px;
+            padding: 0.1875rem 0.5625rem;
             min-width: 3.5rem;
             font-variant: small-caps;
             text-align: center;
-            border-radius: 4px; }
+            border-radius: 0.25rem; }
             .data-table__status--overdue {
                 color: #ff4747;
                 border: 1px solid #ff4747; }
@@ -44,7 +44,7 @@
             justify-content: space-between; }
             .data-table__action-button {
                 flex: 1 0 0;
-                padding: 7px 9px;
+                padding: 0.4375rem 0.5625rem;
                 text-decoration: none;
                 text-align: center;
                 font-variant: small-caps;
@@ -72,13 +72,13 @@
                 display: inline-block;
                 min-width: 1.5em;
                 padding: 0.5em 1em;
-                margin-left: 2px;
+                margin-left: 0.125rem;
                 text-align: center;
                 text-decoration: none !important;
                 cursor: pointer;
                 *cursor: hand;
                 border: 1px solid transparent;
-                border-radius: 4px; }
+                border-radius: 0.25rem; }
                 .data-table__paginate .paginate-button:not(.disabled):not(.current):hover {
                     border: 1px solid #313452; }
                 .data-table__paginate .paginate-button.current {
@@ -95,7 +95,7 @@
             padding-top: 0.755em; }
         .data-table thead tr th {
             position: relative;
-            padding: 10px;
+            padding: 0.625rem;
             border-bottom: 1px solid #313452; }
             .data-table thead tr th:not(.sorting_disabled) {
                 cursor: pointer; }
@@ -103,8 +103,8 @@
                 font-family: "locus-font";
                 font-style: normal;
                 position: absolute;
-                top: 12px;
-                right: 8px;
+                top: 0.75rem;
+                right: 0.5rem;
                 display: block;
                 color: #4d83ff; }
             .data-table thead tr th.sorting:after {
@@ -126,6 +126,6 @@
                 white-space: nowrap;
                 max-width: 10rem; }
                 .data-table tbody tr td:not(:last-child) {
-                    padding: 8px 10px; }
+                    padding: 0.5rem 0.625rem; }
                 .data-table tbody tr td.data-table__empty {
                     text-align: center; }

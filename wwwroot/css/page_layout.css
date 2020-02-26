@@ -17,29 +17,29 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 60px;
+    height: 3.75rem;
     z-index: 1; }
 
 #side-bar {
     position: fixed;
-    top: 60px;
+    top: 3.75rem;
     left: 0;
     bottom: 0;
-    width: 256px;
+    width: 16rem;
     display: flex;
     flex-direction: column;
     z-index: 1; }
 
 #content {
-    margin-top: 60px;
+    margin-top: 3.75rem;
     display: flex;
     flex-direction: column;
-    padding: 21px;
+    padding: 1.3125rem;
     background-color: #1e1e2f;
     box-sizing: border-box;
     width: 100%;
-    min-height: calc(100vh - 60px);
-    margin-left: 256px; }
+    min-height: calc(100vh - 3.75rem);
+    margin-left: 16rem; }
 
 .select--off {
     -webkit-touch-callout: none;

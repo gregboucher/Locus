@@ -1,18 +1,18 @@
 ﻿.overview {
     display: flex; }
     .overview > div:not(:last-child) {
-        margin-right: 21px; }
+        margin-right: 1.3125rem; }
     .overview__card {
         display: flex;
         flex: 1 0 0;
-        padding: 24px 32px;
+        padding: 1.5rem 2rem;
         justify-content: space-between;
         align-items: center;
         color: #868a95;
         background-color: #27293d;
         border: 1px solid #313452; }
         .overview__card--small {
-            padding: 6px 16px; }
+            padding: 0.375rem 1rem; }
         .overview__card.is-active {
             border-color: #4d83ff; }
         .overview__card.is-active .overview__card-text {

@@ -16,7 +16,7 @@
         &__organisation {
             font-size: 2rem;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 0.3125rem;
             font-variant-caps: small-caps;
         }
 
@@ -36,7 +36,6 @@
 
         &__page {
             color: map-get($colour-map, --blue);
-            //margin-left: 3px;
         }
     }
 }

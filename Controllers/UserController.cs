@@ -2,7 +2,6 @@
 using Locus.Models;
 using Locus.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace Locus.Controllers
 {
@@ -10,10 +9,9 @@ namespace Locus.Controllers
     public class UserController : Controller
     {
         private readonly IRepository _repository;
-        private IActionTransferObject<Report> _actionTransferObject;
-        //private static Report _report;
+        private IComplexTransferObject<Report> _actionTransferObject;
 
-        public UserController(IRepository repository, IActionTransferObject<Report> actionTransferObject)
+        public UserController(IRepository repository, IComplexTransferObject<Report> actionTransferObject)
         {
             _repository = repository;
             _actionTransferObject = actionTransferObject;
@@ -42,7 +40,6 @@ namespace Locus.Controllers
             if (ModelState.IsValid)
             {
                 _actionTransferObject.Model = _repository.CreateNewUser(postModel);
-                //_report = _repository.CreateNewUser(postModel);
                 return RedirectToAction("Report");
             }
             return RedirectToAction();
@@ -75,17 +72,9 @@ namespace Locus.Controllers
         {
             if (ModelState.IsValid)
             {
-                var viewModel = new UserReportViewModel
-                {
-                    Controller = "User",
-                    Page = "Report",
-                    Icon = "doc-text-inv",
-                    Report = _repository.EditExistingUser(postModel)
-                };
-                if (viewModel.Report.CollectionsOfReportItems.Any())
+                if (postModel.AssignmentOperations != null || postModel.EditOperations != null)
                 {
                     _actionTransferObject.Model = _repository.EditExistingUser(postModel);
-                    //_report = _repository.EditExistingUser(postModel);
                     return RedirectToAction("Report");
                 }
                 return RedirectToAction("Dashboard", "Home");
@@ -93,6 +82,7 @@ namespace Locus.Controllers
             return RedirectToAction();
         }
 
+        [HttpGet]
         [Route("[action]")]
         public IActionResult Report()
         {

@@ -19,12 +19,12 @@
         .report-header__date, .report-header__message {
             font-size: 0.785rem; }
         .report-header__button {
-            margin-left: 10px;
-            padding: 10px 15px;
+            margin-left: 0.625rem;
+            padding: 0.625rem 1rem;
             font-size: 0.875rem;
             color: white;
             background-color: #3471ff;
-            border-radius: 4px;
+            border-radius: 0.25rem;
             text-decoration: none;
             overflow: hidden;
             white-space: nowrap;
@@ -40,7 +40,7 @@
                 color: #fbbc06; }
     .report-collection__title {
         font-size: 1rem;
-        padding: 10px;
+        padding: 0.625rem;
         border: 1px solid #313452;
         background-color: #27293d; }
     .report-collection:last-child {

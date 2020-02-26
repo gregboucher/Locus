@@ -1,7 +1,7 @@
 ﻿.content-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 21px; }
+    margin-bottom: 1.3125rem; }
     .content-header__group {
         display: flex;
         flex-direction: column;
@@ -10,7 +10,7 @@
     .content-header__organisation {
         font-size: 2rem;
         font-weight: 600;
-        margin-bottom: 5px;
+        margin-bottom: 0.3125rem;
         font-variant-caps: small-caps; }
     .content-header__index {
         display: flex;

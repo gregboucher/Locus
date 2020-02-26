@@ -6,41 +6,35 @@
     height: 100%;
     display: flex;
 
-    &__brand-wrapper {
+    &__logo {
         display: flex;
         align-items: center;
         width: $side-bar--width;
         border-right: 1px solid map-get($colour-map, --border);
         box-sizing: border-box;
-        padding: 16px;
-    }
+        padding: 1rem;
 
-    &__brand-icon {
-        color: white;
-        font-size: 2rem;
-        margin-right: 10px;
-    }
+        &-icon {
+            color: white;
+            font-size: 2rem;
+            margin-right: 0.625rem;
+        }
 
-    &__brand-title {
-        color: white;
-        overflow: hidden;
-        white-space: nowrap;
-        font-size: 1.25rem;
+        &-title {
+            color: white;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 1.25rem;
+        }
     }
 
     &__input-wrapper {
         display: flex;
         background-color: map-get($colour-map, --background);
-        margin: 12px;
+        margin: 0.75rem;
         align-items: center;
-        border-radius: 4px;
+        border-radius: 0.25rem;
         flex-grow: 1;
-    }
-
-    &__input-icon {
-        margin-left: 10px;
-        margin-right: 10px;
-        color: darken(map-get($colour-map, --font), 10%);
     }
 
     &__input {
@@ -54,8 +48,15 @@
         box-shadow: none;
         outline: none;
 
+
         &::placeholder {
             opacity: 1;
+        }
+
+        &-icon {
+            margin-left: 0.625rem;
+            margin-right: 0.625rem;
+            color: darken(map-get($colour-map, --font), 10%);
         }
     }
 

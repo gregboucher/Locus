@@ -390,6 +390,8 @@ namespace Locus.Data
                                                 'AssignmentId is null',
                                                 1;";
 
+                    //TODO @@ROWCOUNT = 0 THROW!!!!
+
                     int count = postModel.EditOperations.Count;
                     for (int i = 0; i < count; i++)
                     {

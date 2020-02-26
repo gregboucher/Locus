@@ -15,7 +15,7 @@ namespace Locus
             services.AddSingleton<IRepository, Repository>();
             services.AddSingleton<ILogger, Logger>();
             services.AddSingleton<ILogger, Logger>();
-            services.AddSingleton(typeof(IActionTransferObject<>), typeof(ActionTransferObject<>));
+            services.AddSingleton(typeof(IComplexTransferObject<>), typeof(ComplexTransferObject<>));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
