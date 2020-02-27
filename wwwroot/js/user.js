@@ -108,7 +108,16 @@ $(function() {
             $this.find('.user-assets__input:first').prop('checked', true);
             hiddenInputs.prop('disabled', false);
         }
+    });
 
+    // if create action, clear input fields and remove selections.
+    // if edit just remove selections
+    $('#reset').click(function () {
+        if ($(this).data('page') == null)
+            $('.user-details__input').val("");
+        cards.find('.user-assets__input').prop('checked', false);
+        cards.find('.user-assets__hidden').prop('disabled', true);
+        checkboxReturnAll.prop('checked', false);
     });
 
     //define callback function for search behaviour when dropdown collection is selected,
