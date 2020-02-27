@@ -11,7 +11,7 @@
     </a>
     <a asp-controller="User" asp-action="Create" class="navigation__button">
         <i class="icon-user-plus navigation__button-icon"></i>
-        <div class="navigation__button-text">New Assignment</div>
+        <div class="navigation__button-text">New User</div>
     </a>
 }
 
@@ -95,7 +95,8 @@
                                             <input type="hidden" class="user-assets__hidden" name="AssignmentOperations.Index" value="@index" disabled/>
                                             <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled/>
                                             <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled/>
-                                            <input type="radio" class="user-assets__input is-assign" disabled/>
+                                            <input type="radio" class="user-assets__input is-assign" name="AssignmentOperations[@index].Type" value="0"/>
+                                            <input type="radio" class="user-assets__input is-indefinite" name="AssignmentOperations[@index].Type" value="1"/>
                                             ++index;
                                         }
                                         <div class="user-assets__card">
@@ -124,8 +125,11 @@
                                     <div class="user-assets__card-wrapper is-assigned">
                                         <input type="hidden" class="user-assets__hidden" name="EditOperations.Index" value="@index" disabled/>
                                         <input type="hidden" class="user-assets__hidden" name="EditOperations[@index].AssetId" value="@_model.Asset.Id" disabled/>
-                                        <input type="radio" class="user-assets__input is-return" name="EditOperations[@index].Type" value="1"/>
-                                        <input type="radio" class="user-assets__input is-extend" name="EditOperations[@index].Type" value="2"/>
+                                        <input type="radio" class="user-assets__input is-return" name="EditOperations[@index].Type" value="2"/>
+                                        @if (_model.Asset.Due.HasValue)
+                                        {
+                                            <input type="radio" class="user-assets__input is-extend" name="EditOperations[@index].Type" value="3"/>
+                                        }
                                         <div class="user-assets__card">
                                             <i class="icon-@_model.Icon user-assets__icon"></i>
                                             <div class="user-assets__left">
@@ -145,7 +149,7 @@
                                                 <div class="user-assets__values">
                                                     <div class="user-assets__values--@_model.Asset.Status.ToString().ToLower() searchable">@_model.Asset.Status</div>
                                                     <div>@_model.Asset.Assigned.ToString("dd-MM-yy")</div>
-                                                    <div>@_model.Asset.Due.ToString("dd-MM-yy")</div>
+                                                    <div>@(_model.Asset.Due.HasValue ? @_model.Asset.Due.Value.ToString("dd-MM-yy") : "...")</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -160,8 +164,8 @@
         </div>
         <div class="user-footer">
             <input type="submit" value="Save" id="submit" class="user-footer__button">
-            <input type="button" value="Reset Selection" data-page="edit" id="reset" class="user-footer__button">
-            <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button">Cancel</a>
+            <input type="button" value="Reset Selection" data-page="edit" id="reset" class="user-footer__button user-footer__button--dark">
+            <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button user-footer__button--dark">Cancel</a>
         </div>
     </form>
 }

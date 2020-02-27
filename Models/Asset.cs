@@ -10,7 +10,7 @@ namespace Locus.Models
         public string Tag { get; set; }
         public string Icon { get; set; }
         public DateTime Assigned { get; set; }
-        public DateTime Due { get; set; }
+        public DateTime? Due { get; set; }
         public Status Status { get; set; }
     }
 }

@@ -11,7 +11,7 @@
     </a>
     <a asp-controller="User" asp-action="Create" class="navigation__button navigation__button--blue">
         <i class="icon-user-plus navigation__button-icon"></i>
-        <div class="navigation__button-text">New Assignment</div>
+        <div class="navigation__button-text">New User</div>
     </a>
 }
 
@@ -83,7 +83,8 @@
                                             <input type="hidden" class="user-assets__hidden" name="AssignmentOperations.Index" value="@index" disabled/>
                                             <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled/>
                                             <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled/>
-                                            <input type="radio" class="user-assets__input is-assign" disabled/>
+                                            <input type="radio" class="user-assets__input is-assign" name="AssignmentOperations[@index].Type" value="0"/>
+                                            <input type="radio" class="user-assets__input is-indefinite" name="AssignmentOperations[@index].Type" value="1"/>
                                             ++index;
                                         }
                                         <div class="user-assets__card">
@@ -115,8 +116,8 @@
         </div>
         <div class="user-footer">
             <input type="submit" value="Create" id="submit" class="user-footer__button">
-            <input type="button" value="Reset" id="reset" class="user-footer__button">
-            <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button">Cancel</a>
+            <input type="button" value="Reset" id="reset" class="user-footer__button user-footer__button--dark">
+            <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button user-footer__button--dark">Cancel</a>
             <input type="hidden" id="checkboxAssigned" name="checkboxAssigned">
         </div>
     </form>

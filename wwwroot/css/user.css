@@ -96,6 +96,14 @@
                     border-top: 1.5625rem solid #23af47; }
                 .user-assets__input.is-assign:checked ~ .user-assets__card:after {
                     content: '\e82b'; }
+            .user-assets__input.is-indefinite:checked ~ .user-assets__card {
+                border: 2px solid #4d83ff;
+                padding: 0.5625rem 0.8125rem; }
+                .user-assets__input.is-indefinite:checked ~ .user-assets__card:before {
+                    border-top: 1.5625rem solid #4d83ff; }
+                .user-assets__input.is-indefinite:checked ~ .user-assets__card:after {
+                    content: '\e818';
+                    font-size: 0.875rem; }
         .user-assets__card {
             position: relative;
             display: flex;
@@ -145,6 +153,8 @@
                 color: #fbbc06; }
             .user-assets__values--active {
                 color: #23af47; }
+            .user-assets__values--indefinite {
+                color: #4b83ff; }
         .user-assets__left {
             flex-grow: 1;
             margin-left: 0.5rem;
@@ -235,5 +245,7 @@
             white-space: nowrap;
             cursor: pointer;
             border: 0 none; }
+            .user-footer__button--dark {
+                background-color: #313452; }
             .user-footer__button:hover {
                 background-color: #4d83ff; }

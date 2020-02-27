@@ -11,7 +11,7 @@
     </a>
     <a asp-controller="User" asp-action="Create" class="navigation__button">
         <i class="icon-user-plus navigation__button-icon"></i>
-        <div class="navigation__button-text">New Assignment</div>
+        <div class="navigation__button-text">New User</div>
     </a>
 }
 
@@ -19,7 +19,7 @@
     <div class="content-header__group">
         <a asp-controller="User" asp-action="Create" class="dashboard-header__button">
             <i class="icon-user-plus"></i>
-            <div class="dashboard-header__button-text">New Assignment</div>
+            <div class="dashboard-header__button-text">New User</div>
         </a>
     </div>
 }
@@ -41,7 +41,7 @@
                     <div class="overview__card-subject">Asset@(Model.CountOverdue == 1 ? "" : "s")</div>
                     <div class="overview__card-verb">Overdue</div>
                 </div>
-                <i class="icon-calendar-times-o overview__card-icon"></i>
+                <i class="icon-hourglass-3 overview__card-icon"></i>
             </div>
             <div class="overview__card" title="Show only users with assets that were assigned today">
                 <div class="overview__card-text">
@@ -49,15 +49,15 @@
                     <div class="overview__card-subject">User@(Model.CountCreatedToday== 1 ? "" : "s")</div>
                     <div class="overview__card-verb">Created Today</div>
                 </div>
-                <i class="icon-calendar-plus-o overview__card-icon"></i>
+                <i class="icon-users overview__card-icon"></i>
             </div>
             <div class="overview__card" title="Show only users with long-term assignments">
                 <div class="overview__card-text">
-                    <div class="overview__card-quantity">0</div>
-                    <div class="overview__card-subject">Long-Term</div>
-                    <div class="overview__card-verb">Assignments</div>
+                    <div class="overview__card-quantity">@Model.CountIndefinite</div>
+                    <div class="overview__card-subject">Indefinite</div>
+                    <div class="overview__card-verb">Assignment@(Model.CountIndefinite == 1 ? "" : "s")</div>
                 </div>
-                <i class="icon-calendar overview__card-icon"></i>
+                <i class="icon-star overview__card-icon"></i>
             </div>
         </div>
         <div class="dropdown__wrapper">
@@ -99,11 +99,11 @@
                             <td>
                                 <div class="data-table__status data-table__status--@user.Assets[0].Status.ToString().ToLower()">@user.Assets[0].Status.ToString()</div>
                             </td>
-                            <td class="select--on">@user.Assets[0].Due.ToString("dd-MM-yy")</td>
+                            <td class="select--on">@(user.Assets[0].Due.HasValue ? user.Assets[0].Due.Value.ToString("dd-MM-yy") : "")</td>
                             <td>
                                 @foreach (var asset in user.Assets)
                                 {
-                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToString().ToLower()" title="SN: @asset.Id&#xA;Tag: @asset.Tag&#xA;Assigned: @asset.Assigned.ToString("dd-MM-yy")&#xA;Due: @asset.Due.ToString("dd-MM-yy")"></i>
+                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToString().ToLower()" title="SN: @asset.Id&#xA;Tag: @asset.Tag&#xA;Assigned: @asset.Assigned.ToString("dd-MM-yy")&#xA;Due: @(asset.Due.HasValue ? asset.Due.Value.ToString("dd-MM-yy") : "Indefinite")"></i>
                                 }
                             </td>
                             <td>

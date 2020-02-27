@@ -154,6 +154,20 @@
                     content: '\e82b';
                 }
             }
+
+            &.is-indefinite:checked ~ .user-assets__card {
+                border: 2px solid map-get($colour-map, --blue);
+                padding: 0.5625rem 0.8125rem;
+
+                &:before {
+                    border-top: 1.5625rem solid map-get($colour-map, --blue);
+                }
+
+                &:after {
+                    content: '\e818';
+                    font-size: 0.875rem;
+                }
+            }
         }
 
         &__card {
@@ -215,8 +229,8 @@
 
         &__values {
             color: darken(map-get($colour-map, --font), 10%);
-            //red, yellow, green
-            @for $i from 5 through 7 {
+            //red, yellow, green, blue
+            @for $i from 5 through 8 {
                 $c: nth($colour-map, $i);
 
                 &#{nth($c, 1)} {
@@ -354,6 +368,10 @@
             white-space: nowrap;
             cursor: pointer;
             border: 0 none;
+
+            &--dark {
+                background-color: map-get($colour-map, --border);
+            }
 
             &:hover {
                 background-color: map-get($colour-map, --blue);

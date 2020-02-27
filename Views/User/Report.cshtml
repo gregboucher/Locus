@@ -11,7 +11,7 @@
     </a>
     <a asp-controller="User" asp-action="Create" class="navigation__button">
         <i class="icon-user-plus navigation__button-icon"></i>
-        <div class="navigation__button-text">New Assignment</div>
+        <div class="navigation__button-text">New User</div>
     </a>
 }
 
@@ -28,8 +28,8 @@
                         switch (Model.Report.UserStatus)
                         {
                             case Status.Active:
-                                <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Report.UserId" class="report-header__button" title="Edit this User">Edit User</a>
-                                <input type="button" value="Print Assignments" class="report-header__button">
+                                <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Report.UserId" class="report-header__button report-header__button--dark" title="Edit this User">Edit User</a>
+                                <input type="button" value="Print Summary" class="report-header__button">
                                 break;
                             case Status.Inactive:
                                 <i class="icon-info report-header__icon report-header__icon--blue"></i>
@@ -84,6 +84,9 @@
                                     break;
                                 case AssignmentReportItem asset: //DO WE NEED THIS CASE???? TODO
                                     sharedHTML<AssignmentReportItem>("ok", "green", item as AssignmentReportItem);
+                                    break;
+                                case IndefiniteReportItem asset:
+                                    sharedHTML<IndefiniteReportItem>("plus-star", "blue", item as IndefiniteReportItem);
                                     break;
                                 case ExtensionReportItem asset:
                                     sharedHTML<ExtensionReportItem>("forward", "yellow", item as ExtensionReportItem);

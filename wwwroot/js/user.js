@@ -23,8 +23,8 @@ $(function() {
         return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
     });
 
-    $.validator.addMethod("checked", function(value, element) {
-        return $('.user-assets__input.is-assign:checked').length > 0;
+    $.validator.addMethod("checked", function() {
+        return $('.user-assets__input.is-assign:checked, .user-assets__input.is-indefinite:checked').length > 0;
     });
 
     $('#user').validate({

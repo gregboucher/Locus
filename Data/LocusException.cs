@@ -2,7 +2,7 @@
 
 namespace Locus.Data
 {
-    public class LocusException : Exception
+    public class LocusException : InvalidOperationException
     {
         public LocusException()
         {

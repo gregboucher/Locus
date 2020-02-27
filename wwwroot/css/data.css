@@ -32,12 +32,17 @@
             .data-table__status--active {
                 color: #23af47;
                 border: 1px solid #23af47; }
+            .data-table__status--indefinite {
+                color: #4b83ff;
+                border: 1px solid #4b83ff; }
         .data-table__icon {
             font-size: 1.2rem; }
             .data-table__icon--overdue {
                 color: #ff4747; }
             .data-table__icon--due {
                 color: #fbbc06; }
+            .data-table__icon--indefinite {
+                color: #4b83ff; }
         .data-table__action {
             display: flex;
             flex-wrap: nowrap;

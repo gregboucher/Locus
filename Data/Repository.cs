@@ -50,7 +50,7 @@ namespace Locus.Data
                                          INNER JOIN [dbo].[Icon] AS I
                                             ON M.IconId = I.Id
                        WHERE Asg.Returned IS NULL
-                       ORDER BY C.[Name], U.Id, Asg.Due;";
+                       ORDER BY C.[Name], U.Id, CASE WHEN Asg.Due IS NULL THEN 1 ELSE 0 END;";
 
                 var collectionsOfUsers = new List<CollectionOfGenerics<User>>();
                 var collectionDictionary = new Dictionary<int, int>();
@@ -61,7 +61,7 @@ namespace Locus.Data
                     db.Query<User, Asset, CollectionOfGenerics<User>, User>
                     (sql, (user, asset, collection) =>
                     {
-                        asset.Status = AssetStatus(asset.Due.Date);
+                        asset.Status = AssetStatus(asset.Due);
                         if (!collectionDictionary.TryGetValue(collection.Id, out int collectionIndex))
                         {
                             collectionIndex = collectionsOfUsers.Count();
@@ -121,10 +121,20 @@ namespace Locus.Data
         public int CountUsersCreatedToday()
         {
             string sql =
-                     @"SELECT COUNT(DISTINCT Asg.UserId)
-                        FROM [dbo].[Assignment] As Asg
-                       WHERE Asg.Returned IS NULL
-                         AND cast(GETDATE() as date) = cast(Asg.Assigned as date);";
+                     @"SELECT COUNT(DISTINCT UserId)
+                        FROM [dbo].[Assignment]
+                       WHERE Returned IS NULL
+                         AND cast(GETDATE() as date) = cast(Assigned as date);";
+            return GetScalar(sql);
+        }
+
+        public int CountIndefinite()
+        {
+            string sql =
+                     @"SELECT COUNT(*)
+                        FROM [dbo].[Assignment]
+                       WHERE Returned IS NULL
+                         AND Due IS NULL;";
             return GetScalar(sql);
         }
 
@@ -189,7 +199,7 @@ namespace Locus.Data
                         }
                         if (asset != null)
                         {
-                            asset.Status = AssetStatus(asset.Due.Date);
+                            asset.Status = AssetStatus(asset.Due);
                             model.Asset = asset;
                             ++collectionsOfModels[collectionIndex].TotalAssigned;
                         }
@@ -222,7 +232,7 @@ namespace Locus.Data
                     {
                         return result;
                     }
-                    throw new Exception();
+                    throw new InvalidOperationException();
                 }
                 catch (Exception ex)
                 {
@@ -313,7 +323,7 @@ namespace Locus.Data
                 }
                 var exception = new LocusException(
                     @"Unfortunately, we were unable to assign any assets to this user.
-                          The asset pool for the selected model(s) may have since been depleted.");
+                      The asset pool for the selected model(s) may have since been depleted.");
                 _logger.WriteLog(exception);
                 throw exception;
             }
@@ -435,15 +445,17 @@ namespace Locus.Data
                             switch (operation.Type)
                             {
                                 case OperationType.Return:
-                                    var returnItem = DbQuery<ReturnedReportItem>(sql, "Model", null, db, parameters);
+                                    var returnItem = DbQuery<ReturnedReportItem>(sql, null, db, parameters);
                                     CommitReportItemToSummary(returnItem, collectionDictionary, collectionsOfReportItems);
                                     break;
                                 case OperationType.Extension:
-                                    var extensionItem = DbQuery<ExtensionReportItem>(sql, "Model", null, db, parameters);
+                                    var extensionItem = DbQuery<ExtensionReportItem>(sql, null, db, parameters);
                                     AppendCustomeProperties(extensionItem, db);
                                     CommitReportItemToSummary(extensionItem, collectionDictionary, collectionsOfReportItems);
                                     userStatus = Status.Active;
                                     break;
+                                default:
+                                    throw new InvalidOperationException();
                             }
                         }
                         catch (Exception ex)
@@ -468,7 +480,7 @@ namespace Locus.Data
                             parameters.Add("@AssetId", operation.AssetId, DbType.String);
                             try
                             {
-                                var errorItem = DbQuery<ErrorReportItem>(sql, "Model", errorMessage, db, parameters);
+                                var errorItem = DbQuery<ErrorReportItem>(sql, errorMessage, db, parameters);
                                 CommitReportItemToSummary(errorItem, collectionDictionary, collectionsOfReportItems);
                             }
                             catch (Exception exception)
@@ -503,9 +515,13 @@ namespace Locus.Data
 
         private Boolean CreateNewAssignment(IDbConnection db, Dictionary<int, int> collectionDictionary, List<CollectionOfGenerics<ReportItem>> collectionsOfReportItems, AssignmentOperation operation, int userId)
         {
+            string dueDate = "DATEADD(DAY, M.[Period], GETDATE())";
+            if (operation.Type == OperationType.Indefinite)
+                dueDate = "null";
+
             string sql = @"INSERT INTO [dbo].[Assignment]
                             SELECT GETDATE(),
-	                               DATEADD(DAY, M.[Period], GETDATE()),
+	                               " + dueDate + @",
 	                               NULL,
 	                               @UserId,
 	                               (
@@ -550,10 +566,21 @@ namespace Locus.Data
             parameters.Add("@UserId", userId, DbType.Int32);
             try
             {
-                var assignmentItem = DbQuery<AssignmentReportItem>(sql, "Model", null, db, parameters);
-                AppendCustomeProperties(assignmentItem, db);
-                CommitReportItemToSummary(assignmentItem, collectionDictionary, collectionsOfReportItems);
-                return true;
+                switch (operation.Type)
+                {
+                    case OperationType.Assignment:
+                        var assignmentItem = DbQuery<AssignmentReportItem>(sql, null, db, parameters);
+                        AppendCustomeProperties(assignmentItem, db);
+                        CommitReportItemToSummary(assignmentItem, collectionDictionary, collectionsOfReportItems);
+                        return true;
+                    case OperationType.Indefinite:
+                        var indefiniteItem = DbQuery<IndefiniteReportItem>(sql, null, db, parameters);
+                        AppendCustomeProperties(indefiniteItem, db);
+                        CommitReportItemToSummary(indefiniteItem, collectionDictionary, collectionsOfReportItems);
+                        return true;
+                    default:
+                        throw new InvalidOperationException();
+                }
             }
             catch (Exception ex)
             {
@@ -575,7 +602,7 @@ namespace Locus.Data
                 parameters.Add("@CollectionId", operation.CollectionId, DbType.Int32);
                 try
                 {
-                    var errorItem = DbQuery<ErrorReportItem>(sql, "Model", "Unable to Assign asset", db, parameters);
+                    var errorItem = DbQuery<ErrorReportItem>(sql, "Unable to Assign asset", db, parameters);
                     CommitReportItemToSummary(errorItem, collectionDictionary, collectionsOfReportItems);
                     return false;
                 }
@@ -587,7 +614,7 @@ namespace Locus.Data
             }
         }
 
-        private PendingReportItem<T> DbQuery<T>(string sql, string splitString, string errorMessage, IDbConnection db, DynamicParameters parameters)
+        private PendingReportItem<T> DbQuery<T>(string sql, string errorMessage, IDbConnection db, DynamicParameters parameters)
             where T : ReportItem
         {
             var item = db.Query<Collection, T, PendingReportItem<T>>
@@ -601,7 +628,7 @@ namespace Locus.Data
                     ReportItem = reportItem
                 };
                 return newItem;
-            }, parameters, splitOn: splitString).Single();
+            }, parameters, splitOn: "Model").Single();
             return item;
         }
 
@@ -685,17 +712,21 @@ namespace Locus.Data
             }
         }
 
-        private Status AssetStatus(DateTime dueDate)
+        private Status AssetStatus(DateTime? dueDate)
         {
-            if (DateTime.Now.Date < dueDate)
+            if (dueDate.HasValue)
             {
-                return Status.Active;
+                if (DateTime.Now.Date < dueDate.Value.Date)
+                {
+                    return Status.Active;
+                }
+                else if (DateTime.Now.Date == dueDate.Value.Date)
+                {
+                    return Status.Due;
+                }
+                else return Status.Overdue;
             }
-            else if (DateTime.Now.Date == dueDate)
-            {
-                return Status.Due;
-            }
-            else return Status.Overdue;
+            return Status.Indefinite;
         }
 
         private int GetScalar(string sql)

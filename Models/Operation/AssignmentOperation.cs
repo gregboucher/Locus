@@ -8,5 +8,7 @@ namespace Locus.Models
         public int ModelId { get; set; }
         [Required]
         public int CollectionId { get; set; }
+        [Required]
+        public OperationType Type { get; set; }
     }
 }

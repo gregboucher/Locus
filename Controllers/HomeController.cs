@@ -28,6 +28,7 @@ namespace Locus.Controllers
                 CountDueToday = _repository.CountDueToday(),
                 CountOverdue = _repository.CountOverdue(),
                 CountCreatedToday = _repository.CountUsersCreatedToday(),
+                CountIndefinite = _repository.CountIndefinite(),
                 CollectionsOfUsers = _repository.GetUsersByCollection()
             };
             return View(viewModel);

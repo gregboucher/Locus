@@ -6,6 +6,7 @@
         Inactive,
         Due,
         Overdue,
+        Indefinite,
         Error
     }
 }

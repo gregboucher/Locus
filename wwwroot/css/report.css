@@ -30,6 +30,8 @@
             white-space: nowrap;
             cursor: pointer;
             border: 0 none; }
+            .report-header__button--dark {
+                background-color: #313452; }
             .report-header__button:hover {
                 background-color: #4d83ff; }
         .report-header__icon {
@@ -64,6 +66,8 @@
                 color: #fbbc06; }
             .report-item__status--green {
                 color: #23af47; }
+            .report-item__status--blue {
+                color: #4d83ff; }
         .report-item__model {
             flex-grow: 1;
             margin-left: 0.5rem;
