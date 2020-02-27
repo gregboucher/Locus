@@ -42,19 +42,23 @@ namespace Locus.Controllers
         public IActionResult Exception()
         {
             var exception = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-            var viewModel = new ErrorWarningViewModel
+            if (exception != null)
             {
-                Controller = "Error",
-                Page = "Exception",
-                Icon = "attention",
-                Message = exception.Error.Message
-            };
-            if (!(exception.Error is LocusException))
-            {
-                _logger.WriteLog(exception.Error);
-                viewModel.Message = "";
+                var viewModel = new ErrorWarningViewModel
+                {
+                    Controller = "Error",
+                    Page = "Exception",
+                    Icon = "attention",
+                    Message = exception.Error.Message
+                };
+                if (!(exception.Error is LocusException))
+                {
+                    _logger.WriteLog(exception.Error);
+                    viewModel.Message = "";
+                }
+                return View(viewModel);
             }
-            return View(viewModel);
+            return RedirectToAction("Warning", "Error", new { StatusCode = 404 });
         }
     }
 }

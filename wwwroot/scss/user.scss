@@ -366,7 +366,6 @@
             text-decoration: none;
             overflow: hidden;
             white-space: nowrap;
-            cursor: pointer;
             border: 0 none;
 
             &--dark {
@@ -375,6 +374,54 @@
 
             &:hover {
                 background-color: map-get($colour-map, --blue);
+            }
+
+            &:hover:not(#help) {
+                cursor: pointer;
+            }
+        }
+    }
+
+    &-help {
+        display: none;
+        position: absolute;
+        pointer-events: none;
+        background-color: map-get($colour-map, --foreground);
+        border: 1px solid map-get($colour-map, --border);
+        padding: 1rem;
+        max-width: 19rem;
+        white-space: normal;
+
+        &__group {
+            color: map-get($colour-map, --font);
+            font-size: 0.875rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__comment {
+            margin: 0.5rem 0;
+
+            & span {
+                color: desaturate(map-get($colour-map, --yellow), 40%);
+                font-variant: small-caps;
+            }
+        }
+
+        &__item {
+            font-variant: small-caps;
+            margin-left: 1rem;
+        }
+
+        &__icon {
+            margin-right: 0.25rem;
+            //red, yellow, green, blue
+            @for $i from 1 through 4 {
+                $c: nth($colour-map, $i);
+
+                &#{nth($c, 1)} {
+                    color: nth($c, 2);
+                }
             }
         }
     }

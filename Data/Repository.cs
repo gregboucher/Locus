@@ -425,7 +425,8 @@ namespace Locus.Data
                                                               M.Id AS ModelId,
                                                               I.[Name] AS Icon,
                                                               Ast.Tag,
-                                                              Asg.Due
+                                                              Asg.Due,
+                                                              Asg.Id AS AssignmentId
                                                          FROM [dbo].[Assignment] AS Asg
                                                               INNER JOIN [dbo].[Asset] AS Ast
                                                                  ON Ast.Id = Asg.AssetId
@@ -515,6 +516,7 @@ namespace Locus.Data
 
         private Boolean CreateNewAssignment(IDbConnection db, Dictionary<int, int> collectionDictionary, List<CollectionOfGenerics<ReportItem>> collectionsOfReportItems, AssignmentOperation operation, int userId)
         {
+            //assignments with Due IS NULL are treated as indefinite
             string dueDate = "DATEADD(DAY, M.[Period], GETDATE())";
             if (operation.Type == OperationType.Indefinite)
                 dueDate = "null";
@@ -550,7 +552,8 @@ namespace Locus.Data
                                    M.Id AS ModelId,
                                    I.[Name] AS Icon,
                                    Ast.Tag,
-                                   Asg.Due
+                                   Asg.Due,
+                                   Asg.Id AS AssignmentId
 							  FROM [dbo].[Assignment] AS Asg
 							       INNER JOIN [dbo].[Asset] AS Ast
 							          ON Ast.Id = Asg.AssetId
@@ -635,6 +638,7 @@ namespace Locus.Data
         private void AppendCustomeProperties<T>(PendingReportItem<T> item, IDbConnection db)
             where T : DetailedReportItem
         {
+            //fetch all the query strings that relate to this model
             var parameters = new DynamicParameters();
             parameters.Add("@ModelId", item.ReportItem.ModelId, DbType.Int32);
             
@@ -646,13 +650,58 @@ namespace Locus.Data
             var queries = db.Query<CustomProperty>(sql, parameters);
             if (queries.Any())
             {
+                //create dynamic parameters for all potential values that a query may need
+                parameters.Add("@AssignmentId", item.ReportItem.AssignmentId, DbType.Int32);
+
+                sql = @"SELECT Asg.Id AS AssignmentId,
+	                           Asg.Assigned AS AssignmentAssigned,
+	                           Asg.Due AS AssignmentDue,
+	                           Asg.Returned AS AssignmentReturned,
+	                           Ast.Id AS AssetId,
+	                           Ast.Tag AS AssetTag,
+	                           Ast.Deactivated AS AssetDeactivated,
+	                           C.Id AS CollectionId,
+	                           C.[Name] AS CollectionName,
+	                           C.[Description] AS CollectionDescription,
+	                           C.Deactivated AS CollectionDeactivated,
+	                           M.Id AS ModelId,
+	                           M.[Name] AS ModelName,
+	                           M.[Period] AS ModelPeriod,
+	                           M.Deactivated AS ModelDeactivated,
+	                           I.Id AS IconId,
+	                           I.[Name] AS IconName,
+	                           U.Id AS UserId,
+	                           U.[Name] AS UserName,
+	                           U.Created AS UserCreated,
+	                           U.Absentee AS UserAbsentee,
+	                           U.Phone AS UserPhone,
+	                           U.Email AS UserEmail,
+	                           U.Comment AS UserComment,
+	                           R.Id AS RoleId,
+	                           R.[Name] AS RoleName
+                          FROM [dbo].[Assignment] AS Asg
+                               INNER JOIN [dbo].[Asset] AS Ast
+                                  ON Ast.Id = Asg.AssetId
+                                     INNER JOIN [dbo].[Collection] AS C
+                                        ON C.Id = Ast.CollectionId
+                                     INNER JOIN [dbo].[Model] AS M
+                                        ON M.Id = Ast.ModelId
+                                           INNER JOIN [dbo].[Icon] as I
+                                              ON I.Id = M.IconId
+	                           INNER JOIN [dbo].[User] as U
+	                              ON U.Id = Asg.UserId
+		                             INNER JOIN [dbo].[Role] AS R
+		                                ON R.Id = U.RoleId
+                         WHERE Asg.Id = @AssignmentId;";
+
+                parameters = new DynamicParameters(db.Query(sql, parameters).Cast<IDictionary<string, object>>().ElementAt(0));
                 item.ReportItem.CustomProperties = new List<CustomProperty>();
                 foreach (var query in queries)
                 {
                     var property = new CustomProperty
                     {
                         Name = query.Name,
-                        Value = db.ExecuteScalar<string>(query.Value)
+                        Value = db.ExecuteScalar<string>(query.Value, parameters)
                     };
                     item.ReportItem.CustomProperties.Add(property);
                 }

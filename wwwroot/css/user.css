@@ -243,9 +243,42 @@
             text-decoration: none;
             overflow: hidden;
             white-space: nowrap;
-            cursor: pointer;
             border: 0 none; }
             .user-footer__button--dark {
                 background-color: #313452; }
             .user-footer__button:hover {
                 background-color: #4d83ff; }
+            .user-footer__button:hover:not(#help) {
+                cursor: pointer; }
+    .user-help {
+        display: none;
+        position: absolute;
+        pointer-events: none;
+        background-color: #27293d;
+        border: 1px solid #313452;
+        padding: 1rem;
+        max-width: 19rem;
+        white-space: normal; }
+        .user-help__group {
+            color: #868a95;
+            font-size: 0.875rem;
+            display: flex;
+            flex-direction: column; }
+        .user-help__comment {
+            margin: 0.5rem 0; }
+            .user-help__comment span {
+                color: #c8a339;
+                font-variant: small-caps; }
+        .user-help__item {
+            font-variant: small-caps;
+            margin-left: 1rem; }
+        .user-help__icon {
+            margin-right: 0.25rem; }
+            .user-help__icon--red {
+                color: #ff4747; }
+            .user-help__icon--yellow {
+                color: #fbbc06; }
+            .user-help__icon--green {
+                color: #23af47; }
+            .user-help__icon--blue {
+                color: #4d83ff; }

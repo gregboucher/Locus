@@ -80,11 +80,11 @@
                                     <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
-                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations.Index" value="@index" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled/>
-                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled/>
-                                            <input type="radio" class="user-assets__input is-assign" name="AssignmentOperations[@index].Type" value="0"/>
-                                            <input type="radio" class="user-assets__input is-indefinite" name="AssignmentOperations[@index].Type" value="1"/>
+                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations.Index" value="@index" disabled />
+                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
+                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
+                                            <input type="radio" class="user-assets__input is-assign" name="AssignmentOperations[@index].Type" value="0" />
+                                            <input type="radio" class="user-assets__input is-indefinite" name="AssignmentOperations[@index].Type" value="1" />
                                             ++index;
                                         }
                                         <div class="user-assets__card">
@@ -118,7 +118,20 @@
             <input type="submit" value="Create" id="submit" class="user-footer__button">
             <input type="button" value="Reset" id="reset" class="user-footer__button user-footer__button--dark">
             <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button user-footer__button--dark">Cancel</a>
+            <div class="user-footer__button user-footer__button--dark" id="help">?</div>
             <input type="hidden" id="checkboxAssigned" name="checkboxAssigned">
+        </div>
+        <div class="user-help">
+            <div class="user-help__group">
+                <div class="user-help__comment">Click multiple times on a <span>model card</span> to cycle through available operations.</div>
+                <div>Where no asset is assigned:</div>
+                <div class="user-help__item"><i class="icon-plus user-help__icon user-help__icon--green"></i>assign a new asset</div>
+                <div class="user-help__item"><i class="icon-star user-help__icon user-help__icon--blue"></i>assign a new asset indefinitely</div>
+                <div>For assets that are assigned:</div>
+                <div class="user-help__item"><i class="icon-cancel user-help__icon user-help__icon--red"></i>return this asset</div>
+                <div class="user-help__item"><i class="icon-forward user-help__icon user-help__icon--yellow"></i>extend the due date by one period</div>
+                <div class="user-help__comment">Creating a new assignment will select an asset <span>at random</span> from the available pool, based on the selected model and collection. The duration of the assignment will be equal to the <span>period</span> shown on the <span>model card</span>.</div>
+            </div>
         </div>
     </form>
 }
