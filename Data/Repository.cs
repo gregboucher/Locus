@@ -32,6 +32,7 @@ namespace Locus.Data
                              Ast.Id,
                              Ast.Tag,
                              I.[Name] AS Icon,
+                             M.[Name] AS Model,
                              Asg.Assigned,
                              Asg.Due,
                              C.Id,

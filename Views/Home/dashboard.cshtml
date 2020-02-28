@@ -27,7 +27,7 @@
 @section content {
     <div class="dashboard">
         <div class="overview">
-            <div class="overview__card" title="Show only users with assets that are due today">
+            <div class="overview__card" onmouseover="ShowTooltip($(this), 500, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountDueToday</div>
                     <div class="overview__card-subject">Asset@(Model.CountDueToday == 1 ? "" : "s")</div>
@@ -35,7 +35,12 @@
                 </div>
                 <i class="icon-calendar-check-o overview__card-icon"></i>
             </div>
-            <div class="overview__card" title="Show only users with assets that are overdue">
+            <h1 class="tooltip">
+                <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
+                    <div>Show only users with assets that are <span>due today</span></div>
+                </div>
+            </h1>
+            <div class="overview__card" onmouseover="ShowTooltip($(this), 500, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountOverdue</div>
                     <div class="overview__card-subject">Asset@(Model.CountOverdue == 1 ? "" : "s")</div>
@@ -43,15 +48,25 @@
                 </div>
                 <i class="icon-hourglass-3 overview__card-icon"></i>
             </div>
-            <div class="overview__card" title="Show only users with assets that were assigned today">
+            <h1 class="tooltip">
+                <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
+                    <div>Show only users with assets that are <span>overdue</span></div>
+                </div>
+            </h1>
+            <div class="overview__card" onmouseover="ShowTooltip($(this), 500, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountCreatedToday</div>
-                    <div class="overview__card-subject">User@(Model.CountCreatedToday== 1 ? "" : "s")</div>
+                    <div class="overview__card-subject">User@(Model.CountCreatedToday == 1 ? "" : "s")</div>
                     <div class="overview__card-verb">Created Today</div>
                 </div>
                 <i class="icon-users overview__card-icon"></i>
             </div>
-            <div class="overview__card" title="Show only users with long-term assignments">
+            <h1 class="tooltip">
+                <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
+                    <div>Show only users with assets that were assigned <span>today</span></div>
+                </div>
+            </h1>
+            <div class="overview__card" onmouseover="ShowTooltip($(this), 500, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountIndefinite</div>
                     <div class="overview__card-subject">Indefinite</div>
@@ -59,6 +74,11 @@
                 </div>
                 <i class="icon-star overview__card-icon"></i>
             </div>
+            <h1 class="tooltip">
+                <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
+                    <div>Show only users with <span>indefinite</span> assignments</div>
+                </div>
+            </h1>
         </div>
         <div class="dropdown__wrapper">
             <div id="dropdown" class="dropdown">No Filter</div>
@@ -103,7 +123,16 @@
                             <td>
                                 @foreach (var asset in user.Assets)
                                 {
-                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToString().ToLower()" title="SN: @asset.Id&#xA;Tag: @asset.Tag&#xA;Assigned: @asset.Assigned.ToString("dd-MM-yy")&#xA;Due: @(asset.Due.HasValue ? asset.Due.Value.ToString("dd-MM-yy") : "Indefinite")"></i>
+                                    <i class="icon-@asset.Icon data-table__icon data-table__icon--@asset.Status.ToString().ToLower()" onmouseover="ShowTooltip($(this), 500, false, 5, 5);" onmouseout="HideTooltip($(this));"></i>
+                                    <div class="tooltip">
+                                        <div class="tooltip__content tooltip__content--no-spacing">
+                                            <div><span>Model: </span>@asset.Model</div>
+                                            <div><span>Serial Number: </span>@asset.Id</div>
+                                            <div><span>Tag: </span>@asset.Tag</div>
+                                            <div><span>Assigned: </span>@asset.Assigned.ToString("dd-MM-yy h:mm tt")</div>
+                                            <div><span>Due: </span>@(asset.Due.HasValue ? asset.Due.Value.ToString("dd-MM-yy") : "Indefinite")</div>
+                                        </div>
+                                    </div>
                                 }
                             </td>
                             <td>
@@ -127,9 +156,7 @@
 }
 
 @section javascript {
-    <script src="~/js/jquery.js"></script>
     <script src="~/js/jquery.dataTables.js"></script>
-    <script src="~/js/accordion.js"></script>
     <script src="~/js/dropdown.js"></script>
     <script src="~/js/dashboard.js"></script>
 }

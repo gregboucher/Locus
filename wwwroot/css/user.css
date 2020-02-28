@@ -61,7 +61,11 @@
             overflow-y: auto;
             overflow-x: hidden;
             scrollbar-width: thin;
-            scrollbar-color: #27293d #1e1e2f; }
+            scrollbar-color: #27293d #1e1e2f;
+            border: 1px dashed #444872;
+            padding: 1.3125rem 1rem;
+            border-radius: 0.6rem;
+            background-color: #1d1d2d; }
             .user-assets__content:after {
                 content: "";
                 flex: 1 0 50%; }
@@ -250,35 +254,3 @@
                 background-color: #4d83ff; }
             .user-footer__button:hover:not(#help) {
                 cursor: pointer; }
-    .user-help {
-        display: none;
-        position: absolute;
-        pointer-events: none;
-        background-color: #27293d;
-        border: 1px solid #313452;
-        padding: 1rem;
-        max-width: 19rem;
-        white-space: normal; }
-        .user-help__group {
-            color: #868a95;
-            font-size: 0.875rem;
-            display: flex;
-            flex-direction: column; }
-        .user-help__comment {
-            margin: 0.5rem 0; }
-            .user-help__comment span {
-                color: #c8a339;
-                font-variant: small-caps; }
-        .user-help__item {
-            font-variant: small-caps;
-            margin-left: 1rem; }
-        .user-help__icon {
-            margin-right: 0.25rem; }
-            .user-help__icon--red {
-                color: #ff4747; }
-            .user-help__icon--yellow {
-                color: #fbbc06; }
-            .user-help__icon--green {
-                color: #23af47; }
-            .user-help__icon--blue {
-                color: #4d83ff; }

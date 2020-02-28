@@ -86,12 +86,15 @@
             flex: 1 0 0;
             font-size: 0.785rem;
             box-sizing: border-box;
-            //max-height: 69vh;
             overflow-y: auto;
             overflow-x: hidden;
             scrollbar-width: thin;
             scrollbar-color: map-get($colour-map, --foreground) map-get($colour-map, --background);
-
+            border: 1px dashed lighten(map-get($colour-map, --border), 10%);
+            padding: $content-spacing 1rem;
+            border-radius: 0.6rem;
+            background-color: darken(map-get($colour-map, --background), 0.5%);
+            
             &:after {
                 //pseudo element to limit grow to 50% for row of only one element.
                 content: "";
@@ -273,7 +276,6 @@
         flex: 1 0 0;
         padding: 1.5rem 2rem;
         font-size: 0.875rem;
-        //font-variant: small-caps;
         color: map-get($colour-map, --font);
         background-color: map-get($colour-map, --foreground);
         border: 1px solid map-get($colour-map, --border);
@@ -378,50 +380,6 @@
 
             &:hover:not(#help) {
                 cursor: pointer;
-            }
-        }
-    }
-
-    &-help {
-        display: none;
-        position: absolute;
-        pointer-events: none;
-        background-color: map-get($colour-map, --foreground);
-        border: 1px solid map-get($colour-map, --border);
-        padding: 1rem;
-        max-width: 19rem;
-        white-space: normal;
-
-        &__group {
-            color: map-get($colour-map, --font);
-            font-size: 0.875rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        &__comment {
-            margin: 0.5rem 0;
-
-            & span {
-                color: desaturate(map-get($colour-map, --yellow), 40%);
-                font-variant: small-caps;
-            }
-        }
-
-        &__item {
-            font-variant: small-caps;
-            margin-left: 1rem;
-        }
-
-        &__icon {
-            margin-right: 0.25rem;
-            //red, yellow, green, blue
-            @for $i from 1 through 4 {
-                $c: nth($colour-map, $i);
-
-                &#{nth($c, 1)} {
-                    color: nth($c, 2);
-                }
             }
         }
     }

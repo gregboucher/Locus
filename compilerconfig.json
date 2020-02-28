@@ -75,5 +75,12 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFile": "wwwroot/css/tooltip.css",
+    "inputFile": "wwwroot/scss/tooltip.scss",
+    "minify": {
+      "enabled": false
+    }
   }
 ]

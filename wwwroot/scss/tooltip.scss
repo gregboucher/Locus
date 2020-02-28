@@ -1,0 +1,46 @@
+﻿@import "_variables.scss";
+
+.tooltip {
+    display: none;
+    position: absolute;
+    pointer-events: none;
+    background-color: map-get($colour-map, --foreground);
+    border: 1px solid map-get($colour-map, --border);
+    padding: 1rem;
+    box-shadow: 0.5rem 0.5rem 0.5rem 1px rgba(0, 0, 0, .2);
+
+    &--caps {
+        font-variant: small-caps;
+    }
+
+    &__content {
+        color: map-get($colour-map, --font);
+        font-size: 0.875rem;
+        display: flex;
+        flex-direction: column;
+        &:not(&--no-spacing) > div:not(:first-child) {
+            margin-top: 0.5rem;
+        }
+
+        & span {
+            color: desaturate(map-get($colour-map, --yellow), 40%);
+            font-variant: small-caps;
+        }
+    }
+
+    &__block {
+        margin-left: 1rem;
+    }
+
+    &__icon {
+        margin-right: 0.25rem;
+        //red, yellow, green, blue
+        @for $i from 1 through 4 {
+            $c: nth($colour-map, $i);
+
+            &#{nth($c, 1)} {
+                color: nth($c, 2);
+            }
+        }
+    }
+}

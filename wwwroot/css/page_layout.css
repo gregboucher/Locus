@@ -10,7 +10,8 @@
     flex-grow: 1;
     align-content: stretch;
     white-space: nowrap;
-    text-align: left; }
+    text-align: left;
+    overflow-x: hidden; }
 
 #top-bar {
     position: fixed;

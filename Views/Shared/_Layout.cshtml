@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/navigation.css">
     <link rel="stylesheet" href="~/css/top_bar.css">
     <link rel="stylesheet" href="~/css/content_header.css">
+    <link rel="stylesheet" href="~/css/tooltip.css">
 
 </head>
 <body id="body" class="select--off">
@@ -65,6 +66,9 @@
         </div>
         @RenderSection("content", required: true)
     </section>
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/accordion.js"></script>
+    <script src="~/js/tooltip.js"></script>
     @RenderSection("javascript", required: false)
 </body>
 </html>

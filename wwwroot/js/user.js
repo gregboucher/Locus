@@ -162,13 +162,5 @@ $(function() {
         }
     });
 
-    //display help window
-    var helpIcon = $('#help');
-    helpIcon.hover(function () {
-        var helpWindow = $('.user-help');
-        helpWindow.css({ top: helpIcon.offset().top - 300, left: helpIcon.offset().left - 150 });
-        helpWindow.fadeToggle(100);
-    });
-
     $('.user-assets__content').css('visibility', 'visible');
 });

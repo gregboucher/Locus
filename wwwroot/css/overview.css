@@ -1,7 +1,10 @@
 ﻿.overview {
-    display: flex; }
-    .overview > div:not(:last-child) {
+    display: flex;
+    z-index: 2; }
+    .overview > div:not(:last-of-type) {
         margin-right: 1.3125rem; }
+    .overview *:not(.overview__card) {
+        pointer-events: none; }
     .overview__card {
         display: flex;
         flex: 1 0 0;

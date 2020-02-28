@@ -2,9 +2,14 @@
 
 .overview {
     display: flex;
+    z-index: 2;
 
-    > div:not(:last-child) {
+    > div:not(:last-of-type) {
         margin-right: $content-spacing;
+    }
+
+    & *:not(&__card) {
+        pointer-events: none;
     }
 
     &__card {

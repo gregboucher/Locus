@@ -28,12 +28,13 @@
             text-decoration: none;
             overflow: hidden;
             white-space: nowrap;
-            cursor: pointer;
             border: 0 none; }
             .report-header__button--dark {
                 background-color: #313452; }
             .report-header__button:hover {
                 background-color: #4d83ff; }
+            .report-header__button:hover:not(#help) {
+                cursor: pointer; }
         .report-header__icon {
             font-size: 1.5rem; }
             .report-header__icon--blue {
