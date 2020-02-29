@@ -2,7 +2,7 @@
 
 namespace Locus.Models
 {
-    public class CollectionOfGenerics<T> : Collection
+    public class ListTByCollection<T> : Collection
     {
         public IList<T> TList { get; set; }
     }

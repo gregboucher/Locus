@@ -3,8 +3,9 @@
     public enum OperationType
     {
         Assignment,
-        Indefinite,
+        Indefinite_Assignment,
         Return,
-        Extension
+        Extension,
+        None
     }
 }

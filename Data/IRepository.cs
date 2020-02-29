@@ -7,18 +7,19 @@ namespace Locus.Data
 {
     public interface IRepository
     {
-        IEnumerable<CollectionOfGenerics<User>> GetUsersByCollection();
+        IEnumerable<ListTByCollection<User>> GetUsersByCollection();
         int CountDueToday();
         int CountOverdue();
         int CountUsersCreatedToday();
         int CountIndefinite();
 
-        IEnumerable<CollectionOfModels<Model>> GetModelsByCollection(int? id);
+        IEnumerable<ListModelsByCollection<Model>> GetModelsByCollection(int? id);
         IEnumerable<Role> GetAllRoles();
         UserDetails GetUserDetails(int id);
 
         Report CreateNewUser(UserCreatePostModel model);
         Report EditExistingUser(UserEditPostModel model);
+        Report GenerateReport(List<IReportItem>, int userId);
 
         Status UserStatus(int userId, IDbConnection db);
     }

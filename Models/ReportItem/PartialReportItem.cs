@@ -1,6 +1,6 @@
 ﻿namespace Locus.Models
 {
-    public class PendingReportItem<T> where T : ReportItem
+    public class PartialReportItem<T> : IPartialReportItem<T> where T : IReportItem
     {
         public Collection Collection { get; set; }
         public T ReportItem { get; set; }

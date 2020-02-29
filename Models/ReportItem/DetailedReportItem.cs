@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Locus.Models
 {
-    public class DetailedReportItem : ReportItem
+    public class DetailedReportItem : SimpleReportItem
     {
         public int AssignmentId { get; set; }
         public int ModelId { get; set; }

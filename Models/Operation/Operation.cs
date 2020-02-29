@@ -2,9 +2,9 @@
 
 namespace Locus.Models
 {
-    public class EditOperation : Operation
+    public abstract class Operation
     {
         [Required]
-        public string AssetId { get; set; }
+        public OperationType Type { get; set; }
     }
 }
