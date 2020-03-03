@@ -9,6 +9,6 @@ namespace Locus.ViewModels
         public int CountOverdue { get; set; }
         public int CountCreatedToday { get; set; }
         public int CountIndefinite { get; set; }
-        public IEnumerable<CollectionOfGenerics<User>> CollectionsOfUsers { get; set; }
+        public IEnumerable<ListTByCollection<User>> CollectionsOfUsers { get; set; }
     }
 }

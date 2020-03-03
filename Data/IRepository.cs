@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Locus.ViewModels;
 using Locus.Models;
 using System.Data;
+using System;
 
 namespace Locus.Data
 {
@@ -17,9 +18,9 @@ namespace Locus.Data
         IEnumerable<Role> GetAllRoles();
         UserDetails GetUserDetails(int id);
 
-        Report CreateNewUser(UserCreatePostModel model);
-        Report EditExistingUser(UserEditPostModel model);
-        Report GenerateReport(List<IReportItem>, int userId);
+        Tuple<IList<IResult>, int> CreateNewUser(UserCreatePostModel model);
+        IList<IResult> EditExistingUser(UserEditPostModel model);
+        Report GenerateReport(IList<IResult> results, int userId);
 
         Status UserStatus(int userId, IDbConnection db);
     }

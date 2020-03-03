@@ -2,6 +2,8 @@
 using Locus.Models;
 using Locus.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 
 namespace Locus.Controllers
 {
@@ -9,9 +11,9 @@ namespace Locus.Controllers
     public class UserController : Controller
     {
         private readonly IRepository _repository;
-        private IComplexTransferObject<Report> _actionTransferObject;
+        private IComplexTransferObject<IList<IResult>> _actionTransferObject;
 
-        public UserController(IRepository repository, IComplexTransferObject<Report> actionTransferObject)
+        public UserController(IRepository repository, IComplexTransferObject<IList<IResult>> actionTransferObject)
         {
             _repository = repository;
             _actionTransferObject = actionTransferObject;
@@ -39,8 +41,9 @@ namespace Locus.Controllers
         {
             if (ModelState.IsValid)
             {
-                _actionTransferObject.Model = _repository.CreateNewUser(postModel);
-                return RedirectToAction("Report");
+                var tuple = _repository.CreateNewUser(postModel);
+                _actionTransferObject.Results = tuple.Item1;
+                return RedirectToAction("Report", new { userId = tuple.Item2});
             }
             return RedirectToAction();
         }
@@ -74,8 +77,8 @@ namespace Locus.Controllers
             {
                 if (postModel.AssignmentOperations != null || postModel.EditOperations != null)
                 {
-                    _actionTransferObject.Model = _repository.EditExistingUser(postModel);
-                    return RedirectToAction("Report");
+                    _actionTransferObject.Results = _repository.EditExistingUser(postModel);
+                    return RedirectToAction("Report", new { userId = postModel.UserId});
                 }
                 return RedirectToAction("Dashboard", "Home");
             }
@@ -83,17 +86,17 @@ namespace Locus.Controllers
         }
 
         [HttpGet]
-        [Route("[action]")]
-        public IActionResult Report()
+        [Route("[action]/{userId}")]
+        public IActionResult Report(int userId)
         {
-            if (_actionTransferObject.Model != null)
+            if (_actionTransferObject.Results != null)
             {
                 var viewModel = new UserReportViewModel
                 {
                     Controller = "User",
                     Page = "Report",
                     Icon = "doc-text-inv",
-                    Report = _actionTransferObject.Model
+                    Report = _repository.GenerateReport(_actionTransferObject.Results, userId)
                 };
                 return View(viewModel);
             }

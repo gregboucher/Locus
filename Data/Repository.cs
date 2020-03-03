@@ -268,9 +268,9 @@ namespace Locus.Data
             }
         }
 
-        public Report CreateNewUser(UserCreatePostModel postModel)
+        public Tuple<IList<IResult>, int> CreateNewUser(UserCreatePostModel postModel)
         {
-            var results = new List<Result>();
+            var results = new List<IResult>();
             int userId;
             using (var scope = new TransactionScope())
             {
@@ -285,8 +285,7 @@ namespace Locus.Data
                                            GETDATE(),
                                            @Comment,
                                            @RoleId)
-                                    SELECT @UserId = SCOPE_IDENTITY(),
-                                           @Created = Created
+                                    SELECT @UserId = SCOPE_IDENTITY()
 							          FROM [dbo].[User]
 								     WHERE Id = SCOPE_IDENTITY();";
 
@@ -303,7 +302,7 @@ namespace Locus.Data
                     userId = parameters.Get<int>("@UserId");
                     foreach (var operation in postModel.AssignmentOperations)
                     {
-                        CreateNewAssignment(db, results, operation, userId);
+                        results.Add(CreateNewAssignment(db, operation, userId));
                     }
                 }
                 if (results.Any())
@@ -319,11 +318,12 @@ namespace Locus.Data
                     throw exception;
                 }
             }
-            GenerateReport(results, userId);
+            return new Tuple<IList<IResult>, int>(results, userId);
         }
 
-        public Report EditExistingUser(UserEditPostModel postModel)
+        public IList<IResult> EditExistingUser(UserEditPostModel postModel)
         {
+            var results = new List<IResult>();
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
                 string sql = @"UPDATE [dbo].[User]
@@ -332,33 +332,26 @@ namespace Locus.Data
                                       Email = @Email,
 	                                  Phone =	@Phone,
 	                                  Comment = @Comment,
-                                      RoleId = @RoleId,
-                                      @Created = Created
+                                      RoleId = @RoleId
                                 WHERE Id = @UserId;";
 
                 var parameters = new DynamicParameters(postModel.UserDetails);
                 parameters.Add("@UserId", postModel.UserId, DbType.Int32);
-                parameters.Add("@Created", 0, DbType.DateTime, ParameterDirection.Output);
-                var created = new DateTime();
                 try
                 {
                     db.Execute(sql, parameters);
-                    created = parameters.Get<DateTime>("@Created");
                 }
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
                     throw new LocusException("We were unable to edit this User.");
                 }
-                var collectionsOfReportItems = new List<ListTByCollection<ReportItem>>();
-                var collectionDictionary = new Dictionary<int, int>();
-                var userStatus = Status.Inactive;
+
                 if (postModel.AssignmentOperations != null)
                 {
                     foreach (var operation in postModel.AssignmentOperations)
                     {
-                        if (CreateNewAssignment(db, collectionDictionary, collectionsOfReportItems, operation, postModel.UserId))
-                            userStatus = Status.Active;
+                        results.Add(CreateNewAssignment(db, operation, postModel.UserId));
                     }
                 }
                 if (postModel.EditOperations != null)
@@ -368,148 +361,62 @@ namespace Locus.Data
                     //If @AssignmentId is null, the appended select query will return no rows
                     //and an Assignment object will be created with null members.
                     //hence we bypass this by manually throwing an exception if @AssignmentId is null.
-                    string sqlReturn = @"UPDATE [dbo].[Assignment]
-                                            SET Returned = GETDATE(),
-                                                @AssignmentId = Id
-                                          WHERE AssetId = @AssetId
-                                            AND Returned IS NULL
-                                             IF (@AssignmentId IS NULL)
-                                          THROW 50001,
-                                                'AssignmentId is null',
-                                                1;";
-
-                    string sqlExtend = @"UPDATE Asg
-                                            SET Due = DATEADD(DAY, M.[Period], GETDATE()),
-                                                @AssignmentId = Asg.Id
-                                           FROM [dbo].[Assignment] AS Asg
-	                                            INNER JOIN [dbo].[Asset] AS Ast
-	                                               ON Ast.Id = Asg.AssetId
-	                                                  INNER JOIN [dbo].[Model] AS M
-		                                                 ON M.Id = Ast.ModelId
-                                          WHERE Asg.AssetId = @AssetId
-                                            AND Asg.Returned IS NULL
-                                             IF (@AssignmentId IS NULL)
-                                          THROW 50001,
-                                                'AssignmentId is null',
-                                                1;";
-
-                    //TODO @@ROWCOUNT = 0 THROW!!!!
-
-                    int count = postModel.EditOperations.Count;
-                    for (int i = 0; i < count; i++)
+                    foreach (var operation in postModel.EditOperations)
                     {
-                        var operation = postModel.EditOperations[i];
-                        string errorMessage = "";
-                        switch (operation.Type)
+                        switch(operation.Type)
                         {
                             case OperationType.Return:
-                                sql = sqlReturn;
-                                errorMessage = "Unable to return this Asset";
+                                sql = @"UPDATE [dbo].[Assignment]
+                                           SET Returned = GETDATE(),
+                                               @AssignmentId = Id
+                                         WHERE AssetId = @AssetId
+                                           AND Returned IS NULL
+                                            IF (@AssignmentId IS NULL)
+                                         THROW 50001,
+                                               'AssignmentId is null',
+                                               1;";
                                 break;
                             case OperationType.Extension:
-                                sql = sqlExtend;
-                                errorMessage = @"Unable to extend this Assignment";
+                                sql = @"UPDATE Asg
+                                           SET Due = DATEADD(DAY, M.[Period], GETDATE()),
+                                               @AssignmentId = Asg.Id
+                                          FROM [dbo].[Assignment] AS Asg
+	                                           INNER JOIN [dbo].[Asset] AS Ast
+	                                              ON Ast.Id = Asg.AssetId
+	                                                 INNER JOIN [dbo].[Model] AS M
+		                                                ON M.Id = Ast.ModelId
+                                         WHERE Asg.AssetId = @AssetId
+                                           AND Asg.Returned IS NULL
+                                            IF (@AssignmentId IS NULL)
+                                         THROW 50001,
+                                               'AssignmentId is null',
+                                               1;";
                                 break;
                         }
-
-                        sql += Environment.NewLine + @"SELECT C.Id,
-                                                              C.[Name],
-                                                              M.[Name] AS Model,
-                                                              M.Id AS ModelId,
-                                                              I.[Name] AS Icon,
-                                                              Ast.Tag,
-                                                              Asg.Due,
-                                                              Asg.Id AS AssignmentId
-                                                         FROM [dbo].[Assignment] AS Asg
-                                                              INNER JOIN [dbo].[Asset] AS Ast
-                                                                 ON Ast.Id = Asg.AssetId
-                                                                    INNER JOIN [dbo].[Collection] AS C
-                                                                       ON C.Id = Ast.CollectionId
-                                                                    INNER JOIN [dbo].[Model] AS M
-                                                                       ON M.Id = Ast.ModelId
-                                                                          INNER JOIN [dbo].[Icon] as I
-                                                                             ON I.Id = M.IconId
-                                                        WHERE Asg.Id = @AssignmentId;";
-
                         parameters = new DynamicParameters();
-                        parameters.Add("@AssetId", operation.AssetId, DbType.String);
+                        parameters.Add("@AssetId", operation.AssetId, DbType.Int32);
                         parameters.Add("@AssignmentId", -1, DbType.Int32, ParameterDirection.Output);
                         try
                         {
-                            switch (operation.Type)
-                            {
-                                case OperationType.Return:
-                                    var returnItem = DbQuery<ReturnedReportItem>(sql, null, db, parameters);
-                                    CommitReportItemToSummary(returnItem, collectionDictionary, collectionsOfReportItems);
-                                    break;
-                                case OperationType.Extension:
-                                    var extensionItem = DbQuery<ExtensionReportItem>(sql, null, db, parameters);
-                                    AppendCustomeProperties(extensionItem, db);
-                                    CommitReportItemToSummary(extensionItem, collectionDictionary, collectionsOfReportItems);
-                                    userStatus = Status.Active;
-                                    break;
-                                default:
-                                    throw new InvalidOperationException();
-                            }
+                            results.Add(DbQuery(operation, sql, db, parameters));
                         }
-                        catch (Exception ex)
+                        catch
                         {
-                            _logger.WriteLog(ex);
 
-                            sql = @"SELECT C.Id,
-	                                       C.[Name],
-                                           M.[Name] AS Model,
-                                           I.[Name] AS Icon,
-                                           Ast.Tag
-                                      FROM [dbo].[Asset] AS Ast
-	                                       INNER JOIN [dbo].[Collection] AS C
-	                                          ON C.Id = Ast.CollectionId
-                                           INNER JOIN [dbo].[Model] AS M
-                                              ON M.Id = Ast.ModelId
-		                                         INNER JOIN [dbo].[Icon] AS I
-		                                            ON I.Id = M.IconId
-                                     WHERE Ast.Id = @AssetId";
-
-                            parameters = new DynamicParameters();
-                            parameters.Add("@AssetId", operation.AssetId, DbType.String);
-                            try
-                            {
-                                var errorItem = DbQuery<ErrorReportItem>(sql, errorMessage, db, parameters);
-                                CommitReportItemToSummary(errorItem, collectionDictionary, collectionsOfReportItems);
-                            }
-                            catch (Exception exception)
-                            {
-                                _logger.WriteLog(exception);
-                                throw;
-                            }
-                        }
-                        //on last iteration, query db for count of user assignments,
-                        //if > 0, return Status.active
-                        if (i == count - 1 && userStatus != Status.Active)
-                        {
-                            userStatus = UserStatus(postModel.UserId, db);
                         }
                     }
-                }
-                var summary = new Report
-                {
-                    UserId = postModel.UserId,
-                    UserName = postModel.UserDetails.Name,
-                    UserCreated = created,
-                    UserStatus = userStatus,
-                    CollectionsOfReportItems = collectionsOfReportItems
-                };
-                return summary;
+                }              
             }
+            return results;
         }
 
         //++++++++++++++++++
         //--HELPER METHODS--
         //++++++++++++++++++
 
-        private void CreateNewAssignment(IDbConnection db, IList<Result> results, AssignmentOperation operation, int userId)
+        private IResult CreateNewAssignment(IDbConnection db, AssignmentOperation operation, int userId)
         {
-            //assignments with Due IS NULL are treated as indefinite
+            //assignments with Due field set to NULL are treated as indefinite assignments
             string dueDate = "DATEADD(DAY, M.[Period], GETDATE())";
             if (operation.Type == OperationType.Indefinite_Assignment)
                 dueDate = "null";
@@ -543,10 +450,10 @@ namespace Locus.Data
             var parameters = new DynamicParameters(operation);
             parameters.Add("@UserId", userId, DbType.Int32);
             parameters.Add("@AssignmentId", -1, DbType.Int32, ParameterDirection.Output);
-            results.Add(DbQuery(operation, sql, db, parameters));
+            return DbQuery(operation, sql, db, parameters);
         }
 
-        private Result DbQuery(Operation operation, string sql, IDbConnection db, DynamicParameters parameters)
+        private IResult DbQuery(Operation operation, string sql, IDbConnection db, DynamicParameters parameters)
         {
             try
             {
@@ -567,7 +474,7 @@ namespace Locus.Data
             }
         }
 
-        public Report GenerateReport(IList<Result> results, int userId)
+        public Report GenerateReport(IList<IResult> results, int userId)
         {
             var listOfPartials = new List<IPartialReportItem<IReportItem>>();
             using (IDbConnection db = _connectionFactory.GetConnection())
@@ -597,7 +504,7 @@ namespace Locus.Data
                     var parameters = new DynamicParameters(userId);
                     try
                     {
-                        listOfPartials.AddRange(CreatePartialReportItem<DetailedReportItem>(OperationType.None, sql, db, parameters));
+                        listOfPartials.AddRange(CreatePartialReportItem<DetailedReportItem>(null, sql, db, parameters));
                     }
                     catch
                     {
@@ -609,71 +516,10 @@ namespace Locus.Data
                     foreach (var result in results)
                     {
                         var parameters = new DynamicParameters(result);
-                        switch (result)
-                        {
-                            case PositiveResult r1:
-                                sql = @"SELECT C.Id,
-                                           C.[Name],
-                                           M.[Name] AS Model,
-                                           M.Id AS ModelId,
-                                           I.[Name] AS Icon,
-                                           Ast.Tag,
-                                           Asg.Due,
-                                           Asg.Id AS AssignmentId
-							          FROM [dbo].[Assignment] AS Asg
-							               INNER JOIN [dbo].[Asset] AS Ast
-							                   ON Ast.Id = Asg.AssetId
-                                                   INNER JOIN [dbo].[Collection] AS C
-					    			                  ON C.Id = Ast.CollectionId
-							                       INNER JOIN [dbo].[Model] AS M
-							                          ON M.Id = Ast.ModelId
-                                                         INNER JOIN [dbo].[Icon] as I
-                                                            ON I.Id = M.IconId
-							         WHERE Asg.Id = @AssignmentId;";
-                                break;
-                            case NegativeAssignmentResult r1:
-                                sql = @"SELECT C.Id,
-                                        C.[Name],
-                                        M.[Name] AS Model,
-                                        I.[Name] AS Icon
-                                    FROM [dbo].[Model] AS M
-                                        INNER JOIN [dbo].[Icon] AS I
-                                            ON I.Id = M.IconId
-                                        CROSS JOIN [dbo].[Collection] AS C
-                                    WHERE M.Id = @ModelId
-                                    AND C.Id = @CollectionId;";
-                                break;
-                            case NegativeEditResult r1:
-                                sql = @"SELECT C.Id,
-	                                       C.[Name],
-                                           M.[Name] AS Model,
-                                           I.[Name] AS Icon,
-                                           Ast.Tag
-                                      FROM [dbo].[Asset] AS Ast
-	                                       INNER JOIN [dbo].[Collection] AS C
-	                                          ON C.Id = Ast.CollectionId
-                                           INNER JOIN [dbo].[Model] AS M
-                                              ON M.Id = Ast.ModelId
-		                                         INNER JOIN [dbo].[Icon] AS I
-		                                            ON I.Id = M.IconId
-                                     WHERE Ast.Id = @AssetId";
-                                break;
-                        }
                         try
                         {
-                            if (!(result is PositiveResult))
-                            {
-                                var temper = CreatePartialReportItem<ErrorReportItem>(result.Type, sql, db, parameters);
-                                listOfPartials.AddRange(CreatePartialReportItem<ErrorReportItem>(result.Type, sql, db, parameters));
-                            }
-                            else if (result.Type == OperationType.Return)
-                            {
-                                listOfPartials.AddRange(CreatePartialReportItem<SimpleReportItem>(result.Type, sql, db, parameters));
-                            }
-                            else
-                            {
-                                listOfPartials.AddRange(CreatePartialReportItem<DetailedReportItem>(result.Type, sql, db, parameters));
-                            }
+                            var newtest = new DetailedReportItem();
+                            listOfPartials.AddRange(CreatePartialReportItem(result.ReportItemType, result.QueryString, db, parameters));
                         }
                         catch
                         {
@@ -681,33 +527,37 @@ namespace Locus.Data
                         }
                     }
                 }
-                //var listOfReportItems = new List<ListTByCollection<IReportItem>>();
-                //var collectionDictionary = new Dictionary<int, int>();
-
-
+                var listOfReportItems = new List<ListTByCollection<IReportItem>>();
+                var collectionDictionary = new Dictionary<int, int>();
                 foreach (var item in listOfPartials)
                 {
                     if (item.ReportItem is DetailedReportItem)
-                    {
-
-                    }
+                        AppendCustomeProperties(item as PartialReportItem<DetailedReportItem>, db);
+                    CommitItemToReport(item, collectionDictionary, listOfReportItems);
                 }
-                
 
+                sql = @"SELECT [Name] AS UserName,
+                               Created AS UserCreated
+                          FROM [dbo].[User]
+                         WHERE Id = @UserId;";
 
-
+                var report = db.QuerySingle<Report>(sql, new { userId });
+                report.UserStatus = UserStatus(userId, db);
+                report.CollectionsOfReportItems = listOfReportItems;
+                return report;
             }
         }
 
-        private IEnumerable<IPartialReportItem<T>> CreatePartialReportItem<T>(OperationType type, string sql, IDbConnection db, DynamicParameters parameters)
-            where T : SimpleReportItem
+        private IEnumerable<IPartialReportItem<T>> CreatePartialReportItem<T>(T emptyReportType , string sql, IDbConnection db, DynamicParameters parameters)
+            where T : IReportItem
         {
+            var tester = emptyReportType;
             var item = db.Query<Collection, T, IPartialReportItem<T>>
             (sql, (collection, reportItem) =>
             {
-                reportItem.Type = type;
-                if (typeof(T) == typeof(ErrorReportItem))
-                    (reportItem as ErrorReportItem).Message = "Error attempting to perform " + type.ToString().Replace(" ", "_");
+                //reportItem.Type = type;
+                //if (typeof(T) == typeof(ErrorReportItem))
+                    //(reportItem as ErrorReportItem).Message = "Error attempting to perform " + type.ToString().Replace(" ", "_");
                 var newItem = new PartialReportItem<T>
                 {
                     Collection = collection,
@@ -718,26 +568,20 @@ namespace Locus.Data
             return item;
         }
 
-        private void AppendCustomeProperties(List<PartialReportItem<DetailedReportItem>> listOfIntermediates, IDbConnection db)
+        private void AppendCustomeProperties(IPartialReportItem<DetailedReportItem> item, IDbConnection db)
         {
-            foreach (var item in listOfIntermediates)
-            {
-                //fetch all the query strings that relate to this model
-                var parameters = new DynamicParameters();
-                parameters.Add("@ModelId", item.ReportItem.ModelId, DbType.Int32);
-
-                string sql = @"SELECT [Name],
+            string sql = @"SELECT [Name],
                                   QueryString AS [Value]
                              FROM [dbo].[Query]
                             WHERE ModelId = @ModelId";
 
-                var queries = db.Query<CustomProperty>(sql, parameters);
-                if (queries.Any())
-                {
-                    //create dynamic parameters for all potential values that a query may need
-                    parameters.Add("@AssignmentId", item.ReportItem.AssignmentId, DbType.Int32);
-
-                    sql = @"SELECT Asg.Id AS AssignmentId,
+            //fetch all the query strings that relate to this model
+            var parameters = new DynamicParameters();
+            parameters.Add("@ModelId", item.ReportItem.ModelId, DbType.Int32);
+            var queries = db.Query<CustomProperty>(sql, parameters);
+            if (queries.Any())
+            {
+                sql = @"SELECT Asg.Id AS AssignmentId,
 	                           Asg.Assigned AS AssignmentAssigned,
 	                           Asg.Due AS AssignmentDue,
 	                           Asg.Returned AS AssignmentReturned,
@@ -778,34 +622,34 @@ namespace Locus.Data
 		                                ON R.Id = U.RoleId
                          WHERE Asg.Id = @AssignmentId;";
 
-                    parameters = new DynamicParameters(db.Query(sql, parameters).Cast<IDictionary<string, object>>().ElementAt(0));
-                    item.ReportItem.CustomProperties = new List<CustomProperty>();
-                    foreach (var query in queries)
+                //create dynamic parameters for all potential values that a query may need
+                parameters.Add("@AssignmentId", item.ReportItem.AssignmentId, DbType.Int32);
+                parameters = new DynamicParameters(db.Query(sql, parameters).Cast<IDictionary<string, object>>().ElementAt(0));
+                item.ReportItem.CustomProperties = new List<CustomProperty>();
+                foreach (var query in queries)
+                {
+                    var property = new CustomProperty
                     {
-                        var property = new CustomProperty
-                        {
-                            Name = query.Name,
-                            Value = db.ExecuteScalar<string>(query.Value, parameters)
-                        };
-                        item.ReportItem.CustomProperties.Add(property);
-                    }
+                        Name = query.Name,
+                        Value = db.ExecuteScalar<string>(query.Value, parameters)
+                    };
+                    item.ReportItem.CustomProperties.Add(property);
                 }
-            }
-            
+            }  
         }     
 
-        private void CommitReportElement<T>(PartialReportItem<T> item, Dictionary<int, int> collectionDictionary, List<ListTByCollection<ReportItem>> listOfReportItems)
+        private void CommitItemToReport<T>(IPartialReportItem<T> item, Dictionary<int, int> collectionDictionary, List<ListTByCollection<T>> listOfReportItems)
             where T : IReportItem
         {
             if (!collectionDictionary.TryGetValue(item.Collection.Id, out int collectionIndex))
             {
                 collectionIndex = listOfReportItems.Count();
                 collectionDictionary.Add(item.Collection.Id, collectionIndex);
-                var collection = new ListTByCollection<ReportItem>
+                var collection = new ListTByCollection<T>
                 {
                     Id = item.Collection.Id,
                     Name = item.Collection.Name,
-                    TList = new List<ReportItem>()
+                    TList = new List<T>()
                 };
                 listOfReportItems.Add(collection);
             }

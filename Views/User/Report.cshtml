@@ -57,53 +57,6 @@
                     }
                 </div>
             </div>
-            @{
-                foreach (var collection in Model.Report.CollectionsOfReportItems)
-                {
-                    <div class="report-collection">
-                        <div class="report-collection__title">@collection.Name</div>
-                        @foreach (var item in collection.TList)
-                        {
-                            switch (item)
-                            {
-                                case ReturnedReportItem returned:
-                                    returned = item as ReturnedReportItem;
-                                    <div class="report-item">
-                                        <i class="icon-cancel report-item__status report-item__status--red"></i>
-                                        <i class="icon-@returned.Icon report-item__model-icon"></i>
-                                        <div class="report-item__model">
-                                            <div class="report-item__model-name select--on">@returned.Model</div>
-                                            <div class="report-item__model-tag select--on">@returned.Tag</div>
-                                        </div>
-                                    </div>
-                                    break;
-                                case ErrorReportItem error:
-                                    error = item as ErrorReportItem;
-                                    <div class="report-item report-item--error">
-                                        <i class="icon-cancel report-item__status report-item__status--red"></i>
-                                        <i class="icon-@error.Icon report-item__model-icon"></i>
-                                        <div class="report-item__model">
-                                            <div class="report-item__model-name">@error.Model</div>
-                                            <div class="report-item__model-tag select--on">@error.Tag</div>
-                                        </div>
-                                        <div class="report-item__info--error">
-                                            @error.Message
-                                        </div>
-                                    </div>
-                                    break;
-                                case AssignmentReportItem asset: //DO WE NEED THIS CASE???? TODO
-                                    sharedHTML<AssignmentReportItem>("ok", "green", item as AssignmentReportItem);
-                                    break;
-                                case IndefiniteReportItem asset:
-                                    sharedHTML<IndefiniteReportItem>("star", "blue", item as IndefiniteReportItem);
-                                    break;
-                                case ExtensionReportItem asset:
-                                    sharedHTML<ExtensionReportItem>("forward", "yellow", item as ExtensionReportItem);
-                                    break;
-                            }
-                        }
-                    </div>
-                }
             }
         </div>
     </div>
