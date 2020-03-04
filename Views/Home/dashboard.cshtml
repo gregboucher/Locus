@@ -27,7 +27,7 @@
 @section content {
     <div class="dashboard">
         <div class="overview">
-            <div class="overview__card" onmouseover="ShowTooltip($(this), 500, false, 0, -10);" onmouseout="HideTooltip($(this));">
+            <div class="overview__card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountDueToday</div>
                     <div class="overview__card-subject">Asset@(Model.CountDueToday == 1 ? "" : "s")</div>
@@ -40,7 +40,7 @@
                     <div>Show only users with assets that are <span>due today</span></div>
                 </div>
             </h1>
-            <div class="overview__card" onmouseover="ShowTooltip($(this), 500, false, 0, -10);" onmouseout="HideTooltip($(this));">
+            <div class="overview__card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountOverdue</div>
                     <div class="overview__card-subject">Asset@(Model.CountOverdue == 1 ? "" : "s")</div>
@@ -53,7 +53,7 @@
                     <div>Show only users with assets that are <span>overdue</span></div>
                 </div>
             </h1>
-            <div class="overview__card" onmouseover="ShowTooltip($(this), 500, false, 0, -10);" onmouseout="HideTooltip($(this));">
+            <div class="overview__card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountCreatedToday</div>
                     <div class="overview__card-subject">User@(Model.CountCreatedToday == 1 ? "" : "s")</div>
@@ -66,7 +66,7 @@
                     <div>Show only users with assets that were assigned <span>today</span></div>
                 </div>
             </h1>
-            <div class="overview__card" onmouseover="ShowTooltip($(this), 500, false, 0, -10);" onmouseout="HideTooltip($(this));">
+            <div class="overview__card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="overview__card-text">
                     <div class="overview__card-quantity">@Model.CountIndefinite</div>
                     <div class="overview__card-subject">Indefinite</div>
@@ -150,9 +150,7 @@
 
 @section stylesheet {
     <link rel="stylesheet" href="~/css/dashboard.css">
-    <link rel="stylesheet" href="~/css/overview.css">
     <link rel="stylesheet" href="~/css/dropdown.css">
-    <link rel="stylesheet" href="~/css/data.css">
 }
 
 @section javascript {

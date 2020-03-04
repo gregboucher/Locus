@@ -7,27 +7,6 @@
     }
   },
   {
-    "outputFile": "wwwroot/css/top_bar.css",
-    "inputFile": "wwwroot/scss/top_bar.scss",
-    "minify": {
-      "enabled": false
-    }
-  },
-  {
-    "outputFile": "wwwroot/css/content_header.css",
-    "inputFile": "wwwroot/scss/content_header.scss",
-    "minify": {
-      "enabled": false
-    }
-  },
-  {
-    "outputFile": "wwwroot/css/navigation.css",
-    "inputFile": "wwwroot/scss/navigation.scss",
-    "minify": {
-      "enabled": false
-    }
-  },
-  {
     "outputFile": "wwwroot/css/dashboard.css",
     "inputFile": "wwwroot/scss/dashboard.scss",
     "minify": {
@@ -42,22 +21,8 @@
     }
   },
   {
-    "outputFile": "wwwroot/css/data.css",
-    "inputFile": "wwwroot/scss/data.scss",
-    "minify": {
-      "enabled": false
-    }
-  },
-  {
     "outputFile": "wwwroot/css/dropdown.css",
     "inputFile": "wwwroot/scss/dropdown.scss",
-    "minify": {
-      "enabled": false
-    }
-  },
-  {
-    "outputFile": "wwwroot/css/overview.css",
-    "inputFile": "wwwroot/scss/overview.scss",
     "minify": {
       "enabled": false
     }
@@ -72,13 +37,6 @@
   {
     "outputFile": "wwwroot/css/report.css",
     "inputFile": "wwwroot/scss/report.scss",
-    "minify": {
-      "enabled": false
-    }
-  },
-  {
-    "outputFile": "wwwroot/css/tooltip.css",
-    "inputFile": "wwwroot/scss/tooltip.scss",
     "minify": {
       "enabled": false
     }
