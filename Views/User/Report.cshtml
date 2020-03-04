@@ -24,13 +24,14 @@
                     <div class="report-header__date select--on">@Model.Report.UserCreated.ToString("dd-MM-yy h:mm tt")</div>
                 </div>
                 <div class="report-header__right">
-                    <div class="report-header__button report-header__button--dark" onmouseover="ShowTooltip($(this), 500, false, 10, 10);" onmouseout="HideTooltip($(this));">?</div>
+                    <div class="report-header__button report-header__button--dark help" onmouseover="ShowTooltip($(this), 500, false, 10, 10);" onmouseout="HideTooltip($(this));">?</div>
                     <div class="tooltip">
                         <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
                             <div><i class="icon-plus tooltip__icon tooltip__icon--green"></i>asset has been assigned for one period</div>
                             <div><i class="icon-star tooltip__icon tooltip__icon--blue"></i>asset has been assigned indefinitely</div>
                             <div><i class="icon-cancel tooltip__icon tooltip__icon--red"></i>asset has been returned</div>
                             <div><i class="icon-forward tooltip__icon tooltip__icon--yellow"></i>due date has been extended one period from today</div>
+                            <div><i class="icon-circle-empty tooltip__icon"></i>assigned, no action performed</div>
                         </div>
                     </div>
                     @{
@@ -38,7 +39,7 @@
                         {
                             case Status.Active:
                                 <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Report.UserId" class="report-header__button report-header__button--dark" title="Edit this User">Edit User</a>
-                                <input type="button" value="Print Summary" class="report-header__button">
+                                <input type="button" value="Print Report" class="report-header__button">
                                 break;
                             case Status.Inactive:
                                 <i class="icon-info report-header__icon report-header__icon--blue"></i>
@@ -57,17 +58,72 @@
                     }
                 </div>
             </div>
+            @{
+                foreach (var collection in Model.Report.ListOfCollectionsOfReportItems)
+                {
+                    <div class="report-collection">
+                        <div class="report-collection__title">@collection.Name</div>
+                        @foreach (var reportItem in collection.TList)
+                        {
+                            switch (reportItem)
+                            {
+                                case DetailedReportItem item:
+                                    item = reportItem as DetailedReportItem;
+                                    switch(item.Type)
+                                    {
+                                        case OperationType.Assignment:
+                                            sharedHTML("ok", "report-item__status--green", item);
+                                            break;
+                                        case OperationType.Indefinite_Assignment:
+                                            sharedHTML("star", "report-item__status--blue", item);
+                                            break;
+                                        case OperationType.Extension:
+                                            sharedHTML("forward", "report-item__status--yellow", item);
+                                            break;
+                                        case OperationType.None:
+                                            sharedHTML("circle-empty", "", item);
+                                            break;
+                                    }
+                                    break;
+                                case ErrorReportItem item:
+                                    item = reportItem as ErrorReportItem;
+                                    <div class="report-item report-item--error">
+                                        <i class="icon-cancel report-item__status report-item__status--red"></i>
+                                        <i class="icon-@item.Icon report-item__model-icon"></i>
+                                        <div class="report-item__model">
+                                            <div class="report-item__model-name">@item.Model</div>
+                                            <div class="report-item__model-tag select--on">@item.Tag</div>
+                                        </div>
+                                        <div class="report-item__info--error">
+                                            @item.Message
+                                        </div>
+                                    </div>
+                                    break;
+                                case SimpleReportItem item:
+                                    item = reportItem as SimpleReportItem;
+                                    <div class="report-item">
+                                        <i class="icon-cancel report-item__status report-item__status--red"></i>
+                                        <i class="icon-@item.Icon report-item__model-icon"></i>
+                                        <div class="report-item__model">
+                                            <div class="report-item__model-name select--on">@item.Model</div>
+                                            <div class="report-item__model-tag select--on">@item.Tag</div>
+                                        </div>
+                                    </div>
+                                    break;
+                            }
+                        }
+                    </div>
+                }
             }
         </div>
     </div>
 }
 
 @functions {
-    void sharedHTML<T>(string statusIcon, string colour, T item)
-        where T : DetailedReportItem, new()
+    void sharedHTML(string statusIcon, string colour, DetailedReportItem item)
     {
         <div class="report-item">
-            <i class="icon-@statusIcon report-item__status report-item__status--@colour"></i>
+            <i class="icon-@statusIcon report-item__status @colour"></i>
             <i class="icon-@item.Icon report-item__model-icon"></i>
             <div class="report-item__model">
                 <div class="report-item__model-name select--on">@item.Model</div>

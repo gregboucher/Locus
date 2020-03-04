@@ -3,7 +3,6 @@
     public class PositiveResult : Result
     {
         public int AssignmentId { get; set; }
-        public override IReportItem ReportItemType { get { return new DetailedReportItem(); }}
         private readonly static string _query =
             @"SELECT C.Id,
                      C.[Name],

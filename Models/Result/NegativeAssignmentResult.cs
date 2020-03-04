@@ -4,7 +4,6 @@
     {
         public int ModelId { get; set; }
         public int CollectionId { get; set; }
-        public override IReportItem ReportItemType { get { return new ErrorReportItem(); } }
         private readonly static string _query =
             @"SELECT C.Id,
                      C.[Name],

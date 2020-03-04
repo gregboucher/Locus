@@ -2,7 +2,6 @@
 using Locus.Models;
 using Locus.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 
 namespace Locus.Controllers
@@ -24,6 +23,7 @@ namespace Locus.Controllers
         [Route("[action]")]
         public ViewResult Create()
         {
+            _actionTransferObject.Results = null;
             var viewModel = new UserCreateViewModel
             {
                 Controller = "User",
@@ -39,6 +39,7 @@ namespace Locus.Controllers
         [Route("[action]")]
         public IActionResult Create(UserCreatePostModel postModel)
         {
+            _actionTransferObject.Results = null;
             if (ModelState.IsValid)
             {
                 var tuple = _repository.CreateNewUser(postModel);
@@ -52,6 +53,7 @@ namespace Locus.Controllers
         [Route("[action]/{userId}")]
         public IActionResult Edit(int userId)
         {
+            _actionTransferObject.Results = null;
             //ensure the user is active, else 404
             if (_repository.UserStatus(userId, null) == Status.Active)
             {
@@ -60,6 +62,7 @@ namespace Locus.Controllers
                     Controller = "User",
                     Page = "Edit",
                     Icon = "edit",
+                    UserId = userId,
                     UserDetails = _repository.GetUserDetails(userId),
                     Roles = _repository.GetAllRoles(),
                     CollectionsOfModels = _repository.GetModelsByCollection(userId)
@@ -73,6 +76,7 @@ namespace Locus.Controllers
         [Route("[action]/{userId}")]
         public IActionResult Edit(UserEditPostModel postModel)
         {
+            _actionTransferObject.Results = null;
             if (ModelState.IsValid)
             {
                 if (postModel.AssignmentOperations != null || postModel.EditOperations != null)
@@ -89,18 +93,14 @@ namespace Locus.Controllers
         [Route("[action]/{userId}")]
         public IActionResult Report(int userId)
         {
-            if (_actionTransferObject.Results != null)
+            var viewModel = new UserReportViewModel
             {
-                var viewModel = new UserReportViewModel
-                {
-                    Controller = "User",
-                    Page = "Report",
-                    Icon = "doc-text-inv",
-                    Report = _repository.GenerateReport(_actionTransferObject.Results, userId)
-                };
-                return View(viewModel);
-            }
-            return RedirectToAction("Warning", "Error", new { StatusCode = 404 });
+                Controller = "User",
+                Page = "Report",
+                Icon = "doc-text-inv",
+                Report = _repository.GenerateReport(_actionTransferObject.Results, userId)
+            };
+            return View(viewModel);
         }
     }
 }

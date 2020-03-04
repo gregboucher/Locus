@@ -378,7 +378,7 @@
                 background-color: map-get($colour-map, --blue);
             }
 
-            &:hover:not(#help) {
+            &:hover:not(.help) {
                 cursor: pointer;
             }
         }

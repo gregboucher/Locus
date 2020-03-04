@@ -3,7 +3,6 @@
     public class NegativeEditResult : Result
     {
         public string AssetId { get; set; }
-        public override IReportItem ReportItemType { get { return new ErrorReportItem(); } }
         private readonly static string _query =
             @"SELECT C.Id,
 	                 C.[Name],

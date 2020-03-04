@@ -24,7 +24,7 @@ namespace Locus.Data
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql =
+                string query =
                     @"SELECT U.Id,
                              U.[Name],
                              U.Created,
@@ -60,7 +60,7 @@ namespace Locus.Data
                 try
                 {
                     db.Query<User, Asset, ListTByCollection<User>, User>
-                    (sql, (user, asset, collection) =>
+                    (query, (user, asset, collection) =>
                     {
                         asset.Status = AssetStatus(asset.Due);
                         if (!collectionDictionary.TryGetValue(collection.Id, out int collectionIndex))
@@ -93,7 +93,7 @@ namespace Locus.Data
 
         public int CountDueToday()
         {
-            string sql =
+            string query =
                     @"SELECT COUNT(*)
                         FROM [dbo].[Assignment] AS Asg 
                              INNER JOIN [dbo].[Asset] AS Ast
@@ -102,12 +102,12 @@ namespace Locus.Data
 		                              ON Ast.ModelId = M.Id
                        WHERE Asg.Returned IS NULL 
                          AND cast(GETDATE() as date) = cast(Asg.Due as date);";
-            return GetScalar(sql);
+            return GetScalar(query);
         }
 
         public int CountOverdue()
         {
-            string sql =
+            string query =
                      @"SELECT COUNT(*)
                         FROM [dbo].[Assignment] AS Asg 
                              INNER JOIN [dbo].[Asset] AS Ast
@@ -116,34 +116,34 @@ namespace Locus.Data
 		                              ON Ast.ModelId = M.Id
                        WHERE Asg.Returned IS NULL
                          AND cast(GETDATE() as date) > cast(Asg.Due as date);";
-            return GetScalar(sql);
+            return GetScalar(query);
         }
 
         public int CountUsersCreatedToday()
         {
-            string sql =
+            string query =
                      @"SELECT COUNT(DISTINCT UserId)
                         FROM [dbo].[Assignment]
                        WHERE Returned IS NULL
                          AND cast(GETDATE() as date) = cast(Assigned as date);";
-            return GetScalar(sql);
+            return GetScalar(query);
         }
 
         public int CountIndefinite()
         {
-            string sql =
+            string query =
                      @"SELECT COUNT(*)
                         FROM [dbo].[Assignment]
                        WHERE Returned IS NULL
                          AND Due IS NULL;";
-            return GetScalar(sql);
+            return GetScalar(query);
         }
 
         public IEnumerable<ListModelsByCollection<Model>> GetModelsByCollection(int? id)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql =
+                string query =
                     @"SELECT Grouped.CollectionId AS Id,
 	                         C.[Name],
 	                         Grouped.ModelId AS Id,
@@ -189,7 +189,7 @@ namespace Locus.Data
                 try
                 {
                     db.Query<ListModelsByCollection<Model>, Model, Asset, Asset>
-                    (sql, (collection, model, asset) =>
+                    (query, (collection, model, asset) =>
                     {
                         if (!collectionDictionary.TryGetValue(collection.Id, out int collectionIndex))
                         {
@@ -222,13 +222,13 @@ namespace Locus.Data
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = @"SELECT R.Id,
+                string query = @"SELECT R.Id,
                                       R.Name
                                  FROM [dbo].[Role] AS R
                                 WHERE R.Deactivated IS NULL;";
                 try
                 {
-                    var result = db.Query<Role>(sql);
+                    var result = db.Query<Role>(query);
                     if (result.Any())
                     {
                         return result;
@@ -247,7 +247,7 @@ namespace Locus.Data
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = @"SELECT U.[Name],
+                string query = @"SELECT U.[Name],
                                       U.Email,
                                       U.Phone,
                                       U.RoleId,
@@ -258,7 +258,7 @@ namespace Locus.Data
 
                 try
                 {
-                    return db.QuerySingle<UserDetails>(sql, new { userId = id });
+                    return db.QuerySingle<UserDetails>(query, new { userId = id });
                 }
                 catch (Exception ex)
                 {
@@ -277,7 +277,7 @@ namespace Locus.Data
                 var parameters = new DynamicParameters(postModel.UserDetails);
                 using (var db = _connectionFactory.GetConnection())
                 {
-                    string sql = @"INSERT INTO [dbo].[User]
+                    string query = @"INSERT INTO [dbo].[User]
                                    VALUES (@Name,
                                            @Absentee,
                                            @Email,
@@ -292,7 +292,7 @@ namespace Locus.Data
                     parameters.Add("@UserId", 0, DbType.Int32, ParameterDirection.Output);
                     try
                     {
-                        db.Execute(sql, parameters);
+                        db.Execute(query, parameters);
                     }
                     catch (Exception ex)
                     {
@@ -305,7 +305,7 @@ namespace Locus.Data
                         results.Add(CreateNewAssignment(db, operation, userId));
                     }
                 }
-                if (results.Any())
+                if (results.OfType<PositiveResult>().Any())
                 {
                     scope.Complete();
                 }
@@ -326,7 +326,7 @@ namespace Locus.Data
             var results = new List<IResult>();
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = @"UPDATE [dbo].[User]
+                string query = @"UPDATE [dbo].[User]
                                   SET [Name] = @Name,
                                       Absentee = @Absentee,
                                       Email = @Email,
@@ -339,7 +339,7 @@ namespace Locus.Data
                 parameters.Add("@UserId", postModel.UserId, DbType.Int32);
                 try
                 {
-                    db.Execute(sql, parameters);
+                    db.Execute(query, parameters);
                 }
                 catch (Exception ex)
                 {
@@ -366,7 +366,7 @@ namespace Locus.Data
                         switch(operation.Type)
                         {
                             case OperationType.Return:
-                                sql = @"UPDATE [dbo].[Assignment]
+                                query = @"UPDATE [dbo].[Assignment]
                                            SET Returned = GETDATE(),
                                                @AssignmentId = Id
                                          WHERE AssetId = @AssetId
@@ -377,7 +377,7 @@ namespace Locus.Data
                                                1;";
                                 break;
                             case OperationType.Extension:
-                                sql = @"UPDATE Asg
+                                query = @"UPDATE Asg
                                            SET Due = DATEADD(DAY, M.[Period], GETDATE()),
                                                @AssignmentId = Asg.Id
                                           FROM [dbo].[Assignment] AS Asg
@@ -394,16 +394,9 @@ namespace Locus.Data
                                 break;
                         }
                         parameters = new DynamicParameters();
-                        parameters.Add("@AssetId", operation.AssetId, DbType.Int32);
+                        parameters.Add("@AssetId", operation.AssetId, DbType.String);
                         parameters.Add("@AssignmentId", -1, DbType.Int32, ParameterDirection.Output);
-                        try
-                        {
-                            results.Add(DbQuery(operation, sql, db, parameters));
-                        }
-                        catch
-                        {
-
-                        }
+                        results.Add(DbQuery(operation, query, db, parameters));
                     }
                 }              
             }
@@ -421,7 +414,7 @@ namespace Locus.Data
             if (operation.Type == OperationType.Indefinite_Assignment)
                 dueDate = "null";
 
-            string sql = @"INSERT INTO [dbo].[Assignment]
+            string query = @"INSERT INTO [dbo].[Assignment]
                             SELECT GETDATE(),
 	                               " + dueDate + @",
 	                               NULL,
@@ -450,14 +443,14 @@ namespace Locus.Data
             var parameters = new DynamicParameters(operation);
             parameters.Add("@UserId", userId, DbType.Int32);
             parameters.Add("@AssignmentId", -1, DbType.Int32, ParameterDirection.Output);
-            return DbQuery(operation, sql, db, parameters);
+            return DbQuery(operation, query, db, parameters);
         }
 
-        private IResult DbQuery(Operation operation, string sql, IDbConnection db, DynamicParameters parameters)
+        private IResult DbQuery(Operation operation, string query, IDbConnection db, DynamicParameters parameters)
         {
             try
             {
-                db.Execute(sql, parameters);
+                db.Execute(query, parameters);
                 return new PositiveResult(parameters.Get<int>("@AssignmentId"), operation);
             }
             catch
@@ -479,16 +472,20 @@ namespace Locus.Data
             var listOfPartials = new List<IPartialReportItem<IReportItem>>();
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
-                string sql = "";
-                if (results == null)
+                try
                 {
-                    sql = @"SELECT C.Id,
+                    string query = "";
+                    if (results == null)
+                    {
+                        //report requested without prior operation[s] (edit/create etc)
+                        query = @"SELECT C.Id,
 	                               C.[Name],
 	                               M.[Name] AS Model,
 	                               I.[Name] AS Icon,
 	                               Ast.Tag,
-	                               Asg.Due,
-	                               Asg.Id AS AssignmentId
+                                   Asg.Id AS AssignmentId,
+                                   M.Id AS ModelId,
+	                               Asg.Due
                               FROM [dbo].[Assignment] AS Asg
 	                               INNER JOIN [dbo].[Asset] AS Ast
 		                              ON Ast.Id = Asg.AssetId
@@ -501,63 +498,69 @@ namespace Locus.Data
                              WHERE Asg.UserId = @UserId
                                AND Asg.Returned IS NULL";
 
-                    var parameters = new DynamicParameters(userId);
-                    try
-                    {
-                        listOfPartials.AddRange(CreatePartialReportItem<DetailedReportItem>(null, sql, db, parameters));
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@UserId", userId, DbType.Int32);
+                        listOfPartials.AddRange(CreatePartialReportItem<DetailedReportItem>(OperationType.None, query, db, parameters));
                     }
-                    catch
+                    else
                     {
-
-                    }
-                } 
-                else
-                {
-                    foreach (var result in results)
-                    {
-                        var parameters = new DynamicParameters(result);
-                        try
+                        foreach (var result in results)
                         {
-                            var newtest = new DetailedReportItem();
-                            listOfPartials.AddRange(CreatePartialReportItem(result.ReportItemType, result.QueryString, db, parameters));
-                        }
-                        catch
-                        {
-
+                            var parameters = new DynamicParameters(result);
+                            if (result is PositiveResult)
+                            {
+                                if (result.Type != OperationType.Return)
+                                {
+                                    listOfPartials.AddRange(CreatePartialReportItem<DetailedReportItem>(result.Type, result.QueryString, db, parameters));
+                                }
+                                else
+                                {
+                                    listOfPartials.AddRange(CreatePartialReportItem<SimpleReportItem>(result.Type, result.QueryString, db, parameters));
+                                }
+                            }
+                            else
+                            {
+                                listOfPartials.AddRange(CreatePartialReportItem<ErrorReportItem>(result.Type, result.QueryString, db, parameters));
+                            }
                         }
                     }
-                }
-                var listOfReportItems = new List<ListTByCollection<IReportItem>>();
-                var collectionDictionary = new Dictionary<int, int>();
-                foreach (var item in listOfPartials)
-                {
-                    if (item.ReportItem is DetailedReportItem)
-                        AppendCustomeProperties(item as PartialReportItem<DetailedReportItem>, db);
-                    CommitItemToReport(item, collectionDictionary, listOfReportItems);
-                }
+                    var listOfCollectionsOfReportItems = new List<ListTByCollection<IReportItem>>();
+                    var collectionDictionary = new Dictionary<int, int>();
+                    foreach (var item in listOfPartials)
+                    {
+                        if (item.ReportItem is DetailedReportItem)
+                            AppendCustomeProperties(item as PartialReportItem<DetailedReportItem>, db);
+                        CommitItemToReport(item, collectionDictionary, listOfCollectionsOfReportItems);
+                    }
 
-                sql = @"SELECT [Name] AS UserName,
+                    query = @"SELECT [Name] AS UserName,
                                Created AS UserCreated
                           FROM [dbo].[User]
                          WHERE Id = @UserId;";
 
-                var report = db.QuerySingle<Report>(sql, new { userId });
-                report.UserStatus = UserStatus(userId, db);
-                report.CollectionsOfReportItems = listOfReportItems;
-                return report;
+                    var report = db.QuerySingle<Report>(query, new { userId });
+                    report.UserId = userId;
+                    report.UserStatus = UserStatus(userId, db);
+                    report.ListOfCollectionsOfReportItems = listOfCollectionsOfReportItems;
+                    return report;
+                }
+                catch (Exception ex)
+                {
+                    _logger.WriteLog(ex);
+                    throw;
+                }
             }
         }
 
-        private IEnumerable<IPartialReportItem<T>> CreatePartialReportItem<T>(T emptyReportType , string sql, IDbConnection db, DynamicParameters parameters)
-            where T : IReportItem
+        private IEnumerable<IPartialReportItem<T>> CreatePartialReportItem<T>(OperationType type, string query, IDbConnection db, DynamicParameters parameters)
+            where T : SimpleReportItem
         {
-            var tester = emptyReportType;
             var item = db.Query<Collection, T, IPartialReportItem<T>>
-            (sql, (collection, reportItem) =>
+            (query, (collection, reportItem) =>
             {
-                //reportItem.Type = type;
-                //if (typeof(T) == typeof(ErrorReportItem))
-                    //(reportItem as ErrorReportItem).Message = "Error attempting to perform " + type.ToString().Replace(" ", "_");
+                reportItem.Type = type;
+                if (typeof(T) == typeof(ErrorReportItem))
+                    (reportItem as ErrorReportItem).Message = "Error attempting to perform " + type.ToString().Replace(" ", "_");
                 var newItem = new PartialReportItem<T>
                 {
                     Collection = collection,
@@ -570,7 +573,7 @@ namespace Locus.Data
 
         private void AppendCustomeProperties(IPartialReportItem<DetailedReportItem> item, IDbConnection db)
         {
-            string sql = @"SELECT [Name],
+            string query = @"SELECT [Name],
                                   QueryString AS [Value]
                              FROM [dbo].[Query]
                             WHERE ModelId = @ModelId";
@@ -578,10 +581,10 @@ namespace Locus.Data
             //fetch all the query strings that relate to this model
             var parameters = new DynamicParameters();
             parameters.Add("@ModelId", item.ReportItem.ModelId, DbType.Int32);
-            var queries = db.Query<CustomProperty>(sql, parameters);
+            var queries = db.Query<CustomProperty>(query, parameters);
             if (queries.Any())
             {
-                sql = @"SELECT Asg.Id AS AssignmentId,
+                query = @"SELECT Asg.Id AS AssignmentId,
 	                           Asg.Assigned AS AssignmentAssigned,
 	                           Asg.Due AS AssignmentDue,
 	                           Asg.Returned AS AssignmentReturned,
@@ -624,26 +627,26 @@ namespace Locus.Data
 
                 //create dynamic parameters for all potential values that a query may need
                 parameters.Add("@AssignmentId", item.ReportItem.AssignmentId, DbType.Int32);
-                parameters = new DynamicParameters(db.Query(sql, parameters).Cast<IDictionary<string, object>>().ElementAt(0));
+                parameters = new DynamicParameters(db.Query(query, parameters).Cast<IDictionary<string, object>>().ElementAt(0));
                 item.ReportItem.CustomProperties = new List<CustomProperty>();
-                foreach (var query in queries)
+                foreach (var sqlQuery in queries)
                 {
                     var property = new CustomProperty
                     {
-                        Name = query.Name,
-                        Value = db.ExecuteScalar<string>(query.Value, parameters)
+                        Name = sqlQuery.Name,
+                        Value = db.ExecuteScalar<string>(sqlQuery.Value, parameters)
                     };
                     item.ReportItem.CustomProperties.Add(property);
                 }
             }  
         }     
 
-        private void CommitItemToReport<T>(IPartialReportItem<T> item, Dictionary<int, int> collectionDictionary, List<ListTByCollection<T>> listOfReportItems)
+        private void CommitItemToReport<T>(IPartialReportItem<T> item, Dictionary<int, int> collectionDictionary, List<ListTByCollection<T>> listOfCollectionsOfReportItems)
             where T : IReportItem
         {
             if (!collectionDictionary.TryGetValue(item.Collection.Id, out int collectionIndex))
             {
-                collectionIndex = listOfReportItems.Count();
+                collectionIndex = listOfCollectionsOfReportItems.Count();
                 collectionDictionary.Add(item.Collection.Id, collectionIndex);
                 var collection = new ListTByCollection<T>
                 {
@@ -651,9 +654,9 @@ namespace Locus.Data
                     Name = item.Collection.Name,
                     TList = new List<T>()
                 };
-                listOfReportItems.Add(collection);
+                listOfCollectionsOfReportItems.Add(collection);
             }
-            listOfReportItems[collectionIndex].TList.Add(item.ReportItem);
+            listOfCollectionsOfReportItems[collectionIndex].TList.Add(item.ReportItem);
         }
 
         public Status UserStatus(int userId, IDbConnection db)
@@ -663,7 +666,7 @@ namespace Locus.Data
 
             using (db)
             {
-                string sql = @"SELECT COUNT(*)
+                string query = @"SELECT COUNT(*)
 					         FROM [dbo].[Assignment]
 						    WHERE UserId = @UserId
 						      AND Returned IS NULL;";
@@ -672,7 +675,7 @@ namespace Locus.Data
                 parameters.Add("@UserId", userId, DbType.Int32);
                 try
                 {
-                    int assetCount = db.ExecuteScalar<int>(sql, parameters);
+                    int assetCount = db.ExecuteScalar<int>(query, parameters);
                     if (assetCount > 0)
                     {
                         return Status.Active;
@@ -708,13 +711,13 @@ namespace Locus.Data
             return Status.Indefinite;
         }
 
-        private int GetScalar(string sql)
+        private int GetScalar(string query)
         {
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
                 try
                 {
-                    return db.ExecuteScalar<int>(sql);
+                    return db.ExecuteScalar<int>(query);
                 }
                 catch (Exception ex)
                 {

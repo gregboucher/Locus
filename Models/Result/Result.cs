@@ -4,6 +4,5 @@
     {
         public OperationType Type { get; set; }
         public abstract string QueryString { get; }
-        public abstract IReportItem ReportItemType { get; }
     }
 }

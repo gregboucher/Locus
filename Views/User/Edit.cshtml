@@ -164,9 +164,10 @@
         </div>
         <div class="user-footer">
             <input type="submit" value="Save" id="submit" class="user-footer__button">
+            <a asp-controller="User" asp-action="Report" asp-route-userId="@Model.UserId" class="user-footer__button user-footer__button--dark">Generate User Report</a>
             <input type="button" value="Reset Selection" data-page="edit" id="reset" class="user-footer__button user-footer__button--dark">
             <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button user-footer__button--dark">Cancel</a>
-            <div class="user-footer__button user-footer__button--dark" onmouseover="ShowTooltip($(this), 500, true, 0, -170);" onmouseout="HideTooltip($(this));">?</div>
+            <div class="user-footer__button user-footer__button--dark help" onmouseover="ShowTooltip($(this), 500, true, 0, -170);" onmouseout="HideTooltip($(this));">?</div>
             <div class="tooltip">
                 <div class="tooltip__content">
                     <div>

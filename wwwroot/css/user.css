@@ -252,5 +252,5 @@
                 background-color: #313452; }
             .user-footer__button:hover {
                 background-color: #4d83ff; }
-            .user-footer__button:hover:not(#help) {
+            .user-footer__button:hover:not(.help) {
                 cursor: pointer; }
