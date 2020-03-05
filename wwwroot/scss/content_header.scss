@@ -1,7 +1,8 @@
 ﻿@import "_variables.scss";
 
-.content {
-    &-header {
+#content {
+
+    & .header {
         display: flex;
         justify-content: space-between;
         margin-bottom: $content-spacing;
@@ -39,3 +40,4 @@
         }
     }
 }
+

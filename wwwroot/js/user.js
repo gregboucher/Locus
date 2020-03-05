@@ -1,14 +1,14 @@
-$(function() {
+$(function () {
     $.validator.setDefaults({
         ignore: '',
-        errorClass: 'user__error-text',
+        errorClass: 'form__validation',
         highlight: function(element) {
             $(element)
-                .addClass('user-details__input--error');
+                .addClass('form__input--error');
         },
         unhighlight: function(element) {
             $(element)
-                .removeClass('user-details__input--error');
+                .removeClass('form__input--error');
         },
         errorPlacement: function(error, element) {
             if (element.is('select')) {
@@ -24,7 +24,7 @@ $(function() {
     });
 
     $.validator.addMethod("checked", function() {
-        return $('.user-assets__input.is-assign:checked, .user-assets__input.is-indefinite:checked').length > 0;
+        return $('.user .card__input.is-assign:checked, .user .card__input.is-indefinite:checked').length > 0;
     });
 
     $('#user').validate({
@@ -80,7 +80,7 @@ $(function() {
         }
     });
 
-    var searchInput = $('#top-bar__input');
+    var searchInput = $('#top-bar__field');
     searchInput.val('');
 
     //top-bar input search
@@ -88,15 +88,15 @@ $(function() {
         searchAssets(searchInput.val());
     })
 
-    var cards = $('.user-assets__card-wrapper:not(.is-blank)');
-    var checkboxReturnAll = $("#user-assets__header-check");
+    var cards = $('.user .card__wrapper:not(.is-blank)');
+    var checkboxReturnAll = $('.user #assets__header-check');
 
     cards.click(function() {
         var $this = $(this);
-        var checkedInput = $this.find('.user-assets__input:checked');
-        var hiddenInputs = $this.find('.user-assets__hidden');
+        var checkedInput = $this.find('.card__input:checked');
+        var hiddenInputs = $this.find('.card__hidden');
         if (checkedInput.length != 0) {
-            var nextInput = checkedInput.next('.user-assets__input');
+            var nextInput = checkedInput.next('.card__input');
             if (nextInput.length != 0) {
                 nextInput.prop('checked', true);
                 checkboxReturnAll.prop('checked', false);
@@ -105,7 +105,7 @@ $(function() {
                 hiddenInputs.prop('disabled', true);
             }
         } else {
-            $this.find('.user-assets__input:first').prop('checked', true);
+            $this.find('.card__input:first').prop('checked', true);
             hiddenInputs.prop('disabled', false);
         }
     });
@@ -114,9 +114,9 @@ $(function() {
     // if edit just remove selections
     $('#reset').click(function () {
         if ($(this).data('page') == null)
-            $('.user-details__input').val("");
-        cards.find('.user-assets__input').prop('checked', false);
-        cards.find('.user-assets__hidden').prop('disabled', true);
+            $('.user .form__input').val("");
+        cards.find('.card__input').prop('checked', false);
+        cards.find('.card__hidden').prop('disabled', true);
         checkboxReturnAll.prop('checked', false);
     });
 
@@ -148,19 +148,19 @@ $(function() {
     initDropdown(searchAssets);
 
     //set default dropdown selection
-    searchAssets($('.dropdown__option.is-active').data('search'));
+    searchAssets($('.user .dropdown__option.is-active').data('search'));
 
     //return all checkbox
     checkboxReturnAll.click(function(){
         var assigned = cards.filter('.is-assigned');
         if ($(this).prop('checked')) {
             assigned.find('.is-return').prop('checked', true);
-            assigned.find('.user-assets__hidden').prop('disabled', false);
+            assigned.find('.card__hidden').prop('disabled', false);
         } else {
-            assigned.find('.user-assets__input').prop('checked', false);
-            assigned.find('.user-assets__hidden').prop('disabled', true);
+            assigned.find('.card__input').prop('checked', false);
+            assigned.find('.card__hidden').prop('disabled', true);
         }
     });
 
-    $('.user-assets__content').css('visibility', 'visible');
+    $('.user .assets__body').css('visibility', 'visible');
 });

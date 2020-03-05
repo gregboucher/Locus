@@ -1,17 +1,17 @@
 ﻿@model ErrorWarningViewModel
 
 @section top_bar {
-    <input class="top-bar__input" id="top-bar__input" type="text" placeholder="" disabled>
+    <input class="top-bar__field" id="top-bar__field" type="text" placeholder="" disabled>
 }
 
 @section side_bar {
-    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button">
-        <i class="icon-home navigation__button-icon"></i>
-        <div class="navigation__button-text">Dashboard</div>
+    <a asp-controller="Home" asp-action="Dashboard" class="button">
+        <i class="button__icon icon-home"></i>
+        <div class="button__text">Dashboard</div>
     </a>
-    <a asp-controller="User" asp-action="Create" class="navigation__button">
-        <i class="icon-user-plus navigation__button-icon"></i>
-        <div class="navigation__button-text">New User</div>
+    <a asp-controller="User" asp-action="Create" class="button">
+        <i class="button__icon icon-user-plus"></i>
+        <div class="button__text">New User</div>
     </a>
 }
 
@@ -20,7 +20,7 @@
         <div class="content-error__title content-error__title--red">An error has occoured!</div>
         <div class="content-error__message select--on">@Model.Message</div>
         <div class="content-error__message select--on">If this error persists, please contact your system administrator.</div>
-        <a asp-controller="Home" asp-action="Dashboard" class="content-error__button">Return to Dashboard</a>
+        <a asp-controller="Home" asp-action="Dashboard" class="btn">Return to Dashboard</a>
     </div>
 }
 

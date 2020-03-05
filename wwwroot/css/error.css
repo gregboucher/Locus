@@ -10,18 +10,3 @@
             color: #fbbc06; }
     .content-error__message {
         color: #868a95; }
-    .content-error__button {
-        display: inline-block;
-        margin-top: 1.3125rem;
-        padding: 0.625rem 1rem;
-        font-size: 0.875rem;
-        color: white;
-        background-color: #3471ff;
-        border-radius: 0.25rem;
-        text-decoration: none;
-        overflow: hidden;
-        white-space: nowrap;
-        cursor: pointer;
-        border: 0 none; }
-        .content-error__button:hover {
-            background-color: #4d83ff; }

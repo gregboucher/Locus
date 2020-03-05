@@ -5,57 +5,57 @@
     <title>@Model.Page</title>
     @RenderSection("stylesheet", required: false)
     <link rel="stylesheet" href="~/css/locus-font.css">
-    <link rel="stylesheet" href="~/css/page_layout.css">
+    <link rel="stylesheet" href="~/css/locus.css">
 
 </head>
 <body id="body" class="select--off">
     <section id="top-bar">
         <div class="top-bar">
             <div class="top-bar__logo">
-                <i class="icon-compass top-bar__logo-icon"></i>
-                <div class="top-bar__logo-title">LOCUS</div>
+                <i class="top-bar__logo-icon icon-compass"></i>
+                <div class="top-bar__title">LOCUS</div>
             </div>
-            <div class="top-bar__input-wrapper">
-                <i class="icon-search top-bar__input-icon"></i>
+            <div class="top-bar__input">
+                <i class="top-bar__input-icon icon-search"></i>
                 @RenderSection("top_bar", required: true)
             </div>
-            <div class="top-bar__account-wrapper"></div>
+            <div class="top-bar__account"></div>
         </div>
     </section>
     <nav id="side-bar">
         <div class="navigation">
             @RenderSection("side_bar", required: true)
-            <a class="navigation__button" href="#">
-                <i class="icon-book navigation__button-icon"></i>
-                <div class="navigation__button-text">History</div>
+            <a class="button" href="#">
+                <i class="button__icon icon-book"></i>
+                <div class="button__text">History</div>
             </a>
-            <div class="navigation__button accordion">
-                <i class="icon-cog navigation__button-icon"></i>
-                <div class="navigation__button-text">Admin</div>
-                <i class="navigation__button-dropdown-icon"></i>
+            <div class="button accordion">
+                <i class="button__icon icon-cog"></i>
+                <div class="button__text">Admin</div>
+                <i class="button__dropdown-icon"></i>
             </div>
-            <div class="navigation__submenu">
-                <a class="navigation__button" href="#">
-                    <i class="icon-right-dir navigation__button-icon"></i>
-                    <div class="navigation__button-text">Settings</div>
+            <div class="submenu">
+                <a class="button" href="#">
+                    <i class="button__icon icon-right-dir"></i>
+                    <div class="button__text">Settings</div>
                 </a>
-                <a class="navigation__button" href="#">
-                    <i class="icon-right-dir navigation__button-icon"></i>
-                    <div class="navigation__button-text">Create Tool</div>
+                <a class="button" href="#">
+                    <i class="button__icon icon-right-dir"></i>
+                    <div class="button__text">Create Tool</div>
                 </a>
             </div>
         </div>
     </nav>
     <section id="content">
-        <div class="content-header">
-            <div class="content-header__group">
-                <div class="content-header__organisation">Nelson Park School</div>
-                <div class="content-header__index">
+        <div class="header">
+            <div class="header__group">
+                <div class="header__organisation">Nelson Park School</div>
+                <div class="header__index">
                     <div>
-                        <i class="icon-@Model.Icon content-header__icon"></i>
-                        <span class="content-header__controller">@(Model.Controller + " /")</span>
+                        <i class="header__icon icon-@Model.Icon"></i>
+                        <span class="header__controller">@(Model.Controller + " /")</span>
                     </div>
-                    <div class="content-header__page">@Model.Page</div>
+                    <div class="header__page">@Model.Page</div>
                 </div>
             </div>
             @RenderSection("content_header", required: false)

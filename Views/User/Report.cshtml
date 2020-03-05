@@ -1,17 +1,17 @@
 ﻿@model UserReportViewModel
 
 @section top_bar {
-    <input class="top-bar__input" id="top-bar__input" type="text" placeholder="" disabled>
+    <input class="top-bar__field" id="top-bar__field" type="text" placeholder="" disabled>
 }
 
 @section side_bar {
-    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button">
-        <i class="icon-home navigation__button-icon"></i>
-        <div class="navigation__button-text">Dashboard</div>
+    <a asp-controller="Home" asp-action="Dashboard" class="button">
+        <i class="button__icon icon-home"></i>
+        <div class="button__text">Dashboard</div>
     </a>
-    <a asp-controller="User" asp-action="Create" class="navigation__button">
-        <i class="icon-user-plus navigation__button-icon"></i>
-        <div class="navigation__button-text">New User</div>
+    <a asp-controller="User" asp-action="Create" class="button">
+        <i class="button__icon icon-user-plus"></i>
+        <div class="button__text">New User</div>
     </a>
 }
 
@@ -24,7 +24,7 @@
                     <div class="report-header__date select--on">@Model.Report.UserCreated.ToString("dd-MM-yy h:mm tt")</div>
                 </div>
                 <div class="report-header__right">
-                    <div class="report-header__button report-header__button--dark help" onmouseover="ShowTooltip($(this), 500, false, 10, 10);" onmouseout="HideTooltip($(this));">?</div>
+                    <div class="btn btn--dark help" onmouseover="ShowTooltip($(this), 500, false, 10, 10);" onmouseout="HideTooltip($(this));">?</div>
                     <div class="tooltip">
                         <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
                             <div><i class="icon-plus tooltip__icon tooltip__icon--green"></i>asset has been assigned for one period</div>
@@ -38,8 +38,8 @@
                         switch (Model.Report.UserStatus)
                         {
                             case Status.Active:
-                                <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Report.UserId" class="report-header__button report-header__button--dark" title="Edit this User">Edit User</a>
-                                <input type="button" value="Print Report" class="report-header__button">
+                                <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Report.UserId" class="btn btn--dark" title="Edit this User">Edit User</a>
+                                <input type="button" value="Print Report" class="btn">
                                 break;
                             case Status.Inactive:
                                 <i class="icon-info report-header__icon report-header__icon--blue"></i>
@@ -69,7 +69,7 @@
                             {
                                 case DetailedReportItem item:
                                     item = reportItem as DetailedReportItem;
-                                    switch(item.Type)
+                                    switch (item.Type)
                                     {
                                         case OperationType.Assignment:
                                             sharedHTML("ok", "report-item__status--green", item);
@@ -95,7 +95,7 @@
                                             <div class="report-item__model-tag select--on">@item.Tag</div>
                                         </div>
                                         <div class="report-item__info--error">
-                                            @item.Message
+                                            @("Error attempting to perform " + item.Type.ToString().Replace("_", " "))
                                         </div>
                                     </div>
                                     break;

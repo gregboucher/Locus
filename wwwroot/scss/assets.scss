@@ -1,0 +1,249 @@
+﻿@import "_variables.scss";
+
+.user .assets {
+    display: flex;
+    flex-direction: column;
+    flex: 2 0 0;
+
+    > div:not(:last-child) {
+        margin-bottom: $content-spacing;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        margin-left: 0.3125rem;
+
+        &-label {
+            font-size: 0.875rem;
+            color: map-get($colour-map, --font);
+            margin-top: auto;
+            cursor: pointer;
+
+            &:hover {
+                color: lighten(map-get($colour-map, --font), 20%);
+            }
+
+            &:hover > label:after {
+                background-color: lighten(map-get($colour-map, --background), 4%);
+                border-color: lighten(map-get($colour-map, --border), 10%);
+            }
+        }
+
+        &-check {
+            position: relative;
+            display: none;
+
+            & + label {
+                margin-right: 2.125rem;
+                position: relative;
+
+                &:after {
+                    position: absolute;
+                    font-family: "locus-font";
+                    content: "";
+                    width: 1rem;
+                    height: 1rem;
+                    left: 0.625rem;
+                    top: 0;
+                    border: 1px solid map-get($colour-map, --border);
+                    cursor: pointer;
+                }
+            }
+
+            &:checked + label:after {
+                content: '\e825';
+            }
+        }
+    }
+
+    &__body {
+        visibility: hidden;
+        display: flex;
+        align-content: flex-start;
+        flex-wrap: wrap;
+        flex: 1 0 0;
+        font-size: 0.785rem;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: map-get($colour-map, --foreground) map-get($colour-map, --background);
+        border: 1px dashed lighten(map-get($colour-map, --border), 10%);
+        padding: $content-spacing 1rem;
+        border-radius: 0.6rem;
+        background-color: darken(map-get($colour-map, --background), 0.5%);
+
+        &:after {
+            //pseudo element to limit grow to 50% for row of only one element.
+            content: "";
+            flex: 1 0 50%;
+        }
+
+        &::-webkit-scrollbar {
+            background-color: map-get($colour-map, --background);
+            width: 0.375rem;
+
+            &-thumb {
+                background-color: map-get($colour-map, --foreground);
+
+                &:hover {
+                    background-color: lighten(map-get($colour-map, --foreground), 8%);
+                }
+            }
+        }
+    }
+
+    & .card {
+        position: relative;
+        display: flex;
+        padding: 0.625rem 0.875rem;
+        align-items: center;
+        color: map-get($colour-map, --font);
+        background-color: map-get($colour-map, --foreground);
+        border: 1px solid map-get($colour-map, --border);
+        margin: 0 0.3125rem 0.625rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+
+        &__wrapper {
+            flex: 1 0 50%;
+
+            &.is-empty {
+                opacity: 0.4;
+                pointer-events: none;
+            }
+        }
+
+        &:hover {
+            background-color: lighten(map-get($colour-map, --foreground), 2%);
+        }
+
+        &:before {
+            content: '';
+            position: absolute;
+            border-right: 1.875rem solid transparent;
+            border-top: 1.875rem solid transparent;
+            top: 0;
+            left: 0;
+        }
+
+        &:after {
+            font-family: 'locus-font';
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin-left: 0.125rem;
+            margin-top: -1px;
+            color: map-get($colour-map, --foreground);
+            font-size: 1rem;
+        }
+
+        &__input {
+            display: none;
+
+            &.is-return:checked ~ .card {
+                border: 2px solid map-get($colour-map, --red);
+                padding: 0.5625rem 0.8125rem;
+
+                &:before {
+                    border-top: 1.5625rem solid map-get($colour-map, --red);
+                }
+
+                &:after {
+                    content: '\e828';
+                    margin-top: -0.125rem;
+                }
+            }
+
+            &.is-extend:checked ~ .card {
+                border: 2px solid map-get($colour-map, --yellow);
+                padding: 0.5625rem 0.8125rem;
+
+                &:before {
+                    border-top: 1.5625rem solid map-get($colour-map, --yellow);
+                }
+
+                &:after {
+                    content: '\e835';
+                }
+            }
+
+            &.is-assign:checked ~ .card {
+                border: 2px solid map-get($colour-map, --green);
+                padding: 0.5625rem 0.8125rem;
+
+                &:before {
+                    border-top: 1.5625rem solid map-get($colour-map, --green);
+                }
+
+                &:after {
+                    content: '\e82b';
+                }
+            }
+
+            &.is-indefinite:checked ~ .card {
+                border: 2px solid map-get($colour-map, --blue);
+                padding: 0.5625rem 0.8125rem;
+
+                &:before {
+                    border-top: 1.5625rem solid map-get($colour-map, --blue);
+                }
+
+                &:after {
+                    content: '\e818';
+                    font-size: 0.875rem;
+                }
+            }
+        }
+
+        &__properties {
+            margin-right: 1rem;
+        }
+
+        &__values {
+            color: darken(map-get($colour-map, --font), 10%);
+            //red, yellow, green, blue
+            @for $i from 5 through 8 {
+                $c: nth($colour-map, $i);
+
+                &#{nth($c, 1)} {
+                    color: nth($c, 2);
+                }
+            }
+        }
+
+        &__body-A {
+            flex-grow: 1;
+            margin-left: 0.5rem;
+            margin-right: 1rem;
+        }
+
+        &__model {
+            font-size: 1rem;
+            font-weight: 700;
+            font-variant: small-caps;
+        }
+
+        &__collection {
+            font-size: 0.7rem;
+        }
+
+        &__body-B {
+            display: flex;
+            align-items: center;
+            text-align: right;
+        }
+
+        &__tag {
+            color: darken(map-get($colour-map, --font), 10%);
+            font-size: 0.875rem;
+            margin-left: 0.1rem;
+        }
+
+        &__icon {
+            font-size: 1.75rem;
+        }
+    }
+}

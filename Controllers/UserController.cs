@@ -3,6 +3,7 @@ using Locus.Models;
 using Locus.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Locus.Controllers
 {
@@ -79,11 +80,10 @@ namespace Locus.Controllers
             _actionTransferObject.Results = null;
             if (ModelState.IsValid)
             {
-                if (postModel.AssignmentOperations != null || postModel.EditOperations != null)
-                {
-                    _actionTransferObject.Results = _repository.EditExistingUser(postModel);
+                _actionTransferObject.Results = _repository.EditExistingUser(postModel);
+                //show report only if changes were made to assignments
+                if (_actionTransferObject.Results.Any())
                     return RedirectToAction("Report", new { userId = postModel.UserId});
-                }
                 return RedirectToAction("Dashboard", "Home");
             }
             return RedirectToAction();

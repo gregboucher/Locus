@@ -20,23 +20,4 @@
     &__message {
         color: map-get($colour-map, --font);
     }
-
-    &__button {
-        display: inline-block;
-        margin-top: $content-spacing;
-        padding: 0.625rem 1rem;
-        font-size: 0.875rem;
-        color: white;
-        background-color: darken(map-get($colour-map, --blue), 5%);
-        border-radius: 0.25rem;
-        text-decoration: none;
-        overflow: hidden;
-        white-space: nowrap;
-        cursor: pointer;
-        border: 0 none;
-
-        &:hover {
-            background-color: map-get($colour-map, --blue);
-        }
-    }
 }

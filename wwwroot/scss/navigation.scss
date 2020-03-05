@@ -5,7 +5,7 @@
     border-right: 1px solid map-get($colour-map, --border);
     background-color: map-get($colour-map, --foreground);
 
-    &__button {
+    & .button {
         display: flex;
         align-items: center;
         padding: 1rem;
@@ -16,23 +16,17 @@
         border-bottom: 1px solid map-get($colour-map, --border);
         font-size: 0.875rem;
 
-        &.accordion > &-dropdown-icon::after {
-            content: '\e859';
-            font-family: "locus-font";
-            font-style: normal;
-        }
-
-        &.accordion.is-open > &-dropdown-icon::after {
-            content: '\e85c';
-        }
-
-        &-icon {
+        &__icon {
             font-size: 1.25rem;
             margin-right: 0.5rem;
         }
 
-        &-text {
+        &__text {
             flex-grow: 1;
+        }
+
+        &--blue {
+            color: map-get($colour-map, --blue);
         }
 
         &:hover, &.is-open {
@@ -43,17 +37,23 @@
             cursor: pointer;
         }
 
-        &--blue {
-            color: map-get($colour-map, --blue);
+        &.accordion .button__dropdown-icon::after {
+            content: '\e859';
+            font-family: "locus-font";
+            font-style: normal;
+        }
+
+        &.accordion.is-open .button__dropdown-icon::after {
+            content: '\e85c';
         }
     }
 
-    &__submenu {
+    & .submenu {
         display: none;
         overflow: hidden;
         transition: max-height 0.2s ease-in-out;
 
-        > .navigation__button {
+        > .button {
             padding-left: 2rem;
         }
     }

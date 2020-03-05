@@ -1,25 +1,24 @@
 @model HomeDashboardViewModel
 
 @section top_bar {
-    <input class="top-bar__input" id="top-bar__input" type="text" placeholder="Search All Assignments">
+    <input class="top-bar__field" id="top-bar__field" type="text" placeholder="Search All Assignments">
 }
 
 @section side_bar {
-    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button navigation__button--blue">
-        <i class="icon-home navigation__button-icon"></i>
-        <div class="navigation__button-text">Dashboard</div>
+    <a asp-controller="Home" asp-action="Dashboard" class="button button--blue">
+        <i class="button__icon icon-home"></i>
+        <div class="button__text">Dashboard</div>
     </a>
-    <a asp-controller="User" asp-action="Create" class="navigation__button">
-        <i class="icon-user-plus navigation__button-icon"></i>
-        <div class="navigation__button-text">New User</div>
+    <a asp-controller="User" asp-action="Create" class="button">
+        <i class="button__icon icon-user-plus"></i>
+        <div class="button__text">New User</div>
     </a>
 }
 
 @section content_header {
-    <div class="content-header__group">
-        <a asp-controller="User" asp-action="Create" class="dashboard-header__button">
-            <i class="icon-user-plus"></i>
-            <div class="dashboard-header__button-text">New User</div>
+    <div class="header__group">
+        <a asp-controller="User" asp-action="Create" class="btn">
+            <i class="btn__icon icon-user-plus"></i>New User
         </a>
     </div>
 }
@@ -27,52 +26,52 @@
 @section content {
     <div class="dashboard">
         <div class="overview">
-            <div class="overview__card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
-                <div class="overview__card-text">
-                    <div class="overview__card-quantity">@Model.CountDueToday</div>
-                    <div class="overview__card-subject">Asset@(Model.CountDueToday == 1 ? "" : "s")</div>
-                    <div class="overview__card-verb">Due Today</div>
+            <div class="card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
+                <div class="card__body">
+                    <div class="card__quantity">@Model.CountDueToday</div>
+                    <div class="card__subject">Asset@(Model.CountDueToday == 1 ? "" : "s")</div>
+                    <div class="card__verb">Due Today</div>
                 </div>
-                <i class="icon-calendar-check-o overview__card-icon"></i>
+                <i class="card__icon icon-calendar-check-o"></i>
             </div>
             <h1 class="tooltip">
                 <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
                     <div>Show only users with assets that are <span>due today</span></div>
                 </div>
             </h1>
-            <div class="overview__card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
-                <div class="overview__card-text">
-                    <div class="overview__card-quantity">@Model.CountOverdue</div>
-                    <div class="overview__card-subject">Asset@(Model.CountOverdue == 1 ? "" : "s")</div>
-                    <div class="overview__card-verb">Overdue</div>
+            <div class="card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
+                <div class="card__body">
+                    <div class="card__quantity">@Model.CountOverdue</div>
+                    <div class="card__subject">Asset@(Model.CountOverdue == 1 ? "" : "s")</div>
+                    <div class="card__verb">Overdue</div>
                 </div>
-                <i class="icon-hourglass-3 overview__card-icon"></i>
+                <i class="card__icon icon-hourglass-3"></i>
             </div>
             <h1 class="tooltip">
                 <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
                     <div>Show only users with assets that are <span>overdue</span></div>
                 </div>
             </h1>
-            <div class="overview__card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
-                <div class="overview__card-text">
-                    <div class="overview__card-quantity">@Model.CountCreatedToday</div>
-                    <div class="overview__card-subject">User@(Model.CountCreatedToday == 1 ? "" : "s")</div>
-                    <div class="overview__card-verb">Created Today</div>
+            <div class="card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
+                <div class="card__body">
+                    <div class="card__quantity">@Model.CountCreatedToday</div>
+                    <div class="card__subject">User@(Model.CountCreatedToday == 1 ? "" : "s")</div>
+                    <div class="card__verb">Created Today</div>
                 </div>
-                <i class="icon-users overview__card-icon"></i>
+                <i class="card__icon icon-users"></i>
             </div>
             <h1 class="tooltip">
                 <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
                     <div>Show only users with assets that were assigned <span>today</span></div>
                 </div>
             </h1>
-            <div class="overview__card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
-                <div class="overview__card-text">
-                    <div class="overview__card-quantity">@Model.CountIndefinite</div>
-                    <div class="overview__card-subject">Indefinite</div>
-                    <div class="overview__card-verb">Assignment@(Model.CountIndefinite == 1 ? "" : "s")</div>
+            <div class="card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
+                <div class="card__body">
+                    <div class="card__quantity">@Model.CountIndefinite</div>
+                    <div class="card__subject">Indefinite</div>
+                    <div class="card__verb">Assignment@(Model.CountIndefinite == 1 ? "" : "s")</div>
                 </div>
-                <i class="icon-star overview__card-icon"></i>
+                <i class="card__icon icon-star"></i>
             </div>
             <h1 class="tooltip">
                 <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">

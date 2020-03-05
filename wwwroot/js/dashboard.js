@@ -9,8 +9,8 @@ $(function() {
         sDom: 'lrtip'
     });
 
-    var overviewCards = $('.overview__card');
-    var searchInput = $('#top-bar__input');
+    var overviewCards = $('.overview .card');
+    var searchInput = $('#top-bar__field');
     searchInput.val('');
 
     //top-bar input search

@@ -357,7 +357,7 @@ namespace Locus.Data
                 if (postModel.EditOperations != null)
                 {
                     //UPDATE will not throw and exception by default if it can't set.
-                    //Most likely cause would be if the asset has already been returned.
+                    //Most likely cause of this would be if the asset has already been returned.
                     //If @AssignmentId is null, the appended select query will return no rows
                     //and an Assignment object will be created with null members.
                     //hence we bypass this by manually throwing an exception if @AssignmentId is null.
@@ -477,7 +477,7 @@ namespace Locus.Data
                     string query = "";
                     if (results == null)
                     {
-                        //report requested without prior operation[s] (edit/create etc)
+                        //report requested without and changes to assignments
                         query = @"SELECT C.Id,
 	                               C.[Name],
 	                               M.[Name] AS Model,
@@ -547,7 +547,7 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw;
+                    throw new LocusException("An error occured while attempting to produce a report.");
                 }
             }
         }
@@ -559,8 +559,6 @@ namespace Locus.Data
             (query, (collection, reportItem) =>
             {
                 reportItem.Type = type;
-                if (typeof(T) == typeof(ErrorReportItem))
-                    (reportItem as ErrorReportItem).Message = "Error attempting to perform " + type.ToString().Replace(" ", "_");
                 var newItem = new PartialReportItem<T>
                 {
                     Collection = collection,

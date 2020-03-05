@@ -1,5 +1,4 @@
 ﻿@import "_variables.scss";
-@import "overview.scss";
 @import "data.scss";
 
 .dashboard {
@@ -10,26 +9,65 @@
     > div:not(:last-child) {
         margin-bottom: $content-spacing;
     }
+}
 
-    &-header {
-        &__button {
-            display: flex;
-            background-color: darken(map-get($colour-map, --blue), 5%);
-            font-size: 0.875rem;
-            color: white;
-            padding: 0.625rem 1rem;
-            text-decoration: none;
-            cursor: pointer;
-            border-radius: 0.25rem;
+.overview {
+    display: flex;
+    z-index: 2;
 
-            &:hover {
-                background-color: map-get($colour-map, --blue);
-            }
+    > div:not(:last-of-type) {
+        margin-right: $content-spacing;
+    }
+
+    & *:not(.card) {
+        pointer-events: none;
+    }
+
+    & .card {
+        display: flex;
+        flex: 1 0 0;
+        padding: 1.5rem 2rem;
+        justify-content: space-between;
+        align-items: center;
+        color: map-get($colour-map, --font);
+        background-color: map-get($colour-map, --foreground);
+        border: 1px solid map-get($colour-map, --border);
+
+        &__quantity {
+            font-size: 2.5rem;
+            font-weight: 600;
         }
-        &__button-text {
-            margin-left: 0.25rem;
-            overflow: hidden;
-            white-space: nowrap;
+
+        &__subject {
+            font-weight: 700;
+        }
+
+        &__verb {
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+
+        &__icon {
+            font-size: 2.5rem;
+            color: map-get($colour-map, --blue);
+        }
+
+        &.is-active {
+            border-color: map-get($colour-map, --blue);
+        }
+
+        &.is-active &__body {
+            color: lighten(map-get($colour-map, --font), 25%);
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: lighten(map-get($colour-map, --foreground), 2%);
+            transition: background-color 0.1s linear;
+        }
+
+        &:hover &__body {
+            color: lighten(map-get($colour-map, --font), 25%);
         }
     }
 }

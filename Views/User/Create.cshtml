@@ -1,44 +1,44 @@
 ﻿@model UserCreateViewModel
 
 @section top_bar {
-    <input class="top-bar__input" id="top-bar__input" type="text" placeholder="Search Assets by Model, Tag, Status or Collection">
+    <input class="top-bar__field" id="top-bar__field" type="text" placeholder="Search Assets by Model, Tag, Status or Collection">
 }
 
 @section side_bar {
-    <a asp-controller="Home" asp-action="Dashboard" class="navigation__button">
-        <i class="icon-home navigation__button-icon"></i>
-        <div class="navigation__button-text">Dashboard</div>
+    <a asp-controller="Home" asp-action="Dashboard" class="button">
+        <i class="button__icon icon-home"></i>
+        <div class="button__text">Dashboard</div>
     </a>
-    <a asp-controller="User" asp-action="Create" class="navigation__button navigation__button--blue">
-        <i class="icon-user-plus navigation__button-icon"></i>
-        <div class="navigation__button-text">New User</div>
+    <a asp-controller="User" asp-action="Create" class="button button--blue">
+        <i class="button__icon icon-user-plus"></i>
+        <div class="button__text">New User</div>
     </a>
 }
 
 @section content {
     <form class="user" id="user" method="post" autocomplete="off">
-        <div class="user-content">
-            <div class="user-details">
-                <div class="user-details__row">
-                    <div><i class="icon-user user-details__icon"></i>Name</div>
-                    <input name="UserDetails.Name" class="user-details__input" type="text" placeholder="">
+        <div class="content">
+            <div class="form">
+                <div class="form__row">
+                    <div><i class="form__icon icon-user"></i>Name</div>
+                    <input name="UserDetails.Name" class="form__input" type="text" placeholder="">
                 </div>
-                <div class="user-details__row">
-                    <div><i class="icon-mail-alt user-details__icon"></i>Email</div>
-                    <input name="UserDetails.Email" class="user-details__input" type="text" placeholder="">
+                <div class="form__row">
+                    <div><i class="form__icon icon-mail-alt"></i>Email</div>
+                    <input name="UserDetails.Email" class="form__input" type="text" placeholder="">
                 </div>
-                <div class="user-details__row">
-                    <div><i class="icon-phone user-details__icon"></i>Phone</div>
-                    <input name="UserDetails.Phone" class="user-details__input " type="text" placeholder="">
+                <div class="form__row">
+                    <div><i class="form__icon icon-phone"></i>Phone</div>
+                    <input name="UserDetails.Phone" class="form__input " type="text" placeholder="">
                 </div>
-                <div class="user-details__row">
-                    <div><i class="icon-user-times user-details__icon"></i>Absentee</div>
-                    <input name="UserDetails.Absentee" class="user-details__input" type="text" placeholder="">
+                <div class="form__row">
+                    <div><i class="form__icon icon-user-times"></i>Absentee</div>
+                    <input name="UserDetails.Absentee" class="form__input" type="text" placeholder="">
                 </div>
-                <div class="user-details__row">
-                    <div><i class="icon-th-list user-details__icon"></i>Role</div>
-                    <div class="user-details__input-wrapper">
-                        <select name="UserDetails.RoleId" class="user-details__input user-details__input--select">
+                <div class="form__row">
+                    <div><i class="form__icon icon-th-list"></i>Role</div>
+                    <div class="form__input-wrapper">
+                        <select name="UserDetails.RoleId" class="form__input form__input--select">
                             <option hidden="hidden" disabled selected></option>
                             @foreach (var role in Model.Roles)
                             {
@@ -47,13 +47,13 @@
                         </select>
                     </div>
                 </div>
-                <div class="user-details__row user-details__row--grow">
-                    <div><i class="icon-align-left user-details__icon"></i>Comments</div>
-                    <textarea name="UserDetails.Comment" class="user-details__input user-details__input-comment"></textarea>
+                <div class="form__row form__row--grow">
+                    <div><i class="form__icon icon-align-left"></i>Comments</div>
+                    <textarea name="UserDetails.Comment" class="form__input form__input--comment"></textarea>
                 </div>
             </div>
-            <div class="user-assets">
-                <div class="user-assets__header">
+            <div class="assets">
+                <div class="assets__header">
                     <div class="dropdown__wrapper dropdown__wrapper--larger">
                         <div id="dropdown" class="dropdown">All</div>
                         <div class="dropdown__content">
@@ -68,7 +68,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="user-assets__content">
+                <div class="assets__body">
                     @{
                         int index = 0;
                         foreach (var collection in Model.CollectionsOfModels)
@@ -77,29 +77,29 @@
                             {
                                 if (_model.Asset == null)
                                 {
-                                    <div class="user-assets__card-wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
+                                    <div class="card__wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
-                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations.Index" value="@index" disabled />
-                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
-                                            <input type="hidden" class="user-assets__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
-                                            <input type="radio" class="user-assets__input is-assign" name="AssignmentOperations[@index].Type" value="0" />
-                                            <input type="radio" class="user-assets__input is-indefinite" name="AssignmentOperations[@index].Type" value="1" />
+                                            <input type="hidden" class="card__hidden" name="AssignmentOperations.Index" value="@index" disabled />
+                                            <input type="hidden" class="card__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
+                                            <input type="hidden" class="card__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
+                                            <input type="radio" class="card__input is-assign" name="AssignmentOperations[@index].Type" value="1" />
+                                            <input type="radio" class="card__input is-indefinite" name="AssignmentOperations[@index].Type" value="2" />
                                             ++index;
                                         }
-                                        <div class="user-assets__card">
-                                            <i class="icon-@_model.Icon user-assets__icon"></i>
-                                            <div class="user-assets__left">
-                                                <div class="user-assets__model searchable">@_model.Name</div>
-                                                <div class="user-assets__collection searchable">@collection.Name</div>
+                                        <div class="card">
+                                            <i class="icon-@_model.Icon card__icon"></i>
+                                            <div class="card__body-A">
+                                                <div class="card__model searchable">@_model.Name</div>
+                                                <div class="card__collection searchable">@collection.Name</div>
                                             </div>
-                                            <div class="user-assets__right">
-                                                <div class="user-assets__names">
+                                            <div class="card__body-B">
+                                                <div class="card__properties">
                                                     <div>Status:</div>
                                                     <div>Surplus:</div>
                                                     <div>Period:</div>
                                                 </div>
-                                                <div class="user-assets__values">
+                                                <div class="card__values">
                                                     <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
                                                     <div>@(_model.Surplus + " / " + _model.Total)</div>
                                                     <div>@(_model.Period + " day" + (_model.Period == 1 ? "" : "s"))</div>
@@ -114,11 +114,11 @@
                 </div>
             </div>
         </div>
-        <div class="user-footer">
-            <input type="submit" value="Create" id="submit" class="user-footer__button">
-            <input type="button" value="Reset" id="reset" class="user-footer__button user-footer__button--dark">
-            <a asp-controller="Home" asp-action="Dashboard" class="user-footer__button user-footer__button--dark">Cancel</a>
-            <div class="user-footer__button user-footer__button--dark help" onmouseover="ShowTooltip($(this), 500, true, 0, -170);" onmouseout="HideTooltip($(this));">?</div>
+        <div class="footer">
+            <input type="submit" value="Create" id="submit" class="btn">
+            <input type="button" value="Reset" id="reset" class="btn btn--dark">
+            <a asp-controller="Home" asp-action="Dashboard" class="btn--dark btn">Cancel</a>
+            <div class="btn btn--dark help" onmouseover="ShowTooltip($(this), 500, true, 0, -170);" onmouseout="HideTooltip($(this));">?</div>
             <div class="tooltip">
                 <div class="tooltip__content">
                     <div>

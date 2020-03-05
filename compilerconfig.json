@@ -1,7 +1,7 @@
 ﻿[
   {
-    "outputFile": "wwwroot/css/page_layout.css",
-    "inputFile": "wwwroot/scss/page_layout.scss",
+    "outputFile": "wwwroot/css/locus.css",
+    "inputFile": "wwwroot/scss/locus.scss",
     "minify": {
       "enabled": false
     }
