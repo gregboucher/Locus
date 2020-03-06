@@ -526,10 +526,24 @@ namespace Locus.Data
                     }
                     var listOfCollectionsOfReportItems = new List<ListTByCollection<IReportItem>>();
                     var collectionDictionary = new Dictionary<int, int>();
+                    var status = Status.None;
                     foreach (var item in listOfPartials)
                     {
-                        if (item.ReportItem is DetailedReportItem)
-                            AppendCustomeProperties(item as PartialReportItem<DetailedReportItem>, db);
+                        if (!(item.ReportItem is ErrorReportItem))
+                        {
+                            if (item.ReportItem is DetailedReportItem)
+                            {
+                                AppendCustomeProperties(item as PartialReportItem<DetailedReportItem>, db);
+                                status = Status.Active;
+                            }
+                            else
+                            {
+                                var temp = item.ReportItem as SimpleReportItem;
+                                if (temp.Type != OperationType.Return)
+                                    status = Status.Active;
+                            }
+                                
+                        }
                         CommitItemToReport(item, collectionDictionary, listOfCollectionsOfReportItems);
                     }
 
@@ -540,6 +554,8 @@ namespace Locus.Data
 
                     var report = db.QuerySingle<Report>(query, new { userId });
                     report.UserId = userId;
+                    if (status != Status.None)
+                        report.Printable = true;
                     report.UserStatus = UserStatus(userId, db);
                     report.ListOfCollectionsOfReportItems = listOfCollectionsOfReportItems;
                     return report;

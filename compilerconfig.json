@@ -40,5 +40,12 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFile": "wwwroot/css/print.css",
+    "inputFile": "wwwroot/scss/print.scss",
+    "minify": {
+      "enabled": false
+    }
   }
 ]

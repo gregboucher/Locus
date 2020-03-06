@@ -74,3 +74,5 @@
                 font-size: 0.875rem; }
             .report-item__info--error {
                 font-variant: small-caps; }
+    .report #print {
+        visibility: collapse; }

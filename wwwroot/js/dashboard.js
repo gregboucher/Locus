@@ -53,7 +53,7 @@ $(function() {
             switch(cardIndex) {
                 case 0:
                     filterRowByAssetClass('icon--due');
-                    changePlaceholder('Assets Due Today');
+                        changePlaceholder('Assets Due Today');
                 break
                 case 1:
                     filterRowByAssetClass('icon--overdue');

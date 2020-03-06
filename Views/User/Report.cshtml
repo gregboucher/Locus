@@ -39,7 +39,10 @@
                         {
                             case Status.Active:
                                 <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Report.UserId" class="btn btn--dark" title="Edit this User">Edit User</a>
-                                <input type="button" value="Print Report" class="btn">
+                                if (Model.Report.Printable)
+                                {
+                                    <input type="button" value="Print Report" id="button-print" class="btn">
+                                }
                                 break;
                             case Status.Inactive:
                                 <i class="icon-info report-header__icon report-header__icon--blue"></i>
@@ -51,7 +54,6 @@
                                 <i class="icon-attention report-header__icon report-header__icon--yellow"></i>
                                 <div>
                                     <div>An error has occoured!</div>
-                                    <div>Unable to count user assignments</div>
                                 </div>
                                 break;
                         }
@@ -116,8 +118,50 @@
                 }
             }
         </div>
-        <div class="report-print">
-
+        <div id="print">
+            @{
+                if (Model.Report.Printable)
+                {
+                    <div class="print__header">
+                        <i class="print__icon icon-compass"></i>
+                        <span class="print__locus">LOCUS</span>
+                    </div>
+                    <div class="print__name">@Model.Report.UserName</div>
+                    <div class="print__date">@Model.Report.UserCreated.ToString("dd-MM-yy h:mm tt")</div>
+                    foreach (var collection in Model.Report.ListOfCollectionsOfReportItems)
+                    {
+                        foreach (var reportItem in collection.TList)
+                        {
+                            var simpleItem = reportItem as SimpleReportItem;
+                            if (!(reportItem is ErrorReportItem) & simpleItem.Type != OperationType.Return)
+                            {
+                                <hr />
+                                <div>
+                                    <i class="icon-@simpleItem.Icon"></i> <span class="print__model">@simpleItem.Model</span>
+                                </div>
+                                <div class="print__tag print--margin-left"><span class="print__title">Tag: </span>@simpleItem.Tag</div>
+                                if (reportItem is DetailedReportItem)
+                                {
+                                    var detailedItem = reportItem as DetailedReportItem;
+                                    <div class="print__due print--margin-left"><span class="print__title">Due: </span>@detailedItem.Due.ToString("dd-MM-yy")</div>
+                                    if (detailedItem.CustomProperties != null)
+                                    {
+                                        foreach (var property in detailedItem.CustomProperties)
+                                        {
+                                            <div>
+                                                <span class="print__propery print--margin-left print__title">@property.Name: </span>
+                                                <span class="print__value">@property.Value</span>
+                                            </div>
+                                            
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    <div class="print__blank"></div>
+                }
+            }
         </div>
     </div>
 }
@@ -153,5 +197,10 @@
 }
 
 @section stylesheet {
-    <link rel="stylesheet" href="~/css/report.css">
+        <link rel="stylesheet" href="~/css/report.css">
+}
+
+@section javascript {
+    <script src="~/js/printThis.js"></script>
+    <script src="~/js/report.js"></script>
 }

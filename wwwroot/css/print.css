@@ -1,0 +1,34 @@
+﻿@page {
+    size: auto;
+    margin: 0mm; }
+
+#print {
+    visibility: visible;
+    font-size: 1.25rem; }
+    #print hr {
+        border: 1px dashed black; }
+    #print .print__blank {
+        margin-top: 10mm;
+        padding: 20px;
+        border: 1px dashed #f4f; }
+    #print .print__header {
+        margin-bottom: 1rem; }
+    #print .print__icon {
+        font-size: 4rem; }
+    #print .print__locus {
+        font-size: 2.5rem;
+        font-variant: small-caps;
+        margin-bottom: 2rem; }
+    #print .print__title {
+        font-weight: 700; }
+    #print .print--margin-left {
+        margin-left: 2rem; }
+    #print .print__name {
+        font-size: 1.75rem; }
+    #print .print__date {
+        font-size: 0.875rem; }
+    #print .print__model {
+        font-variant: small-caps;
+        font-size: 1.75rem; }
+    #print .print__value:last-child {
+        margin-bottom: 2rem; }

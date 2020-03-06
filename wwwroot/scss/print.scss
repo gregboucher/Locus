@@ -1,0 +1,73 @@
+﻿@import "_variables.scss";
+
+@page {
+    size: auto;
+    margin: 0mm;
+}
+
+#print {
+    visibility: visible;
+    font-size: 1.25rem;
+
+    & hr {
+        border: 1px dashed black;
+    }
+
+    & .print__blank {
+        margin-top: 10mm;
+        padding: 20px;
+        border: 1px dashed #f4f;
+    }
+
+    & .print__header {
+        margin-bottom: 1rem;
+    }
+
+    & .print__icon {
+        font-size: 4rem;
+    }
+
+    & .print__locus {
+        font-size: 2.5rem;
+        font-variant: small-caps;
+        margin-bottom: 2rem;
+    }
+
+    & .print__title {
+        font-weight: 700;
+    }
+
+    & .print--margin-left {
+        margin-left: 2rem;
+    }
+
+    & .print__name {
+        font-size: 1.75rem;
+    }
+
+    & .print__date {
+        font-size: 0.875rem;
+    }
+
+    & .print__model {
+        font-variant: small-caps;
+        font-size: 1.75rem;
+    }
+
+    & .print__tag {
+
+    }
+
+    & .print__due {
+
+    }
+
+    & .print__property {
+
+    }
+
+    & .print__value:last-child {
+        margin-bottom: 2rem;
+    }
+}
+
