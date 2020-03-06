@@ -81,6 +81,7 @@
 	INSERT INTO [dbo].[Model] VALUES ('Sony A7S', 7, 3, NULL); --7days, camera
 
 	-- QueryName, QueryString, ModelId
+	INSERT INTO [dbo].[Query] VALUES ('Username', 'SELECT @AssetTag As Username', 3);
 	INSERT INTO [dbo].[Query] VALUES ('Password', 'SELECT [Password] FROM [eduhub].[dbo].[UserDetails] WHERE UserId = @AssetTag', 3); --1 day, tags
 	--INSERT INTO [dbo].[Query] VALUES ('Password', 'SELECT COUNT(*) FROM [dbo].[Assignment]', 3); --1 day, tags
 	--SELECT [Password] FROM [eduhub].[dbo].[UserDetails] WHERE UserId = 'crt01'

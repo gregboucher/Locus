@@ -39,7 +39,7 @@
                         {
                             case Status.Active:
                                 <a asp-controller="User" asp-action="Edit" asp-route-userId="@Model.Report.UserId" class="btn btn--dark" title="Edit this User">Edit User</a>
-                                if (Model.Report.Printable)
+                                if (Model.Report.PrintableCollections.Any())
                                 {
                                     <input type="button" value="Print Report" id="button-print" class="btn">
                                 }
@@ -61,66 +61,85 @@
                 </div>
             </div>
             @{
-                foreach (var collection in Model.Report.ListOfCollectionsOfReportItems)
+                if (Model.Report.ResultCollections.Any())
                 {
-                    <div class="report-collection">
-                        <div class="report-collection__title">@collection.Name</div>
-                        @foreach (var reportItem in collection.TList)
-                        {
-                            switch (reportItem)
+                    //assignments have changed, show only changes
+                    foreach (var collection in Model.Report.ResultCollections)
+                    {
+                        <div class="report-collection">
+                            <div class="report-collection__title">@collection.Name</div>
+                            @foreach (var reportItem in collection.TList)
                             {
-                                case DetailedReportItem item:
-                                    item = reportItem as DetailedReportItem;
-                                    switch (item.Type)
-                                    {
-                                        case OperationType.Assignment:
-                                            sharedHTML("ok", "report-item__status--green", item);
-                                            break;
-                                        case OperationType.Indefinite_Assignment:
-                                            sharedHTML("star", "report-item__status--blue", item);
-                                            break;
-                                        case OperationType.Extension:
-                                            sharedHTML("forward", "report-item__status--yellow", item);
-                                            break;
-                                        case OperationType.None:
-                                            sharedHTML("circle-empty", "", item);
-                                            break;
-                                    }
-                                    break;
-                                case ErrorReportItem item:
-                                    item = reportItem as ErrorReportItem;
-                                    <div class="report-item report-item--error">
-                                        <i class="icon-cancel report-item__status report-item__status--red"></i>
-                                        <i class="icon-@item.Icon report-item__model-icon"></i>
-                                        <div class="report-item__model">
-                                            <div class="report-item__model-name">@item.Model</div>
-                                            <div class="report-item__model-tag select--on">@item.Tag</div>
+                                switch (reportItem)
+                                {
+                                    case DetailedReportItem item:
+                                        item = reportItem as DetailedReportItem;
+                                        switch (item.Type)
+                                        {
+                                            case OperationType.Assignment:
+                                                sharedHTML("ok", "report-item__status--green", item);
+                                                break;
+                                            case OperationType.Indefinite_Assignment:
+                                                sharedHTML("star", "report-item__status--blue", item);
+                                                break;
+                                            case OperationType.Extension:
+                                                sharedHTML("forward", "report-item__status--yellow", item);
+                                                break;
+                                        }
+                                        break;
+                                    case ErrorReportItem item:
+                                        item = reportItem as ErrorReportItem;
+                                        <div class="report-item report-item--error">
+                                            <i class="icon-cancel report-item__status report-item__status--red"></i>
+                                            <i class="icon-@item.Icon report-item__model-icon"></i>
+                                            <div class="report-item__model">
+                                                <div class="report-item__model-name">@item.Model</div>
+                                                <div class="report-item__model-tag select--on">@item.Tag</div>
+                                            </div>
+                                            <div class="report-item__info--error">
+                                                @("Error attempting to perform " + item.Type.ToString().Replace("_", " "))
+                                            </div>
                                         </div>
-                                        <div class="report-item__info--error">
-                                            @("Error attempting to perform " + item.Type.ToString().Replace("_", " "))
+                                        break;
+                                    case SimpleReportItem item:
+                                        item = reportItem as SimpleReportItem;
+                                        <div class="report-item">
+                                            <i class="icon-cancel report-item__status report-item__status--red"></i>
+                                            <i class="icon-@item.Icon report-item__model-icon"></i>
+                                            <div class="report-item__model">
+                                                <div class="report-item__model-name select--on">@item.Model</div>
+                                                <div class="report-item__model-tag select--on">@item.Tag</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    break;
-                                case SimpleReportItem item:
-                                    item = reportItem as SimpleReportItem;
-                                    <div class="report-item">
-                                        <i class="icon-cancel report-item__status report-item__status--red"></i>
-                                        <i class="icon-@item.Icon report-item__model-icon"></i>
-                                        <div class="report-item__model">
-                                            <div class="report-item__model-name select--on">@item.Model</div>
-                                            <div class="report-item__model-tag select--on">@item.Tag</div>
-                                        </div>
-                                    </div>
-                                    break;
+                                        break;
+                                }
                             }
+                        </div>
+                    }
+                }
+                else
+                {
+                    //no results, show all assigned assets
+                    if (Model.Report.PrintableCollections.Any())
+                    {
+                        foreach (var collection in Model.Report.PrintableCollections)
+                        {
+                            <div class="report-collection">
+                                <div class="report-collection__title">@collection.Name</div>
+                                @foreach (var item in collection.TList)
+                                {
+                                    sharedHTML("circle-empty", "", item);
+                                }
+                            </div>
                         }
-                    </div>
+                    }
+
                 }
             }
         </div>
         <div id="print">
             @{
-                if (Model.Report.Printable)
+                if (Model.Report.PrintableCollections.Any())
                 {
                     <div class="print__header">
                         <i class="print__icon icon-compass"></i>
@@ -128,34 +147,28 @@
                     </div>
                     <div class="print__name">@Model.Report.UserName</div>
                     <div class="print__date">@Model.Report.UserCreated.ToString("dd-MM-yy h:mm tt")</div>
-                    foreach (var collection in Model.Report.ListOfCollectionsOfReportItems)
+                    foreach (var collection in Model.Report.PrintableCollections)
                     {
-                        foreach (var reportItem in collection.TList)
+                        foreach (var item in collection.TList)
                         {
-                            var simpleItem = reportItem as SimpleReportItem;
-                            if (!(reportItem is ErrorReportItem) & simpleItem.Type != OperationType.Return)
-                            {
                                 <hr />
                                 <div>
-                                    <i class="icon-@simpleItem.Icon"></i> <span class="print__model">@simpleItem.Model</span>
+                                    <i class="icon-@item.Icon"></i> <span class="print__model">@item.Model</span>
                                 </div>
-                                <div class="print__tag print--margin-left"><span class="print__title">Tag: </span>@simpleItem.Tag</div>
-                                if (reportItem is DetailedReportItem)
+                                <div class="print__tag print--margin-left"><span class="print__title">Tag: </span>@item.Tag</div>
+                                <div class="print__due print--margin-left"><span class="print__title">Due: </span>@item.Due.ToString("dd-MM-yy")</div>
+                                if (item.CustomProperties != null)
                                 {
-                                    var detailedItem = reportItem as DetailedReportItem;
-                                    <div class="print__due print--margin-left"><span class="print__title">Due: </span>@detailedItem.Due.ToString("dd-MM-yy")</div>
-                                    if (detailedItem.CustomProperties != null)
+                                    foreach (var property in item.CustomProperties)
                                     {
-                                        foreach (var property in detailedItem.CustomProperties)
-                                        {
-                                            <div>
-                                                <span class="print__propery print--margin-left print__title">@property.Name: </span>
-                                                <span class="print__value">@property.Value</span>
-                                            </div>
+                                        <div>
+                                            <span class="print__propery print--margin-left print__title">@property.Name: </span>
+                                            <span class="print__value">@property.Value</span>
+                                        </div>
                                             
-                                        }
                                     }
                                 }
+
                             }
                         }
                     }

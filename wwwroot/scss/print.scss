@@ -5,9 +5,16 @@
     margin: 0mm;
 }
 
+@font-face {
+    font-family: Roboto;
+    src: url(../font/Roboto-Regular.ttf);
+}
+
 #print {
     visibility: visible;
     font-size: 1.25rem;
+    font-family: Roboto, sans-serif;
+    font-weight: 400;
 
     & hr {
         border: 1px dashed black;
@@ -16,7 +23,7 @@
     & .print__blank {
         margin-top: 10mm;
         padding: 20px;
-        border: 1px dashed #f4f;
+        border: 1px dashed #f4f4;
     }
 
     & .print__header {
@@ -55,15 +62,12 @@
     }
 
     & .print__tag {
-
     }
 
     & .print__due {
-
     }
 
     & .print__property {
-
     }
 
     & .print__value:last-child {

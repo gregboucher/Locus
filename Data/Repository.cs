@@ -469,82 +469,83 @@ namespace Locus.Data
 
         public Report GenerateReport(IList<IResult> results, int userId)
         {
-            var listOfPartials = new List<IPartialReportItem<IReportItem>>();
+            var listOfResultPartials = new List<IPartialReportItem<IReportItem>>();
+            var listOfPrintablePartials = new List<IPartialReportItem<DetailedReportItem>>();
             using (IDbConnection db = _connectionFactory.GetConnection())
             {
                 try
                 {
                     string query = "";
-                    if (results == null)
-                    {
-                        //report requested without and changes to assignments
-                        query = @"SELECT C.Id,
-	                               C.[Name],
-	                               M.[Name] AS Model,
-	                               I.[Name] AS Icon,
-	                               Ast.Tag,
-                                   Asg.Id AS AssignmentId,
-                                   M.Id AS ModelId,
-	                               Asg.Due
-                              FROM [dbo].[Assignment] AS Asg
-	                               INNER JOIN [dbo].[Asset] AS Ast
-		                              ON Ast.Id = Asg.AssetId
-                                         INNER JOIN [dbo].[Collection] AS C
-			                                ON C.Id = Ast.CollectionId
-			                             INNER JOIN [dbo].[Model] AS M
-			                                ON M.Id = Ast.ModelId
-                                               INNER JOIN [dbo].[Icon] as I
-                                                  ON I.Id = M.IconId
-                             WHERE Asg.UserId = @UserId
-                               AND Asg.Returned IS NULL";
+                    query = @"SELECT C.Id,
+	                            C.[Name],
+	                            M.[Name] AS Model,
+	                            I.[Name] AS Icon,
+	                            Ast.Tag,
+                                Asg.Id AS AssignmentId,
+                                M.Id AS ModelId,
+	                            Asg.Due
+                            FROM [dbo].[Assignment] AS Asg
+	                            INNER JOIN [dbo].[Asset] AS Ast
+		                            ON Ast.Id = Asg.AssetId
+                                        INNER JOIN [dbo].[Collection] AS C
+			                            ON C.Id = Ast.CollectionId
+			                            INNER JOIN [dbo].[Model] AS M
+			                            ON M.Id = Ast.ModelId
+                                            INNER JOIN [dbo].[Icon] as I
+                                                ON I.Id = M.IconId
+                            WHERE Asg.UserId = @UserId
+                            AND Asg.Returned IS NULL";
 
-                        var parameters = new DynamicParameters();
-                        parameters.Add("@UserId", userId, DbType.Int32);
-                        listOfPartials.AddRange(CreatePartialReportItem<DetailedReportItem>(OperationType.None, query, db, parameters));
-                    }
-                    else
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserId", userId, DbType.Int32);
+                    listOfPrintablePartials.AddRange(CreatePartialReportItem<DetailedReportItem>(OperationType.None, query, db, parameters));
+                    if (results != null)
                     {
                         foreach (var result in results)
                         {
-                            var parameters = new DynamicParameters(result);
+                            parameters = new DynamicParameters(result);
                             if (result is PositiveResult)
                             {
                                 if (result.Type != OperationType.Return)
                                 {
-                                    listOfPartials.AddRange(CreatePartialReportItem<DetailedReportItem>(result.Type, result.QueryString, db, parameters));
+                                    //positive results that are not of type.return produce detailedReportItems.
+                                    //Since a partialReportItem will already have been created for this asset in
+                                    //listOfPrintablePartials, we can copy a reference so as not to double up on
+                                    //appending custom properties etc.
+                                    var positiveResult = result as PositiveResult;
+                                    var partialReference = listOfPrintablePartials.Find(x => x.ReportItem.AssignmentId == positiveResult.AssignmentId);
+                                    partialReference.ReportItem.Type = result.Type;
+                                    listOfResultPartials.Add(partialReference);
                                 }
                                 else
                                 {
-                                    listOfPartials.AddRange(CreatePartialReportItem<SimpleReportItem>(result.Type, result.QueryString, db, parameters));
+                                    listOfResultPartials.AddRange(CreatePartialReportItem<SimpleReportItem>(result.Type, result.QueryString, db, parameters));
                                 }
                             }
                             else
                             {
-                                listOfPartials.AddRange(CreatePartialReportItem<ErrorReportItem>(result.Type, result.QueryString, db, parameters));
+                                listOfResultPartials.AddRange(CreatePartialReportItem<ErrorReportItem>(result.Type, result.QueryString, db, parameters));
                             }
                         }
                     }
-                    var listOfCollectionsOfReportItems = new List<ListTByCollection<IReportItem>>();
-                    var collectionDictionary = new Dictionary<int, int>();
-                    var status = Status.None;
-                    foreach (var item in listOfPartials)
+                    var printableCollections = new List<ListTByCollection<DetailedReportItem>>();
+                    var printableCollectionDictionary = new Dictionary<int, int>();
+                    var resultCollections = new List<ListTByCollection<IReportItem>>();
+                    var resultCollectionDictionary = new Dictionary<int, int>();
+                    if (listOfPrintablePartials.Any())
                     {
-                        if (!(item.ReportItem is ErrorReportItem))
+                        foreach (var partial in listOfPrintablePartials)
                         {
-                            if (item.ReportItem is DetailedReportItem)
-                            {
-                                AppendCustomeProperties(item as PartialReportItem<DetailedReportItem>, db);
-                                status = Status.Active;
-                            }
-                            else
-                            {
-                                var temp = item.ReportItem as SimpleReportItem;
-                                if (temp.Type != OperationType.Return)
-                                    status = Status.Active;
-                            }
-                                
+                            AppendCustomeProperties(partial, db);
+                            CommitItemToReport(partial, printableCollectionDictionary, printableCollections);
                         }
-                        CommitItemToReport(item, collectionDictionary, listOfCollectionsOfReportItems);
+                    }
+                    if (listOfResultPartials.Any())
+                    {
+                        foreach (var partial in listOfResultPartials)
+                        {
+                            CommitItemToReport(partial, resultCollectionDictionary, resultCollections);
+                        }
                     }
 
                     query = @"SELECT [Name] AS UserName,
@@ -554,10 +555,9 @@ namespace Locus.Data
 
                     var report = db.QuerySingle<Report>(query, new { userId });
                     report.UserId = userId;
-                    if (status != Status.None)
-                        report.Printable = true;
                     report.UserStatus = UserStatus(userId, db);
-                    report.ListOfCollectionsOfReportItems = listOfCollectionsOfReportItems;
+                    report.ResultCollections = resultCollections;
+                    report.PrintableCollections = printableCollections;
                     return report;
                 }
                 catch (Exception ex)
@@ -655,22 +655,22 @@ namespace Locus.Data
             }  
         }     
 
-        private void CommitItemToReport<T>(IPartialReportItem<T> item, Dictionary<int, int> collectionDictionary, List<ListTByCollection<T>> listOfCollectionsOfReportItems)
+        private void CommitItemToReport<T>(IPartialReportItem<T> item, Dictionary<int, int> dictionary, List<ListTByCollection<T>> collections)
             where T : IReportItem
         {
-            if (!collectionDictionary.TryGetValue(item.Collection.Id, out int collectionIndex))
+            if (!dictionary.TryGetValue(item.Collection.Id, out int collectionIndex))
             {
-                collectionIndex = listOfCollectionsOfReportItems.Count();
-                collectionDictionary.Add(item.Collection.Id, collectionIndex);
+                collectionIndex = collections.Count();
+                dictionary.Add(item.Collection.Id, collectionIndex);
                 var collection = new ListTByCollection<T>
                 {
                     Id = item.Collection.Id,
                     Name = item.Collection.Name,
                     TList = new List<T>()
                 };
-                listOfCollectionsOfReportItems.Add(collection);
+                collections.Add(collection);
             }
-            listOfCollectionsOfReportItems[collectionIndex].TList.Add(item.ReportItem);
+            collections[collectionIndex].TList.Add(item.ReportItem);
         }
 
         public Status UserStatus(int userId, IDbConnection db)

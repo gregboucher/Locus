@@ -2,15 +2,21 @@
     size: auto;
     margin: 0mm; }
 
+@font-face {
+    font-family: Roboto;
+    src: url(../font/Roboto-Regular.ttf); }
+
 #print {
     visibility: visible;
-    font-size: 1.25rem; }
+    font-size: 1.25rem;
+    font-family: Roboto, sans-serif;
+    font-weight: 400; }
     #print hr {
         border: 1px dashed black; }
     #print .print__blank {
         margin-top: 10mm;
         padding: 20px;
-        border: 1px dashed #f4f; }
+        border: 1px dashed #f4f4; }
     #print .print__header {
         margin-bottom: 1rem; }
     #print .print__icon {

@@ -2,7 +2,6 @@
 {
     public enum Status
     {
-        None,
         Error,
         Active,
         Inactive,
