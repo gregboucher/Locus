@@ -7,6 +7,6 @@
         Inactive,
         Due,
         Overdue,
-        Indefinite
+        Long_term
     }
 }

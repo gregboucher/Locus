@@ -183,7 +183,7 @@
                 }
             }
 
-            &.is-indefinite:checked ~ .card {
+            &.is-long_term:checked ~ .card {
                 border: 2px solid map-get($colour-map, --blue);
                 padding: 0.5625rem 0.8125rem;
 

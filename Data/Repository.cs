@@ -129,7 +129,7 @@ namespace Locus.Data
             return GetScalar(query);
         }
 
-        public int CountIndefinite()
+        public int CountLongterm()
         {
             string query =
                      @"SELECT COUNT(*)
@@ -409,9 +409,9 @@ namespace Locus.Data
 
         private IResult CreateNewAssignment(IDbConnection db, AssignmentOperation operation, int userId)
         {
-            //assignments with Due field set to NULL are treated as indefinite assignments
+            //assignments with Due field set to NULL are treated as long-term assignments
             string dueDate = "DATEADD(DAY, M.[Period], GETDATE())";
-            if (operation.Type == OperationType.Indefinite_Assignment)
+            if (operation.Type == OperationType.Long_term)
                 dueDate = "null";
 
             string query = @"INSERT INTO [dbo].[Assignment]
@@ -595,10 +595,12 @@ namespace Locus.Data
             //fetch all the query strings that relate to this model
             var parameters = new DynamicParameters();
             parameters.Add("@ModelId", item.ReportItem.ModelId, DbType.Int32);
-            var queries = db.Query<CustomProperty>(query, parameters);
-            if (queries.Any())
+            try
             {
-                query = @"SELECT Asg.Id AS AssignmentId,
+                var queries = db.Query<CustomProperty>(query, parameters);
+                if (queries.Any())
+                {
+                    query = @"SELECT Asg.Id AS AssignmentId,
 	                           Asg.Assigned AS AssignmentAssigned,
 	                           Asg.Due AS AssignmentDue,
 	                           Asg.Returned AS AssignmentReturned,
@@ -639,20 +641,25 @@ namespace Locus.Data
 		                                ON R.Id = U.RoleId
                          WHERE Asg.Id = @AssignmentId;";
 
-                //create dynamic parameters for all potential values that a query may need
-                parameters.Add("@AssignmentId", item.ReportItem.AssignmentId, DbType.Int32);
-                parameters = new DynamicParameters(db.Query(query, parameters).Cast<IDictionary<string, object>>().ElementAt(0));
-                item.ReportItem.CustomProperties = new List<CustomProperty>();
-                foreach (var sqlQuery in queries)
-                {
-                    var property = new CustomProperty
+                    //create dynamic parameters for all potential values that a query may need
+                    parameters.Add("@AssignmentId", item.ReportItem.AssignmentId, DbType.Int32);
+                    parameters = new DynamicParameters(db.Query(query, parameters).Cast<IDictionary<string, object>>().ElementAt(0));
+                    item.ReportItem.CustomProperties = new List<CustomProperty>();
+                    foreach (var sqlQuery in queries)
                     {
-                        Name = sqlQuery.Name,
-                        Value = db.ExecuteScalar<string>(sqlQuery.Value, parameters)
-                    };
-                    item.ReportItem.CustomProperties.Add(property);
+                        var property = new CustomProperty
+                        {
+                            Name = sqlQuery.Name,
+                            Value = db.ExecuteScalar<string>(sqlQuery.Value, parameters)
+                        };
+                        item.ReportItem.CustomProperties.Add(property);
+                    }
                 }
-            }  
+            }
+            catch (Exception ex)
+            {
+                _logger.WriteLog(ex);
+            }
         }     
 
         private void CommitItemToReport<T>(IPartialReportItem<T> item, Dictionary<int, int> dictionary, List<ListTByCollection<T>> collections)
@@ -722,7 +729,7 @@ namespace Locus.Data
                 }
                 else return Status.Overdue;
             }
-            return Status.Indefinite;
+            return Status.Long_term;
         }
 
         private int GetScalar(string query)

@@ -12,7 +12,7 @@ namespace Locus.Data
         int CountDueToday();
         int CountOverdue();
         int CountUsersCreatedToday();
-        int CountIndefinite();
+        int CountLongterm();
 
         IEnumerable<ListModelsByCollection<Model>> GetModelsByCollection(int? id);
         IEnumerable<Role> GetAllRoles();

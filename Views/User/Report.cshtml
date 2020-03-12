@@ -79,7 +79,7 @@
                                             case OperationType.Assignment:
                                                 sharedHTML("ok", "report-item__status--green", item);
                                                 break;
-                                            case OperationType.Indefinite_Assignment:
+                                            case OperationType.Long_term:
                                                 sharedHTML("star", "report-item__status--blue", item);
                                                 break;
                                             case OperationType.Extension:
@@ -97,7 +97,7 @@
                                                 <div class="report-item__model-tag select--on">@item.Tag</div>
                                             </div>
                                             <div class="report-item__info--error">
-                                                @("Error attempting to perform " + item.Type.ToString().Replace("_", " "))
+                                                @("Error attempting to perform " + item.Type.ToString().Replace("_", "-"))
                                             </div>
                                         </div>
                                         break;
@@ -137,45 +137,49 @@
                 }
             }
         </div>
-        <div id="print">
-            @{
-                if (Model.Report.PrintableCollections.Any())
-                {
-                    <div class="print__header">
-                        <i class="print__icon icon-compass"></i>
-                        <span class="print__locus">LOCUS</span>
-                    </div>
-                    <div class="print__name">@Model.Report.UserName</div>
-                    <div class="print__date">@Model.Report.UserCreated.ToString("dd-MM-yy h:mm tt")</div>
-                    foreach (var collection in Model.Report.PrintableCollections)
-                    {
-                        foreach (var item in collection.TList)
+            @if (Model.Report.PrintableCollections.Any())
+            {
+                <div class="print" id="print">
+                    @{ 
+                        <div class="print__header">
+                           <i class="print__locus-icon icon-compass"></i>
+                           <div>
+                               <div class="print__title">LOCUS</div>
+                               <div class="print__sub-title">asset management</div>
+                           </div>
+                        </div>
+                        <div class="print__name">@Model.Report.UserName</div>
+                        <div class="print__date">@DateTime.Now.ToString("dd-MM-yy h:mm tt")</div>
+                        foreach (var collection in Model.Report.PrintableCollections)
                         {
+                            foreach (var item in collection.TList)
+                            {
                                 <hr />
-                                <div>
-                                    <i class="icon-@item.Icon"></i> <span class="print__model">@item.Model</span>
-                                </div>
-                                <div class="print__tag print--margin-left"><span class="print__title">Tag: </span>@item.Tag</div>
-                                <div class="print__due print--margin-left"><span class="print__title">Due: </span>@item.Due.ToString("dd-MM-yy")</div>
-                                if (item.CustomProperties != null)
-                                {
-                                    foreach (var property in item.CustomProperties)
-                                    {
-                                        <div>
-                                            <span class="print__propery print--margin-left print__title">@property.Name: </span>
-                                            <span class="print__value">@property.Value</span>
-                                        </div>
+                                <div class="print__asset">
+                                    <i class="print__icon icon-@item.Icon"></i>
+                                    <div>
+                                        <div class="print__model">@item.Model</div>
+                                        <div class="print__bold">Tag: <span>@item.Tag</span></div>
+                                        <div class="print__bold">Due: <span>@item.Due.ToString("dd-MM-yy")</span></div>
+                                        @if (item.CustomProperties != null)
+                                        {
+                                            foreach (var property in item.CustomProperties)
+                                            {
+                                                <div>
+                                                    <div class="print__bold">@property.Name: <span>@property.Value</span></div>
+                                                </div>
                                             
-                                    }
-                                }
-
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                               
                             }
                         }
                     }
                     <div class="print__blank"></div>
-                }
+                </div>
             }
-        </div>
     </div>
 }
 

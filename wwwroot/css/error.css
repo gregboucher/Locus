@@ -1,5 +1,8 @@
 ﻿.content-error {
-    text-align: center; }
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center; }
     .content-error__title {
         font-size: 2rem;
         font-weight: 700;
@@ -9,4 +12,5 @@
         .content-error__title--yellow {
             color: #fbbc06; }
     .content-error__message {
-        color: #868a95; }
+        color: #868a95;
+        margin-bottom: 1rem; }

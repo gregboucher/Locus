@@ -15,7 +15,6 @@ namespace Locus.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
         [Route("[action]/{statusCode}")]
         public IActionResult Warning(int statusCode)
         {
@@ -36,8 +35,7 @@ namespace Locus.Controllers
                     return View(viewModel);
             }
         }
-
-        [HttpGet]
+        
         [Route("[action]")]
         public IActionResult Exception()
         {

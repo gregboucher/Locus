@@ -121,12 +121,12 @@
                     border-top: 1.5625rem solid #23af47; }
                 .user .assets .card__input.is-assign:checked ~ .card:after {
                     content: '\e82b'; }
-            .user .assets .card__input.is-indefinite:checked ~ .card {
+            .user .assets .card__input.is-long_term:checked ~ .card {
                 border: 2px solid #4d83ff;
                 padding: 0.5625rem 0.8125rem; }
-                .user .assets .card__input.is-indefinite:checked ~ .card:before {
+                .user .assets .card__input.is-long_term:checked ~ .card:before {
                     border-top: 1.5625rem solid #4d83ff; }
-                .user .assets .card__input.is-indefinite:checked ~ .card:after {
+                .user .assets .card__input.is-long_term:checked ~ .card:after {
                     content: '\e818';
                     font-size: 0.875rem; }
         .user .assets .card__properties {
@@ -139,7 +139,7 @@
                 color: #fbbc06; }
             .user .assets .card__values--active {
                 color: #23af47; }
-            .user .assets .card__values--indefinite {
+            .user .assets .card__values--long_term {
                 color: #4b83ff; }
         .user .assets .card__body-A {
             flex-grow: 1;

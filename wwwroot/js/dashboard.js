@@ -64,7 +64,7 @@ $(function() {
                     changePlaceholder('Users Created Today');
                 break
                 case 3:
-                    filterRowByAssetClass('icon--indefinite');
+                    filterRowByAssetClass('icon--long_term');
                     changePlaceholder('Assets Assigned Indefinitely');
                 break
             }

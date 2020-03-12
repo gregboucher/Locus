@@ -67,15 +67,15 @@
             </h1>
             <div class="card" onmouseover="ShowTooltip($(this), 1000, false, 0, -10);" onmouseout="HideTooltip($(this));">
                 <div class="card__body">
-                    <div class="card__quantity">@Model.CountIndefinite</div>
-                    <div class="card__subject">Indefinite</div>
-                    <div class="card__verb">Assignment@(Model.CountIndefinite == 1 ? "" : "s")</div>
+                    <div class="card__quantity">@Model.CountLongterm</div>
+                    <div class="card__subject">Long-term</div>
+                    <div class="card__verb">Assignment@(Model.CountLongterm == 1 ? "" : "s")</div>
                 </div>
                 <i class="card__icon icon-star"></i>
             </div>
             <h1 class="tooltip">
                 <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
-                    <div>Show only users with <span>indefinite</span> assignments</div>
+                    <div>Show only users with <span>long-term</span> assignments</div>
                 </div>
             </h1>
         </div>
@@ -116,7 +116,7 @@
                             <td class="select--on">@user.Role</td>
                             <td class="@(DateTime.Now.ToString("dd-MM-yy") == user.Created.ToString("dd-MM-yy") ? "data-table__today" : "") select--on">@user.Created.ToString("dd-MM-yy")</td>
                             <td>
-                                <div class="data-table__status data-table__status--@user.Assets[0].Status.ToString().ToLower()">@user.Assets[0].Status.ToString()</div>
+                                <div class="data-table__status data-table__status--@user.Assets[0].Status.ToString().ToLower()">@user.Assets[0].Status.ToString().Replace("_", "-")</div>
                             </td>
                             <td class="select--on">@(user.Assets[0].Due.HasValue ? user.Assets[0].Due.Value.ToString("dd-MM-yy") : "")</td>
                             <td>
@@ -129,7 +129,7 @@
                                             <div><span>Serial Number: </span>@asset.Id</div>
                                             <div><span>Tag: </span>@asset.Tag</div>
                                             <div><span>Assigned: </span>@asset.Assigned.ToString("dd-MM-yy h:mm tt")</div>
-                                            <div><span>Due: </span>@(asset.Due.HasValue ? asset.Due.Value.ToString("dd-MM-yy") : "Indefinite")</div>
+                                            <div><span>Due: </span>@(asset.Due.HasValue ? asset.Due.Value.ToString("dd-MM-yy") : "Long-term")</div>
                                         </div>
                                     </div>
                                 }

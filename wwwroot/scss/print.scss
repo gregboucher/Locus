@@ -10,9 +10,8 @@
     src: url(../font/Roboto-Regular.ttf);
 }
 
-#print {
+.print {
     visibility: visible;
-    font-size: 1.25rem;
     font-family: Roboto, sans-serif;
     font-weight: 400;
 
@@ -20,58 +19,62 @@
         border: 1px dashed black;
     }
 
-    & .print__blank {
+    & &__blank {
         margin-top: 10mm;
         padding: 20px;
         border: 1px dashed #f4f4;
     }
 
-    & .print__header {
+    & &__header {
         margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
     }
 
-    & .print__icon {
+    & &__locus-icon {
         font-size: 4rem;
     }
 
-    & .print__locus {
+    & &__title {
         font-size: 2.5rem;
         font-variant: small-caps;
-        margin-bottom: 2rem;
     }
 
-    & .print__title {
+    & &__sub-title {
+        font-size: 1rem;
+        font-variant: small-caps;
+    }
+
+    & &__bold {
         font-weight: 700;
+
+        & span {
+            font-weight: 400;
+        }
     }
 
-    & .print--margin-left {
-        margin-left: 2rem;
-    }
-
-    & .print__name {
+    & &__name {
         font-size: 1.75rem;
     }
 
-    & .print__date {
+    & &__date {
         font-size: 0.875rem;
     }
 
-    & .print__model {
+    & &__asset {
+        display: flex;
+        align-items: center;
+    }
+
+    & &__icon {
+        font-size: 2rem;
+        margin-right: 1rem;
+    }
+
+    & &__model {
         font-variant: small-caps;
         font-size: 1.75rem;
-    }
-
-    & .print__tag {
-    }
-
-    & .print__due {
-    }
-
-    & .print__property {
-    }
-
-    & .print__value:last-child {
-        margin-bottom: 2rem;
     }
 }
 

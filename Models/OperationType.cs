@@ -4,7 +4,7 @@
     {
         None,
         Assignment,
-        Indefinite_Assignment,
+        Long_term,
         Return,
         Extension
     }

@@ -24,7 +24,7 @@ $(function () {
     });
 
     $.validator.addMethod("checked", function() {
-        return $('.user .card__input.is-assign:checked, .user .card__input.is-indefinite:checked').length > 0;
+        return $('.user .card__input.is-assign:checked, .user .card__input.is-long_term:checked').length > 0;
     });
 
     $('#user').validate({

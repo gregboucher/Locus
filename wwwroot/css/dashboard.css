@@ -19,7 +19,7 @@
         .data-table__status {
             display: inline-block;
             padding: 0.1875rem 0.5625rem;
-            min-width: 3.5rem;
+            min-width: 3.8rem;
             font-variant: small-caps;
             text-align: center;
             border-radius: 0.25rem; }
@@ -32,7 +32,7 @@
             .data-table__status--active {
                 color: #23af47;
                 border: 1px solid #23af47; }
-            .data-table__status--indefinite {
+            .data-table__status--long_term {
                 color: #4b83ff;
                 border: 1px solid #4b83ff; }
         .data-table__icon {
@@ -41,7 +41,7 @@
                 color: #ff4747; }
             .data-table__icon--due {
                 color: #fbbc06; }
-            .data-table__icon--indefinite {
+            .data-table__icon--long_term {
                 color: #4b83ff; }
         .data-table__action {
             display: flex;

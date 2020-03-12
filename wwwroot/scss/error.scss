@@ -1,7 +1,10 @@
 ﻿@import "_variables.scss";
 
 .content-error {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-self:center;
+    align-items: center;
 
     &__title {
         font-size: 2rem;
@@ -19,5 +22,6 @@
 
     &__message {
         color: map-get($colour-map, --font);
+        margin-bottom: 1rem;
     }
 }
