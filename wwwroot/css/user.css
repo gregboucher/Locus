@@ -78,6 +78,8 @@
             .user .assets .card__wrapper.is-empty {
                 opacity: 0.4;
                 pointer-events: none; }
+            .user .assets .card__wrapper.is-assigned .card {
+                border: 1px solid #4b4b4b; }
         .user .assets .card:hover {
             background-color: #2b2d43; }
         .user .assets .card:before {
