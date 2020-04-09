@@ -13,8 +13,7 @@ namespace Locus
             services.AddControllersWithViews();
             services.AddSingleton<IConnectionFactory, ConnectionFactory>();
             services.AddSingleton<IRepository, Repository>();
-            services.AddSingleton<ILogger, Logger>();
-            services.AddSingleton<ILogger, Logger>();
+                services.AddSingleton<ILogger, Logger>();
             services.AddSingleton(typeof(IComplexTransferObject<>), typeof(ComplexTransferObject<>));
         }
 
