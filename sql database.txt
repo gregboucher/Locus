@@ -4,6 +4,7 @@
 	IF OBJECT_ID('dbo.Query', 'U') IS NOT NULL DROP TABLE [dbo].[Query]
 	IF OBJECT_ID('dbo.Model', 'U') IS NOT NULL DROP TABLE [dbo].[Model]
 	IF OBJECT_ID('dbo.Collection', 'U') IS NOT NULL DROP TABLE [dbo].[Collection]
+	IF OBJECT_ID('dbo.Period', 'U') IS NOT NULL DROP TABLE [dbo].[Period]
 	IF OBJECT_ID('dbo.Icon', 'U') IS NOT NULL DROP TABLE [dbo].[Icon]
 	IF OBJECT_ID('dbo.Role', 'U') IS NOT NULL DROP TABLE [dbo].[Role]
 	
@@ -15,6 +16,13 @@
 	CREATE TABLE [dbo].[Icon] (
 		[Id] INT NOT NULL PRIMARY KEY IDENTITY,
 		[Name] NVARCHAR(64) NOT NULL UNIQUE,
+		[Deactivated] DATETIME
+	);
+	CREATE TABLE [dbo].[Period] (
+		[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+		[Days] INT NOT NULL,
+		[Name] NVARCHAR(64),
+		[Deactivated] DATETIME
 	);
 	CREATE TABLE [dbo].[Collection] (
 		[Id] INT NOT NULL PRIMARY KEY IDENTITY,
@@ -25,7 +33,8 @@
 	CREATE TABLE [dbo].[Model] (
 		[Id] INT NOT NULL PRIMARY KEY IDENTITY,
 		[Name] NVARCHAR(64) NOT NULL,
-		[Period] INT NOT NULL,
+		[IsCustomPeriod] BIT,
+		[Period] INT NOT NULL REFERENCES [dbo].[Period],
 		[IconId] INT NOT NULL REFERENCES [dbo].[Icon],
 		[Deactivated] DATETIME
 	);
@@ -65,20 +74,29 @@
 	INSERT INTO [dbo].[Role] VALUES ('Cleaner', NULL);
 	INSERT INTO [dbo].[Role] VALUES ('Contractor', NULL);
 
-	INSERT INTO [dbo].[Icon] VALUES ('tags');
-	INSERT INTO [dbo].[Icon] VALUES ('laptop');
-	INSERT INTO [dbo].[Icon] VALUES ('camera');
-	INSERT INTO [dbo].[Icon] VALUES ('television');
+	INSERT INTO [dbo].[Icon] VALUES ('tags', NULL);
+	INSERT INTO [dbo].[Icon] VALUES ('laptop', NULL);
+	INSERT INTO [dbo].[Icon] VALUES ('camera', NULL);
+	INSERT INTO [dbo].[Icon] VALUES ('television', NULL);
+
+	INSERT INTO [dbo].[Period] VALUES (1, '1 Day', NULL);
+	INSERT INTO [dbo].[Period] VALUES (2, '2 Days', NULL);
+	INSERT INTO [dbo].[Period] VALUES (3, '3 Days', NULL);
+	INSERT INTO [dbo].[Period] VALUES (5, '5 Days', NULL);
+	INSERT INTO [dbo].[Period] VALUES (7, '1 Week', NULL);
+	INSERT INTO [dbo].[Period] VALUES (14, '2 Weeks', NULL);
+	INSERT INTO [dbo].[Period] VALUES (21, '3 Weeks', NULL);
+	INSERT INTO [dbo].[Period] VALUES (28, '4 Weeks', NULL);
 
 	INSERT INTO [dbo].[Collection] VALUES ('Libau', 'Main Campus', NULL);
 	INSERT INTO [dbo].[Collection] VALUES ('Illinois', 'Annex', NULL);
 	INSERT INTO [dbo].[Collection] VALUES ('Test#3Group', 'test description', NULL);
 
-	-- Name, Period, Icon, Deactivated
-	INSERT INTO [dbo].[Model] VALUES ('Salto RFID', 1, 1, NULL); --1 day, tags
-	INSERT INTO [dbo].[Model] VALUES ('Acer Travelmate', 3, 2, NULL); --3 days, laptop
-	INSERT INTO [dbo].[Model] VALUES ('Lenovo Thinkpad', 3, 4, NULL); --3days, television
-	INSERT INTO [dbo].[Model] VALUES ('Sony A7S', 7, 3, NULL); --7days, camera
+	-- Name, CustomPeriod, Period, Icon, Deactivated
+	INSERT INTO [dbo].[Model] VALUES ('Salto RFID', NULL, 1, 1, NULL); --1 day, tags
+	INSERT INTO [dbo].[Model] VALUES ('Acer Travelmate', NULL, 3, 2, NULL); --3 days, laptop
+	INSERT INTO [dbo].[Model] VALUES ('Lenovo Thinkpad', NULL, 3, 4, NULL); --3days, television
+	INSERT INTO [dbo].[Model] VALUES ('Sony A7S', 1, 5, 3, NULL); --7days, camera
 
 	-- QueryName, QueryString, ModelId
 	INSERT INTO [dbo].[Query] VALUES ('Username', 'SELECT @AssetTag As Username', 3);
@@ -109,6 +127,7 @@
 	INSERT INTO [dbo].[Asset] VALUES ('LENOVO03', 'crt03', 3, 2, NULL); --Lenovo, Illinois
 	INSERT INTO [dbo].[Asset] VALUES ('LENOVO04', 'crt04', 3, 2, NULL); --Lenovo, Illinois
 	INSERT INTO [dbo].[Asset] VALUES ('SONY03', 'CAM-03', 4, 2, NULL); --Sony, Illinois
+	INSERT INTO [dbo].[Asset] VALUES ('SONY04', 'CAM-04', 4, 2, NULL); --Sony, Illinois
 
 	INSERT INTO [dbo].[User] VALUES ('Greg Boucher', 'Chris Boucher', 'Boucher.Gregory.M@nelsonpark.vic.edu.au', '123456789', GETDATE(), NULL, 1);
 	INSERT INTO [dbo].[User] VALUES ('Bob Smith', 'Jim Fluffer', 'Bob.Smith.P@nelsonpark.vic.edu.au', '987654321', GETDATE(), NULL, 1);

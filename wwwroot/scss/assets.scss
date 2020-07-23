@@ -92,6 +92,18 @@
                 }
             }
         }
+
+        & .period-menu {
+            display: none;
+            z-index: 1000;
+            position: absolute;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 0;
+            background-color: map-get($colour-map, --background);
+            border: 1px solid map-get($colour-map, --border);
+            color: map-get($colour-map, --font);
+        }
     }
 
     & .card {

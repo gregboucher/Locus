@@ -31,6 +31,7 @@ namespace Locus.Controllers
                 Page = "Create",
                 Icon = "user-plus",
                 Roles = _repository.GetAllRoles(),
+                Periods = _repository.GetAllPeriods(),
                 CollectionsOfModels = _repository.GetModelsByCollection(null)
             };
             return View(viewModel);

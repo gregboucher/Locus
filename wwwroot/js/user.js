@@ -2,15 +2,15 @@ $(function () {
     $.validator.setDefaults({
         ignore: '',
         errorClass: 'form__validation',
-        highlight: function(element) {
+        highlight: function (element) {
             $(element)
                 .addClass('form__input--error');
         },
-        unhighlight: function(element) {
+        unhighlight: function (element) {
             $(element)
                 .removeClass('form__input--error');
         },
-        errorPlacement: function(error, element) {
+        errorPlacement: function (error, element) {
             if (element.is('select')) {
                 error.insertAfter(element.parent());
             } else {
@@ -19,11 +19,11 @@ $(function () {
         }
     });
 
-    $.validator.addMethod("letterspaceonly", function(value, element) {
+    $.validator.addMethod("letterspaceonly", function (value, element) {
         return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
     });
 
-    $.validator.addMethod("checked", function() {
+    $.validator.addMethod("checked", function () {
         return $('.user .card__input.is-assign:checked, .user .card__input.is-long_term:checked').length > 0;
     });
 
@@ -74,7 +74,7 @@ $(function () {
                 checked: "Please assign at least one device"
             }
         },
-        submitHandler: function(form) {
+        submitHandler: function (form) {
             $('#checkboxAssigned').prop('disabled', true);
             form.submit();
         }
@@ -84,14 +84,14 @@ $(function () {
     searchInput.val('');
 
     //top-bar input search
-    searchInput.keyup(function() {
+    searchInput.keyup(function () {
         searchAssets(searchInput.val());
     })
 
     var cards = $('.user .card__wrapper:not(.is-blank)');
     var checkboxReturnAll = $('.user #assets__header-check');
 
-    cards.click(function() {
+    cards.click(function () {
         var $this = $(this);
         var checkedInput = $this.find('.card__input:checked');
         var hiddenInputs = $this.find('.card__hidden');
@@ -107,6 +107,34 @@ $(function () {
         } else {
             $this.find('.card__input:first').prop('checked', true);
             hiddenInputs.prop('disabled', false);
+        }
+    });
+
+    var cardsWithCustomPeriod = cards.filter('.is-customPeriod')
+    var periodMenu = $('.period-menu')
+
+    //disable context menu on all cards
+    cards.contextmenu(function (e) {
+        e.preventDefault();
+    })
+
+    //custome context menu on cards with is-customePeriod class
+    cardsWithCustomPeriod.contextmenu(function (e) {
+        //periodMenu.appendTo(e.currentTarget);
+        periodMenu.css({ top: e.pageY, left: e.pageX });
+        periodMenu.show();
+    })
+    
+    periodMenu.children('li').click(function (e) {
+        periodMenu.hide();
+        periodMenu.parent().children('.card__hidden-period').val($(this).attr('data-period'));
+        e.stopPropagation();
+    });
+
+    // close period menu if clicking outside menu
+    $(document).mousedown(function (e) {
+        if (!$(e.target).parents(".period-menu").length > 0) {
+            periodMenu.hide();
         }
     });
 

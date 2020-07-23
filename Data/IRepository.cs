@@ -15,6 +15,7 @@ namespace Locus.Data
         int CountLongterm();
 
         IEnumerable<ListModelsByCollection<Model>> GetModelsByCollection(int? id);
+        IEnumerable<Period> GetAllPeriods();
         IEnumerable<Role> GetAllRoles();
         UserDetails GetUserDetails(int id);
 
