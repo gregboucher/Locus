@@ -67,6 +67,7 @@ namespace Locus.Controllers
                     UserId = userId,
                     UserDetails = _repository.GetUserDetails(userId),
                     Roles = _repository.GetAllRoles(),
+                    Periods = _repository.GetAllPeriods(),
                     CollectionsOfModels = _repository.GetModelsByCollection(userId)
                 };
                 return View(viewModel);

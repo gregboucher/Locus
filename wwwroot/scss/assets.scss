@@ -103,6 +103,23 @@
             background-color: map-get($colour-map, --background);
             border: 1px solid map-get($colour-map, --border);
             color: map-get($colour-map, --font);
+            box-shadow: 7px 7px 7px 1px rgba(0, 0, 0, .2);
+
+            & li {
+                padding: 8px 12px;
+                list-style-type: none;
+                user-select: none;
+
+                &.is-selected {
+                    background-color: lighten(map-get($colour-map, --background), 2%);
+                    color: white;
+                }
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: lighten(map-get($colour-map, --background), 4%);
+                }
+            }
         }
     }
 

@@ -111,7 +111,7 @@ $(function () {
     });
 
     var cardsWithCustomPeriod = cards.filter('.is-customPeriod')
-    var periodMenu = $('.period-menu')
+    var allPeriodMenues = $('.period-menu');
 
     //disable context menu on all cards
     cards.contextmenu(function (e) {
@@ -120,21 +120,31 @@ $(function () {
 
     //custome context menu on cards with is-customePeriod class
     cardsWithCustomPeriod.contextmenu(function (e) {
-        //periodMenu.appendTo(e.currentTarget);
-        periodMenu.css({ top: e.pageY, left: e.pageX });
-        periodMenu.show();
+        var menu = $(e.currentTarget).prev('.period-menu')
+        var firstHidden = menu.next('.is-customPeriod').children('.card__hidden').first();
+        //if (!firstHidden.prop('disabled')) {
+            menu.css({ top: e.pageY, left: e.pageX });
+            menu.show();
+        //}
     })
-    
-    periodMenu.children('li').click(function (e) {
-        periodMenu.hide();
-        periodMenu.parent().children('.card__hidden-period').val($(this).attr('data-period'));
+
+    allPeriodMenues.children('li').click(function (e) {
         e.stopPropagation();
+        var listItem = $(this);
+        var allListItems = listItem.siblings('li');
+        var menu = listItem.parent();
+        var cardContent = menu.next('.is-customPeriod').children();
+        allListItems.removeClass('is-selected');
+        listItem.addClass('is-selected');
+        cardContent.filter('.card__hidden--period').val(listItem.attr('data-period'));
+        cardContent.find('.card__value--period').text(listItem.text());
+        menu.hide();
     });
 
     // close period menu if clicking outside menu
     $(document).mousedown(function (e) {
         if (!$(e.target).parents(".period-menu").length > 0) {
-            periodMenu.hide();
+            allPeriodMenues.hide();
         }
     });
 

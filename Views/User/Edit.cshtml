@@ -87,6 +87,22 @@
                         {
                             foreach (var _model in collection.TList)
                             {
+                                if (_model.IsCustomPeriod == true)
+                                {
+                                    <ul class="period-menu">
+                                        @foreach (var period in Model.Periods)
+                                        {
+                                            if (period.Days == _model.Period.Days)
+                                            {
+                                                <li class="is-selected" data-period="@period.Days">@period.Name</li>
+                                            }
+                                            else
+                                            {
+                                                <li data-period="@period.Days">@period.Name</li>
+                                            }
+                                        }
+                                    </ul>
+                                }
                                 if (_model.Asset == null)
                                 {
                                     <div class="card__wrapper @(_model.Surplus == 0 ? "is-empty" : "") @(_model.IsCustomPeriod == true ? "is-customPeriod" : "")">
@@ -97,7 +113,7 @@
                                             <input type="hidden" class="card__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
                                             if (_model.IsCustomPeriod == true)
                                             {
-                                                <input type="hidden" class="card__hidden card__hidden-period" name="AssignmentOperations[@index].Period" value="@_model.Period" disabled />
+                                                <input type="hidden" class="card__hidden card__hidden--period" name="AssignmentOperations[@index].Period" value="@_model.Period.Days" disabled />
                                             }
                                             <input type="radio" class="card__input is-assign" name="AssignmentOperations[@index].Type" value="1" />
                                             <input type="radio" class="card__input is-long_term" name="AssignmentOperations[@index].Type" value="2" />
@@ -118,7 +134,7 @@
                                                 <div class="card__values">
                                                     <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
                                                     <div>@(_model.Surplus + " / " + _model.Total)</div>
-                                                    <div>_model.Period.Name</div>
+                                                    <div class="card__value--period">@_model.Period.Name</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -131,7 +147,7 @@
                                         <input type="hidden" class="card__hidden" name="EditOperations[@index].AssetId" value="@_model.Asset.Id" disabled />
                                         @if (_model.IsCustomPeriod == true)
                                         {
-                                            <input type="hidden" class="card__hidden card__hidden-period" name="EditOperations[@index].Period" value="@_model.Period" disabled />
+                                            <input type="hidden" class="card__hidden card__hidden--period" name="EditOperations[@index].Period" value="@_model.Period.Days" disabled />
                                         }
                                         <input type="radio" class="card__input is-return" name="EditOperations[@index].Type" value="3" />
                                         @if (_model.Asset.Due.HasValue)
@@ -167,16 +183,6 @@
                             }
                         }
                     }
-                    <ul class='period-menu'>
-                        <li data-period="1">1 Day</li>
-                        <li data-period="2">2 Days</li>
-                        <li data-period="3">3 Days</li>
-                        <li data-period="5">5 Days</li>
-                        <li data-period="7">1 Week</li>
-                        <li data-period="14">2 Weeks</li>
-                        <li data-period="21">3 Weeks</li>
-                        <li data-period="28">4 Weeks</li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -206,7 +212,9 @@
                         Creating a new assignment will select an asset <span>at random</span><br />
                         from the available pool, based on the selected model and<br />
                         collection. The duration of the assignment will be equal<br />
-                        to the <span>period</span> shown on the <span>model card</span>.
+                        to the <span>period</span> shown on the <span>model card</span>. If the model<br />
+                        allows you to set a custom lease <span>period</span>, you can set this by<br />
+                        right-clicking the <span>model card</span>.
                     </div>
                 </div>
             </div>

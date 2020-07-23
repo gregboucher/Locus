@@ -409,7 +409,7 @@ namespace Locus.Data
                             case OperationType.Extension:
 
                                 string period;
-                                if (operation.Period != 0)
+                                if (operation.Period > 0)
                                     period = operation.Period.ToString();
                                 else
                                     period = "M.[Period]";
@@ -450,7 +450,7 @@ namespace Locus.Data
             string dueDate;
             if (operation.Type == OperationType.Long_term)
                 dueDate = "NULL";
-            else if (operation.Period != 0)
+            else if (operation.Period > 0)
                 dueDate = "DATEADD(DAY, " + operation.Period + @", GETDATE())";
             else
                 dueDate = "DATEADD(DAY, M.[Period], GETDATE())";
