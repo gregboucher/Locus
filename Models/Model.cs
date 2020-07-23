@@ -9,6 +9,7 @@ namespace Locus.Models
         public string Name { get; set; }
         public string Icon { get; set; }
         public int Period { get; set; }
+        public bool IsCustomPeriod { get; set; }
         public int Surplus { get; set; }
         public int Total { get; set; }
         public Asset Asset { get; set; }

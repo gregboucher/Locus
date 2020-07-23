@@ -150,6 +150,7 @@ namespace Locus.Data
 	                         M.[Name],
 	                         I.[Name] As Icon,
 	                         M.[Period],
+                             M.IsCustomPeriod,
 	                         Grouped.Surplus,
 	                         Grouped.Total,
 	                         Asg.AssetId AS Id,
@@ -344,7 +345,7 @@ namespace Locus.Data
                 catch (Exception ex)
                 {
                     _logger.WriteLog(ex);
-                    throw new LocusException("We were unable to edit this User.");
+                    throw new LocusException("Unable to edit this User.");
                 }
 
                 if (postModel.AssignmentOperations != null)
@@ -356,7 +357,7 @@ namespace Locus.Data
                 }
                 if (postModel.EditOperations != null)
                 {
-                    //UPDATE will not throw and exception by default if it can't set.
+                    //An SQL UPDATE will not throw an exception by default if it can't set.
                     //Most likely cause of this would be if the asset has already been returned.
                     //If @AssignmentId is null, the appended select query will return no rows
                     //and an Assignment object will be created with null members.
@@ -377,8 +378,15 @@ namespace Locus.Data
                                                1;";
                                 break;
                             case OperationType.Extension:
+
+                                string period;
+                                if (operation.Period != 0)
+                                    period = operation.Period.ToString();
+                                else
+                                    period = "M.[Period]";
+
                                 query = @"UPDATE Asg
-                                           SET Due = DATEADD(DAY, M.[Period], GETDATE()),
+                                           SET Due = DATEADD(DAY, " + period + @", GETDATE()),
                                                @AssignmentId = Asg.Id
                                           FROM [dbo].[Assignment] AS Asg
 	                                           INNER JOIN [dbo].[Asset] AS Ast
@@ -410,9 +418,13 @@ namespace Locus.Data
         private IResult CreateNewAssignment(IDbConnection db, AssignmentOperation operation, int userId)
         {
             //assignments with Due field set to NULL are treated as long-term assignments
-            string dueDate = "DATEADD(DAY, M.[Period], GETDATE())";
+            string dueDate;
             if (operation.Type == OperationType.Long_term)
-                dueDate = "null";
+                dueDate = "NULL";
+            else if (operation.Period != 0)
+                dueDate = "DATEADD(DAY, " + operation.Period + @", GETDATE())";
+            else
+                dueDate = "DATEADD(DAY, M.[Period], GETDATE())";
 
             string query = @"INSERT INTO [dbo].[Assignment]
                             SELECT GETDATE(),
