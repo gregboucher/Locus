@@ -6,6 +6,6 @@ namespace Locus.Models
     {
         [Required]
         public OperationType Type { get; set; }
-        public int Period { get; set; }
+        public int? Period { get; set; }
     }
 }

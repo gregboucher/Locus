@@ -152,7 +152,7 @@ namespace Locus.Data
 	                         Grouped.Surplus,
 	                         Grouped.Total,
                              P.[Days],
-                             P.[Name],
+                             P.[Text],
 	                         Asg.AssetId AS Id,
 	                         Ast.Tag,
 	                         Asg.Assigned,
@@ -232,7 +232,7 @@ namespace Locus.Data
                 //fetch the list of periods for each unique model, and then append them to all instances of that
                 //model found in collectionsOfModels.
                 query =
-                    @"SELECT P.Id, P.[Days], P.[Name]
+                    @"SELECT P.Id, P.[Days], P.[Text]
                         FROM [dbo].[Period] AS P
                              INNER JOIN [dbo].[PeriodMap] as PM
                                 ON PM.PeriodId = P.Id
@@ -419,20 +419,27 @@ namespace Locus.Data
                                 break;
                             case OperationType.Extension:
 
-                                string period;
+                                //assignments with period == 0 have a due field of NULL,
+                                //which are treated as long-term assignments
+                                //operation.period will be null if no period has been selected manually
+                                string dueDate;
                                 if (operation.Period > 0)
-                                    period = operation.Period.ToString();
+                                    dueDate = "DATEADD(DAY, " + operation.Period + @", GETDATE())";
+                                else if (operation.Period == 0)
+                                    dueDate = "NULL";
                                 else
-                                    period = "M.[Period]";
+                                    dueDate = "DATEADD(DAY, P.[Days], GETDATE())";
 
                                 query = @"UPDATE Asg
-                                           SET Due = DATEADD(DAY, " + period + @", GETDATE()),
+                                           SET Due = " + dueDate + @",
                                                @AssignmentId = Asg.Id
                                           FROM [dbo].[Assignment] AS Asg
 	                                           INNER JOIN [dbo].[Asset] AS Ast
 	                                              ON Ast.Id = Asg.AssetId
 	                                                 INNER JOIN [dbo].[Model] AS M
 		                                                ON M.Id = Ast.ModelId
+                                                           INNER JOIN [dbo].[Period] AS P
+                                                              ON P.Id = M.DefaultPeriod
                                          WHERE Asg.AssetId = @AssetId
                                            AND Asg.Returned IS NULL
                                             IF (@AssignmentId IS NULL)
@@ -457,14 +464,16 @@ namespace Locus.Data
 
         private IResult CreateNewAssignment(IDbConnection db, AssignmentOperation operation, int userId)
         {
-            //assignments with Due field set to NULL are treated as long-term assignments
+            //assignments with period == 0 have a due field of NULL,
+            //which are treated as long-term assignments
+            //operation.Period will be null if no period has been selected manually
             string dueDate;
-            if (operation.Type == OperationType.Long_term)
+            if (operation.Period > 0)
+            dueDate = "DATEADD(DAY, " + operation.Period + @", GETDATE())";
+            else if (operation.Period == 0)
                 dueDate = "NULL";
-            else if (operation.Period > 0)
-                dueDate = "DATEADD(DAY, " + operation.Period + @", GETDATE())";
             else
-                dueDate = "DATEADD(DAY, M.[Period], GETDATE())";
+                dueDate = "DATEADD(DAY, P.[Days], GETDATE())";
 
             string query = @"INSERT INTO [dbo].[Assignment]
                             SELECT GETDATE(),
@@ -489,6 +498,8 @@ namespace Locus.Data
                                       ORDER BY NEWID()
 	                               )
                               FROM [dbo].[Model] AS M
+                                   LEFT JOIN [dbo].[Period] AS P
+							         ON P.Id = M.DefaultPeriod
                              WHERE M.Id = @ModelId
                             SELECT @AssignmentId = SCOPE_IDENTITY();";
 
@@ -781,7 +792,7 @@ namespace Locus.Data
                 }
                 else return Status.Overdue;
             }
-            return Status.Long_term;
+            return Status.Long_Term;
         }
 
         private int GetScalar(string query)

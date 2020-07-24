@@ -118,7 +118,7 @@
                             <td>
                                 <div class="data-table__status data-table__status--@user.Assets[0].Status.ToString().ToLower()">@user.Assets[0].Status.ToString().Replace("_", "-")</div>
                             </td>
-                            <td class="select--on">@(user.Assets[0].Due.HasValue ? user.Assets[0].Due.Value.ToString("dd-MM-yy") : "")</td>
+                            <td class="select--on">@(user.Assets[0].Due != null ? user.Assets[0].Due.Value.ToString("dd-MM-yy") : "")</td>
                             <td>
                                 @foreach (var asset in user.Assets)
                                 {
@@ -129,7 +129,7 @@
                                             <div><span>Serial Number: </span>@asset.Id</div>
                                             <div><span>Tag: </span>@asset.Tag</div>
                                             <div><span>Assigned: </span>@asset.Assigned.ToString("dd-MM-yy h:mm tt")</div>
-                                            <div><span>Due: </span>@(asset.Due.HasValue ? asset.Due.Value.ToString("dd-MM-yy") : "Long-term")</div>
+                                            <div><span>Due: </span>@(asset.Due != null ? asset.Due.Value.ToString("dd-MM-yy") : "Long-term")</div>
                                         </div>
                                     </div>
                                 }

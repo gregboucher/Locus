@@ -22,7 +22,7 @@
 	CREATE TABLE [dbo].[Period] (
 		[Id] INT NOT NULL PRIMARY KEY IDENTITY,
 		[Days] INT NOT NULL,
-		[Name] NVARCHAR(64),
+		[Text] NVARCHAR(64),
 		[Deactivated] DATETIME
 	);
 	CREATE TABLE [dbo].[Collection] (
@@ -104,7 +104,7 @@
 	INSERT INTO [dbo].[Model] VALUES ('Salto RFID', 1, 1, NULL); --1 day, tags
 	INSERT INTO [dbo].[Model] VALUES ('Acer Travelmate', 3, 2, NULL); --3 days, laptop
 	INSERT INTO [dbo].[Model] VALUES ('Lenovo Thinkpad', 3, 4, NULL); --3days, television
-	INSERT INTO [dbo].[Model] VALUES ('Sony A7S', 5, 3, NULL); --7days, camera
+	INSERT INTO [dbo].[Model] VALUES ('Sony A7S', 7, 3, NULL); --7days, camera
 
 	-- ModelId, PeriodId
 	INSERT INTO [dbo].[PeriodMap] VALUES (1, 1);

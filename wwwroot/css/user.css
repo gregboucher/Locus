@@ -178,6 +178,9 @@
             display: flex;
             align-items: center;
             text-align: right; }
+            .user .assets .card__body-B--margin {
+                margin-top: 0.46875rem;
+                margin-bottom: 0.46875rem; }
         .user .assets .card__tag {
             color: #6c707c;
             font-size: 0.875rem;

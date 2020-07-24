@@ -87,19 +87,22 @@
                         {
                             foreach (var _model in collection.TList)
                             {
-                                <ul class="period-menu">
-                                    @foreach (var period in _model.Periods)
-                                    {
-                                        if (period.Days == _model.DefaultPeriod.Days)
-                                        {
-                                            <li class="is-selected" data-period="@period.Days">@period.Name</li>
-                                        }
-                                        else
-                                        {
-                                            <li data-period="@period.Days">@period.Name</li>
-                                        }
-                                    }
-                                </ul>
+                                if (_model.Asset == null || _model.Asset.Due != null)
+                                {
+                                        <ul class="period-menu">
+                                            @foreach (var period in _model.Periods)
+                                            {
+                                                if (period.Days == _model.DefaultPeriod.Days)
+                                                {
+                                                    <li class="is-selected" data-period="@period.Days">@period.Text</li>
+                                                }
+                                                else
+                                                {
+                                                    <li data-period="@period.Days">@period.Text</li>
+                                                }
+                                            }
+                                        </ul>
+                                }
                                 if (_model.Asset == null)
                                 {
                                     <div class="card__wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
@@ -110,7 +113,6 @@
                                             <input type="hidden" class="card__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
                                             <input type="hidden" class="card__hidden card__hidden--period" name="AssignmentOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
                                             <input type="radio" class="card__input is-assign" name="AssignmentOperations[@index].Type" value="1" />
-                                            <input type="radio" class="card__input is-long_term" name="AssignmentOperations[@index].Type" value="2" />
                                             ++index;
                                         }
                                         <div class="card">
@@ -119,7 +121,7 @@
                                                 <div class="card__model searchable">@_model.Name</div>
                                                 <div class="card__collection searchable">@collection.Name</div>
                                             </div>
-                                            <div class="card__body-B">
+                                            <div class="card__body-B card__body-B--margin">
                                                 <div class="card__properties">
                                                     <div>Status:</div>
                                                     <div>Surplus:</div>
@@ -128,7 +130,7 @@
                                                 <div class="card__values">
                                                     <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
                                                     <div>@(_model.Surplus + " / " + _model.Total)</div>
-                                                    <div class="card__value--period">@_model.DefaultPeriod.Name</div>
+                                                    <div class="card__value--period">@_model.DefaultPeriod.Text</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -136,39 +138,41 @@
                                 }
                                 else
                                 {
-                                    <div class="card__wrapper is-assigned">
-                                        <input type="hidden" class="card__hidden" name="EditOperations.Index" value="@index" disabled />
-                                        <input type="hidden" class="card__hidden" name="EditOperations[@index].AssetId" value="@_model.Asset.Id" disabled />
-                                        <input type="hidden" class="card__hidden card__hidden--period" name="EditOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
-                                        <input type="radio" class="card__input is-return" name="EditOperations[@index].Type" value="3" />
-                                        @if (_model.Asset.Due.HasValue)
-                                        {
-                                            <input type="radio" class="card__input is-extend" name="EditOperations[@index].Type" value="4" />
-                                        }
-                                        <div class="card">
-                                            <i class="icon-@_model.Icon card__icon"></i>
-                                            <div class="card__body-A">
-                                                <div class="card__model searchable">@_model.Name</div>
-                                                <div class="card__collection searchable">
-                                                    @collection.Name<span class="card__tag searchable">
-                                                        @_model.Asset.Tag
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="card__body-B">
-                                                <div class="card__properties">
-                                                    <div>Status:</div>
-                                                    <div>Assigned:</div>
-                                                    <div>Due:</div>
-                                                </div>
-                                                <div class="card__values">
-                                                    <div class="card__values--@_model.Asset.Status.ToString().ToLower() searchable">@_model.Asset.Status.ToString().Replace("_", "-")</div>
-                                                    <div>@_model.Asset.Assigned.ToString("dd-MM-yy")</div>
-                                                    <div>@(_model.Asset.Due.HasValue ? @_model.Asset.Due.Value.ToString("dd-MM-yy") : "...")</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                <div class="card__wrapper is-assigned">
+                    <input type="hidden" class="card__hidden" name="EditOperations.Index" value="@index" disabled />
+                    <input type="hidden" class="card__hidden" name="EditOperations[@index].AssetId" value="@_model.Asset.Id" disabled />
+                    <input type="radio" class="card__input is-return" name="EditOperations[@index].Type" value="2" />
+                    @if (_model.Asset.Due != null)
+                    {
+                        <input type="hidden" class="card__hidden card__hidden--period" name="EditOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
+                        <input type="radio" class="card__input is-extend" name="EditOperations[@index].Type" value="3" />
+                    }
+                    <div class="card">
+                        <i class="icon-@_model.Icon card__icon"></i>
+                        <div class="card__body-A">
+                            <div class="card__model searchable">@_model.Name</div>
+                            <div class="card__collection searchable">
+                                @collection.Name<span class="card__tag searchable">
+                                    @_model.Asset.Tag
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card__body-B">
+                            <div class="card__properties">
+                                <div>Status:</div>
+                                <div>Assigned:</div>
+                                <div>Due:</div>
+                                <div>Period:</div>
+                            </div>
+                            <div class="card__values">
+                                <div class="card__values--@_model.Asset.Status.ToString().ToLower() searchable">@_model.Asset.Status.ToString().Replace("_", "-")</div>
+                                <div>@_model.Asset.Assigned.ToString("dd-MM-yy")</div>
+                                <div>@(_model.Asset.Due != null ? @_model.Asset.Due.Value.ToString("dd-MM-yy") : "n/a")</div>
+                                <div class="card__value--period">@_model.DefaultPeriod.Text</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                                     ++index;
                                 }
                             }
@@ -178,7 +182,7 @@
             </div>
         </div>
         <div class="footer">
-            <input type="submit" value="Save" id="submit" class="btn">
+            <input type="submit" value="Save" class="btn">
             <a asp-controller="User" asp-action="Report" asp-route-userId="@Model.UserId" class="btn btn--dark">Generate User Report</a>
             <input type="button" value="Reset Selection" data-page="edit" id="reset" class="btn btn--dark">
             <a asp-controller="Home" asp-action="Dashboard" class="btn btn--dark">Cancel</a>
@@ -192,20 +196,19 @@
                     <div>Where no asset is assigned:</div>
                     <div class="tooltip__block tooltip--caps">
                         <div><i class="icon-plus tooltip__icon tooltip__icon--green"></i>assign a new asset</div>
-                        <div><i class="icon-star tooltip__icon tooltip__icon--blue"></i>assign a new asset indefinitely</div>
                     </div>
                     <div>For assets that are assigned:</div>
                     <div class="tooltip__block tooltip--caps">
                         <div><i class="icon-cancel tooltip__icon tooltip__icon--red"></i>return this asset</div>
-                        <div><i class="icon-forward tooltip__icon tooltip__icon--yellow"></i>extend the due date by one period</div>
+                        <div><i class="icon-forward tooltip__icon tooltip__icon--yellow"></i>extend the due date by the specified period</div>
                     </div>
                     <div>
                         Creating a new assignment will select an asset <span>at random</span><br />
                         from the available pool, based on the selected model and<br />
                         collection. The duration of the assignment will be equal<br />
-                        to the <span>period</span> shown on the <span>model card</span>. If the model<br />
-                        allows you to set a custom lease <span>period</span>, you can set this by<br />
-                        right-clicking the <span>model card</span>.
+                        to the <span>period</span> shown on the <span>model card</span>. To change the<br />
+                        <span>period</span>, simply <span>right-click</span> on a <span>model card</span> and select<br />
+                        a new period from the drop down menu.
                     </div>
                 </div>
             </div>

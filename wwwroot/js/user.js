@@ -24,7 +24,7 @@ $(function () {
     });
 
     $.validator.addMethod("checked", function () {
-        return $('.user .card__input.is-assign:checked, .user .card__input.is-long_term:checked').length > 0;
+        return $('.user .card__input.is-assign:checked').length > 0;
     });
 
     $('#user').validate({
@@ -96,7 +96,7 @@ $(function () {
         var checkedInput = $this.find('.card__input:checked');
         var hiddenInputs = $this.find('.card__hidden');
         if (checkedInput.length != 0) {
-            var nextInput = checkedInput.next('.card__input');
+            var nextInput = checkedInput.nextAll('.card__input:first');
             if (nextInput.length != 0) {
                 nextInput.prop('checked', true);
                 checkboxReturnAll.prop('checked', false);
@@ -116,11 +116,8 @@ $(function () {
     cards.contextmenu(function (e) {
         e.preventDefault();
         var menu = $(e.currentTarget).prev('.period-menu')
-        //var firstHidden = menu.next('.is-customPeriod').children('.card__hidden').first();
-        //if (!firstHidden.prop('disabled')) {
         menu.css({ top: e.pageY, left: e.pageX });
         menu.show();
-        //}
     })
 
     allPeriodMenues.children('li').click(function (e) {
@@ -134,6 +131,9 @@ $(function () {
         cardContent.filter('.card__hidden--period').val(listItem.attr('data-period'));
         cardContent.find('.card__value--period').text(listItem.text());
         menu.hide();
+        cardContent.filter('.is-assign').prop('checked', true);
+        cardContent.filter('.is-extend').prop('checked', true);
+        cardContent.filter('.card__hidden').prop('disabled', false);
     });
 
     // close period menu if clicking outside menu

@@ -79,9 +79,6 @@
                                             case OperationType.Assignment:
                                                 sharedHTML("ok", "report-item__status--green", item);
                                                 break;
-                                            case OperationType.Long_term:
-                                                sharedHTML("star", "report-item__status--blue", item);
-                                                break;
                                             case OperationType.Extension:
                                                 sharedHTML("forward", "report-item__status--yellow", item);
                                                 break;
@@ -160,7 +157,7 @@
                                     <div>
                                         <div class="print__model">@item.Model</div>
                                         <div class="print__bold">Tag: <span>@item.Tag</span></div>
-                                        <div class="print__bold">Due: <span>@item.Due.ToString("dd-MM-yy")</span></div>
+                                        <div class="print__bold">Due: <span>@(item.Due != null ? item.Due.Value.ToString("dd-MM-yy") : "Long-Term")</span></div>
                                         @if (item.CustomProperties != null)
                                         {
                                             foreach (var property in item.CustomProperties)
@@ -207,7 +204,7 @@
             }
             <div class="report-item__info">
                 <div class="report-item__info-title">Due</div>
-                <div class="report-item__info-value select--on">@item.Due.ToString("dd-MM-yy")</div>
+                <div class="report-item__info-value select--on">@(item.Due != null ? item.Due.Value.ToString("dd-MM-yy") : "n/a")</div>
             </div>
         </div>
     }
