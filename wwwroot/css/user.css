@@ -62,27 +62,27 @@
                 background-color: #27293d; }
                 .user .assets__body::-webkit-scrollbar-thumb:hover {
                     background-color: #373a56; }
-        .user .assets__body .period-menu {
-            display: none;
-            z-index: 1000;
-            position: absolute;
-            overflow: hidden;
-            white-space: nowrap;
-            padding: 0;
-            background-color: #1e1e2f;
-            border: 1px solid #313452;
-            color: #868a95;
-            box-shadow: 7px 7px 7px 1px rgba(0, 0, 0, 0.2); }
-            .user .assets__body .period-menu li {
-                padding: 8px 12px;
-                list-style-type: none;
-                user-select: none; }
-                .user .assets__body .period-menu li.is-selected {
-                    background-color: #222235;
-                    color: white; }
-                .user .assets__body .period-menu li:hover {
-                    cursor: pointer;
-                    background-color: #26263b; }
+    .user .assets .period-menu {
+        display: none;
+        z-index: 1000;
+        position: absolute;
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 0;
+        background-color: #1e1e2f;
+        border: 1px solid #313452;
+        color: #868a95;
+        box-shadow: 7px 7px 7px 1px rgba(0, 0, 0, 0.2); }
+        .user .assets .period-menu li {
+            padding: 8px 12px;
+            list-style-type: none;
+            user-select: none; }
+            .user .assets .period-menu li.is-selected {
+                background-color: #222235;
+                color: white; }
+            .user .assets .period-menu li:hover {
+                cursor: pointer;
+                background-color: #26263b; }
     .user .assets .card {
         position: relative;
         display: flex;

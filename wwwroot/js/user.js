@@ -110,21 +110,16 @@ $(function () {
         }
     });
 
-    var cardsWithCustomPeriod = cards.filter('.is-customPeriod')
     var allPeriodMenues = $('.period-menu');
 
-    //disable context menu on all cards
+    //custom context menu for period selection
     cards.contextmenu(function (e) {
         e.preventDefault();
-    })
-
-    //custome context menu on cards with is-customePeriod class
-    cardsWithCustomPeriod.contextmenu(function (e) {
         var menu = $(e.currentTarget).prev('.period-menu')
-        var firstHidden = menu.next('.is-customPeriod').children('.card__hidden').first();
+        //var firstHidden = menu.next('.is-customPeriod').children('.card__hidden').first();
         //if (!firstHidden.prop('disabled')) {
-            menu.css({ top: e.pageY, left: e.pageX });
-            menu.show();
+        menu.css({ top: e.pageY, left: e.pageX });
+        menu.show();
         //}
     })
 
@@ -133,7 +128,7 @@ $(function () {
         var listItem = $(this);
         var allListItems = listItem.siblings('li');
         var menu = listItem.parent();
-        var cardContent = menu.next('.is-customPeriod').children();
+        var cardContent = menu.next('.card__wrapper').children();
         allListItems.removeClass('is-selected');
         listItem.addClass('is-selected');
         cardContent.filter('.card__hidden--period').val(listItem.attr('data-period'));

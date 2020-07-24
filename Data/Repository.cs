@@ -187,7 +187,6 @@ namespace Locus.Data
                     ORDER BY Grouped.CollectionId, Asg.Due DESC;";
 
                 var collectionsOfModels = new List<ListModelsByCollection<Model>>();
-                //maybe change this to OUT collection type not index
                 var collectionDictionary = new Dictionary<int, int>();
                 var modelDictionary = new Dictionary<int, List<Model>>();
 
@@ -213,6 +212,8 @@ namespace Locus.Data
                         collectionsOfModels[collectionIndex].TList.Add(model);
                         collectionsOfModels[collectionIndex].Total += model.Total;
                         
+                        //add model to modelList mapped to modelId in modelDictionary
+                        //for future binding of periods
                         if (!modelDictionary.TryGetValue(model.Id, out List<Model> modelList))
                         {
                             modelList = new List<Model>();
@@ -228,6 +229,8 @@ namespace Locus.Data
                     throw new LocusException("Unable to populate model list.");
                 }
 
+                //fetch the list of periods for each unique model, and then append them to all instances of that
+                //model found in collectionsOfModels.
                 query =
                     @"SELECT P.Id, P.[Days], P.[Name]
                         FROM [dbo].[Period] AS P
@@ -237,18 +240,19 @@ namespace Locus.Data
 
                 foreach (KeyValuePair<int, List<Model>> pair in modelDictionary)
                 {
+                    var periods = new List<Period>();
                     try
                     {
-                        var periods = db.Query<Period>(query, new { @modelId = pair.Key });
-                        foreach (var model in pair.Value)
-                        {
-                            model.Periods = periods;
-                        }
+                        periods.AddRange(db.Query<Period>(query, new { @modelId = pair.Key }));
                     }
                     catch (Exception ex)
                     {
                         _logger.WriteLog(ex);
                         throw new LocusException("Unable to populate model period list.");
+                    }
+                    foreach (var model in pair.Value)
+                    {
+                        model.Periods = periods;
                     }
                 }
                 return collectionsOfModels;
