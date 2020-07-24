@@ -151,7 +151,6 @@ namespace Locus.Data
 	                         I.[Name] As Icon,
 	                         Grouped.Surplus,
 	                         Grouped.Total,
-                             M.IsCustomPeriod,
                              P.[Days],
                              P.[Name],
 	                         Asg.AssetId AS Id,
@@ -184,11 +183,13 @@ namespace Locus.Data
 	                                 INNER JOIN [dbo].[Icon] AS I
                                         ON I.Id = M.IconId
                                      INNER JOIN [dbo].[Period] AS P
-                                        ON P.Id = M.Period       
+                                        ON P.Id = M.DefaultPeriod
                     ORDER BY Grouped.CollectionId, Asg.Due DESC;";
 
                 var collectionsOfModels = new List<ListModelsByCollection<Model>>();
+                //maybe change this to OUT collection type not index
                 var collectionDictionary = new Dictionary<int, int>();
+                var modelDictionary = new Dictionary<int, List<Model>>();
 
                 try
                 {
@@ -208,9 +209,16 @@ namespace Locus.Data
                             model.Asset = asset;
                             ++collectionsOfModels[collectionIndex].TotalAssigned;
                         }
-                        model.Period = period;
+                        model.DefaultPeriod = period;
                         collectionsOfModels[collectionIndex].TList.Add(model);
                         collectionsOfModels[collectionIndex].Total += model.Total;
+                        
+                        if (!modelDictionary.TryGetValue(model.Id, out List<Model> modelList))
+                        {
+                            modelList = new List<Model>();
+                            modelDictionary.Add(model.Id, modelList);
+                        }
+                        modelList.Add(model);
                         return null;
                     }, new { userId = id }, splitOn: "Id, Id, Days, Id");
                 }
@@ -218,6 +226,30 @@ namespace Locus.Data
                 {
                     _logger.WriteLog(ex);
                     throw new LocusException("Unable to populate model list.");
+                }
+
+                query =
+                    @"SELECT P.Id, P.[Days], P.[Name]
+                        FROM [dbo].[Period] AS P
+                             INNER JOIN [dbo].[PeriodMap] as PM
+                                ON PM.PeriodId = P.Id
+                        WHERE PM.ModelId = @modelId";
+
+                foreach (KeyValuePair<int, List<Model>> pair in modelDictionary)
+                {
+                    try
+                    {
+                        var periods = db.Query<Period>(query, new { @modelId = pair.Key });
+                        foreach (var model in pair.Value)
+                        {
+                            model.Periods = periods;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.WriteLog(ex);
+                        throw new LocusException("Unable to populate model period list.");
+                    }
                 }
                 return collectionsOfModels;
             }
@@ -244,31 +276,6 @@ namespace Locus.Data
                 {
                     _logger.WriteLog(ex);
                     throw new LocusException("Unable to fetch list of User Roles.");
-                }
-            }
-        }
-
-        public IEnumerable<Period> GetAllPeriods()
-        {
-            using (IDbConnection db = _connectionFactory.GetConnection())
-            {
-                string query = @"SELECT P.[Days],
-                                        P.[Name]
-                                   FROM [dbo].[Period] AS P
-                                  WHERE P.Deactivated IS NULL;";
-                try
-                {
-                    var result = db.Query<Period>(query);
-                    if (result.Any())
-                    {
-                        return result;
-                    }
-                    throw new InvalidOperationException();
-                }
-                catch (Exception ex)
-                {
-                    _logger.WriteLog(ex);
-                    throw new LocusException("Unable to fetch list of Periods.");
                 }
             }
         }

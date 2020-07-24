@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Locus.Models
@@ -10,8 +11,8 @@ namespace Locus.Models
         public string Icon { get; set; }
         public int Surplus { get; set; }
         public int Total { get; set; }
-        public bool IsCustomPeriod { get; set; }
-        public Period Period { get; set; }
+        public Period DefaultPeriod { get; set; }
+        public IEnumerable<Period> Periods { get; set; }
         public Asset Asset { get; set; }
     }
 }

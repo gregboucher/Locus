@@ -2,6 +2,7 @@
 	IF OBJECT_ID('dbo.User', 'U') IS NOT NULL DROP TABLE [dbo].[User]
 	IF OBJECT_ID('dbo.Asset', 'U') IS NOT NULL DROP TABLE [dbo].[Asset]
 	IF OBJECT_ID('dbo.Query', 'U') IS NOT NULL DROP TABLE [dbo].[Query]
+	IF OBJECT_ID('dbo.PeriodMap', 'U') IS NOT NULL DROP TABLE [dbo].[PeriodMap]
 	IF OBJECT_ID('dbo.Model', 'U') IS NOT NULL DROP TABLE [dbo].[Model]
 	IF OBJECT_ID('dbo.Collection', 'U') IS NOT NULL DROP TABLE [dbo].[Collection]
 	IF OBJECT_ID('dbo.Period', 'U') IS NOT NULL DROP TABLE [dbo].[Period]
@@ -33,10 +34,14 @@
 	CREATE TABLE [dbo].[Model] (
 		[Id] INT NOT NULL PRIMARY KEY IDENTITY,
 		[Name] NVARCHAR(64) NOT NULL,
-		[IsCustomPeriod] BIT,
-		[Period] INT NOT NULL REFERENCES [dbo].[Period],
+		[DefaultPeriod] INT NOT NULL REFERENCES [dbo].[Period],
 		[IconId] INT NOT NULL REFERENCES [dbo].[Icon],
 		[Deactivated] DATETIME
+	);
+	CREATE TABLE [dbo].[PeriodMap] (
+		[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+		[ModelId] INT NOT NULL REFERENCES [dbo].[Model],
+		[PeriodId] INT NOT NULL REFERENCES [dbo].[Period]
 	);
 	CREATE TABLE [dbo].[Query] (
 		[Id] INT NOT NULL PRIMARY KEY IDENTITY,
@@ -82,21 +87,41 @@
 	INSERT INTO [dbo].[Period] VALUES (1, '1 Day', NULL);
 	INSERT INTO [dbo].[Period] VALUES (2, '2 Days', NULL);
 	INSERT INTO [dbo].[Period] VALUES (3, '3 Days', NULL);
+	INSERT INTO [dbo].[Period] VALUES (4, '4 Days', NULL);
 	INSERT INTO [dbo].[Period] VALUES (5, '5 Days', NULL);
+	INSERT INTO [dbo].[Period] VALUES (6, '6 Days', NULL);
 	INSERT INTO [dbo].[Period] VALUES (7, '1 Week', NULL);
 	INSERT INTO [dbo].[Period] VALUES (14, '2 Weeks', NULL);
 	INSERT INTO [dbo].[Period] VALUES (21, '3 Weeks', NULL);
 	INSERT INTO [dbo].[Period] VALUES (28, '4 Weeks', NULL);
+	INSERT INTO [dbo].[Period] VALUES (0, 'Long-term', NULL);
 
 	INSERT INTO [dbo].[Collection] VALUES ('Libau', 'Main Campus', NULL);
 	INSERT INTO [dbo].[Collection] VALUES ('Illinois', 'Annex', NULL);
 	INSERT INTO [dbo].[Collection] VALUES ('Test#3Group', 'test description', NULL);
 
-	-- Name, CustomPeriod, Period, Icon, Deactivated
-	INSERT INTO [dbo].[Model] VALUES ('Salto RFID', NULL, 1, 1, NULL); --1 day, tags
-	INSERT INTO [dbo].[Model] VALUES ('Acer Travelmate', NULL, 3, 2, NULL); --3 days, laptop
-	INSERT INTO [dbo].[Model] VALUES ('Lenovo Thinkpad', NULL, 3, 4, NULL); --3days, television
-	INSERT INTO [dbo].[Model] VALUES ('Sony A7S', 1, 5, 3, NULL); --7days, camera
+	-- Name, Period, Icon, Deactivated
+	INSERT INTO [dbo].[Model] VALUES ('Salto RFID', 1, 1, NULL); --1 day, tags
+	INSERT INTO [dbo].[Model] VALUES ('Acer Travelmate', 3, 2, NULL); --3 days, laptop
+	INSERT INTO [dbo].[Model] VALUES ('Lenovo Thinkpad', 3, 4, NULL); --3days, television
+	INSERT INTO [dbo].[Model] VALUES ('Sony A7S', 5, 3, NULL); --7days, camera
+
+	-- ModelId, PeriodId
+	INSERT INTO [dbo].[PeriodMap] VALUES (1, 1);
+	INSERT INTO [dbo].[PeriodMap] VALUES (1, 2);
+	INSERT INTO [dbo].[PeriodMap] VALUES (1, 3);
+	INSERT INTO [dbo].[PeriodMap] VALUES (2, 3);
+	INSERT INTO [dbo].[PeriodMap] VALUES (3, 3);
+	INSERT INTO [dbo].[PeriodMap] VALUES (3, 11);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 1);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 2);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 3);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 5);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 7);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 8);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 9);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 10);
+	INSERT INTO [dbo].[PeriodMap] VALUES (4, 11);
 
 	-- QueryName, QueryString, ModelId
 	INSERT INTO [dbo].[Query] VALUES ('Username', 'SELECT @AssetTag As Username', 3);

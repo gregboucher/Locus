@@ -87,34 +87,28 @@
                         {
                             foreach (var _model in collection.TList)
                             {
-                                if (_model.IsCustomPeriod == true)
-                                {
-                                    <ul class="period-menu">
-                                        @foreach (var period in Model.Periods)
+                                <ul class="period-menu">
+                                    @foreach (var period in _model.Periods)
+                                    {
+                                        if (period.Days == _model.DefaultPeriod.Days)
                                         {
-                                            if (period.Days == _model.Period.Days)
-                                            {
-                                                <li class="is-selected" data-period="@period.Days">@period.Name</li>
-                                            }
-                                            else
-                                            {
-                                                <li data-period="@period.Days">@period.Name</li>
-                                            }
+                                            <li class="is-selected" data-period="@period.Days">@period.Name</li>
                                         }
-                                    </ul>
-                                }
+                                        else
+                                        {
+                                            <li data-period="@period.Days">@period.Name</li>
+                                        }
+                                    }
+                                </ul>
                                 if (_model.Asset == null)
                                 {
-                                    <div class="card__wrapper @(_model.Surplus == 0 ? "is-empty" : "") @(_model.IsCustomPeriod == true ? "is-customPeriod" : "")">
+                                    <div class="card__wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
                                             <input type="hidden" class="card__hidden" name="AssignmentOperations.Index" value="@index" disabled />
                                             <input type="hidden" class="card__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
                                             <input type="hidden" class="card__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
-                                            if (_model.IsCustomPeriod == true)
-                                            {
-                                                <input type="hidden" class="card__hidden card__hidden--period" name="AssignmentOperations[@index].Period" value="@_model.Period.Days" disabled />
-                                            }
+                                            <input type="hidden" class="card__hidden card__hidden--period" name="AssignmentOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
                                             <input type="radio" class="card__input is-assign" name="AssignmentOperations[@index].Type" value="1" />
                                             <input type="radio" class="card__input is-long_term" name="AssignmentOperations[@index].Type" value="2" />
                                             ++index;
@@ -134,7 +128,7 @@
                                                 <div class="card__values">
                                                     <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
                                                     <div>@(_model.Surplus + " / " + _model.Total)</div>
-                                                    <div class="card__value--period">@_model.Period.Name</div>
+                                                    <div class="card__value--period">@_model.DefaultPeriod.Name</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -142,13 +136,10 @@
                                 }
                                 else
                                 {
-                                    <div class="card__wrapper is-assigned @(_model.IsCustomPeriod == true ? "is-customPeriod" : "")">
+                                    <div class="card__wrapper is-assigned">
                                         <input type="hidden" class="card__hidden" name="EditOperations.Index" value="@index" disabled />
                                         <input type="hidden" class="card__hidden" name="EditOperations[@index].AssetId" value="@_model.Asset.Id" disabled />
-                                        @if (_model.IsCustomPeriod == true)
-                                        {
-                                            <input type="hidden" class="card__hidden card__hidden--period" name="EditOperations[@index].Period" value="@_model.Period.Days" disabled />
-                                        }
+                                        <input type="hidden" class="card__hidden card__hidden--period" name="EditOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
                                         <input type="radio" class="card__input is-return" name="EditOperations[@index].Type" value="3" />
                                         @if (_model.Asset.Due.HasValue)
                                         {
