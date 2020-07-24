@@ -75,7 +75,7 @@
                         {
                             foreach (var _model in collection.TList)
                             {
-                                if (_model.Asset == null)
+                                if (_model.Asset == null && _model.Periods.Count() > 1)
                                 {
                                         <ul class="period-menu">
                                             @foreach (var period in _model.Periods)

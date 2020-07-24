@@ -87,7 +87,7 @@
                         {
                             foreach (var _model in collection.TList)
                             {
-                                if (_model.Asset == null || _model.Asset.Due != null)
+                                if ((_model.Asset == null || _model.Asset.Due != null) && _model.Periods.Count() > 1)
                                 {
                                         <ul class="period-menu">
                                             @foreach (var period in _model.Periods)
@@ -144,8 +144,11 @@
                     <input type="radio" class="card__input is-return" name="EditOperations[@index].Type" value="2" />
                     @if (_model.Asset.Due != null)
                     {
-                        <input type="hidden" class="card__hidden card__hidden--period" name="EditOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
                         <input type="radio" class="card__input is-extend" name="EditOperations[@index].Type" value="3" />
+                        if (_model.Periods.Count() > 1)
+                        {
+                            <input type="hidden" class="card__hidden card__hidden--period" name="EditOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
+                        }
                     }
                     <div class="card">
                         <i class="icon-@_model.Icon card__icon"></i>
