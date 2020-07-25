@@ -36,14 +36,7 @@
 
         &__icon {
             font-size: 1rem;
-
-            &--blue {
-                color: map-get($colour-map, --blue);
-            }
-
-            &--yellow {
-                color: map-get($colour-map, --yellow);
-            }
+            color: map-get($colour-map, --yellow);
         }
 
         & .help {

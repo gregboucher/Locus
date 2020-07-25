@@ -138,7 +138,7 @@
                             </div>
                             <div class="card__values">
                                 <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
-                                <div>@(_model.Surplus + " / " + _model.Total)</div>
+                                <div>@(_model.Surplus + " of " + _model.Total)</div>
                                 <div class="card__period">@_model.DefaultPeriod.Text</div>
                             </div>
                         </div>

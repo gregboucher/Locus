@@ -171,6 +171,7 @@ namespace Locus.Data
 		                                  LEFT JOIN [dbo].[Assignment] AS Asg
 		                                    ON Asg.AssetId = Ast.Id
                                            AND Asg.Returned IS NULL
+                                    WHERE Ast.Deactivated IS NULL
 	                                GROUP BY Ast.CollectionId, Ast.ModelId
 	                         ) AS Grouped
 	                         ON Grouped.[User] = Asg.UserId
@@ -184,7 +185,9 @@ namespace Locus.Data
                                         ON I.Id = M.IconId
                                      INNER JOIN [dbo].[Period] AS P
                                         ON P.Id = M.DefaultPeriod
-                    ORDER BY Grouped.CollectionId, Asg.Due DESC, Grouped.ModelId;";
+                       WHERE C.Deactivated IS NULL
+					     AND M.Deactivated IS NULL
+                    ORDER BY Grouped.CollectionId, Grouped.ModelId;";
 
                 var collectionsOfModels = new List<ListModelsByCollection<Model>>();
                 var collectionDictionary = new Dictionary<int, int>();

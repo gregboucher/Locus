@@ -79,6 +79,8 @@
 	INSERT INTO [dbo].[Role] VALUES ('Contractor', NULL);
 	INSERT INTO [dbo].[Role] VALUES ('Cleaner', NULL);
 
+	--UPDATE [dbo].[Role] SET Deactivated = GETDATE() WHERE Id = 1;
+
 	INSERT INTO [dbo].[Icon] VALUES ('tags', NULL);
 	INSERT INTO [dbo].[Icon] VALUES ('laptop', NULL);
 	INSERT INTO [dbo].[Icon] VALUES ('camera', NULL);
@@ -99,12 +101,16 @@
 	INSERT INTO [dbo].[Collection] VALUES ('Libau', 'Main Campus', NULL);
 	INSERT INTO [dbo].[Collection] VALUES ('Illinois', 'Annex Campus', NULL);
 
+	--UPDATE [dbo].[Collection] SET Deactivated = GETDATE() WHERE Id = 1;
+
 	-- Name, DefaultPeriod FK, Icon, Deactivated
 	INSERT INTO [dbo].[Model] VALUES ('Crt laptop', 2, 2, NULL); --1 day, laptop
 	INSERT INTO [dbo].[Model] VALUES ('Crt door fob', 2, 1, NULL); --1 days, tags
 	INSERT INTO [dbo].[Model] VALUES ('Contractor door fob', 4, 1, NULL); --3 days, tags
 	INSERT INTO [dbo].[Model] VALUES ('Alarm fob', 4, 4, NULL); --3 days, bell-1
 	INSERT INTO [dbo].[Model] VALUES ('Camera', 4, 3, NULL); --3 days, camera
+
+	--UPDATE [dbo].[Model] SET Deactivated = GETDATE() WHERE Id = 1;
 
 	-- ModelId, PeriodId
 	INSERT INTO [dbo].[PeriodList] VALUES (3, 2); --Contractor Door Fob
@@ -161,6 +167,12 @@
 	INSERT INTO [dbo].[Asset] VALUES ('615060000951', 'CAM-003', 5, 1, NULL);
 	INSERT INTO [dbo].[Asset] VALUES ('615060000944', 'CAM-004', 5, 1, NULL);
 	INSERT INTO [dbo].[Asset] VALUES ('615060000947', 'CAM-005', 5, 1, NULL);
+
+	--UPDATE [dbo].[Asset] SET Deactivated = GETDATE() WHERE Id = 'R90QHLQN';
+	--UPDATE [dbo].[Asset] SET Deactivated = GETDATE() WHERE Id = 'R90QHS6T';
+	--UPDATE [dbo].[Asset] SET Deactivated = GETDATE() WHERE Id = 'R90QHS7Q';
+	--UPDATE [dbo].[Asset] SET Deactivated = GETDATE() WHERE Id = 'R90QHS7Z';
+	--UPDATE [dbo].[Asset] SET Deactivated = GETDATE() WHERE Id = 'R90QHS85';
 
 	--Illinois
 	INSERT INTO [dbo].[Asset] VALUES ('R90QHS8J', 'CRT06', 1, 2, NULL);

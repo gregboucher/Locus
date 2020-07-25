@@ -21,11 +21,8 @@
         .report-header__message {
             margin-left: 1rem; }
         .report-header__icon {
-            font-size: 1rem; }
-            .report-header__icon--blue {
-                color: #4d83ff; }
-            .report-header__icon--yellow {
-                color: #fbbc06; }
+            font-size: 1rem;
+            color: #fbbc06; }
         .report-header .help {
             font-size: 1rem; }
     .report-collection__title {
