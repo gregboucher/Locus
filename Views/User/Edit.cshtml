@@ -108,11 +108,11 @@
                                     <div class="card__wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
                                         @if (_model.Surplus != 0)
                                         {
-                                            <input type="hidden" class="card__hidden" name="AssignmentOperations.Index" value="@index" disabled />
-                                            <input type="hidden" class="card__hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
-                                            <input type="hidden" class="card__hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
-                                            <input type="hidden" class="card__hidden card__hidden--period" name="AssignmentOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
-                                            <input type="radio" class="card__input is-assign" name="AssignmentOperations[@index].Type" value="1" />
+                                            <input type="hidden" name="AssignmentOperations.Index" value="@index" disabled />
+                                            <input type="hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
+                                            <input type="hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
+                                            <input type="hidden" class="input__period" name="AssignmentOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
+                                            <input type="radio" class="is-assign" name="AssignmentOperations[@index].Type" value="1" />
                                             ++index;
                                         }
                                         <div class="card">
@@ -130,7 +130,7 @@
                                                 <div class="card__values">
                                                     <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
                                                     <div>@(_model.Surplus + " / " + _model.Total)</div>
-                                                    <div class="card__value--period">@_model.DefaultPeriod.Text</div>
+                                                    <div class="card__period">@_model.DefaultPeriod.Text</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -139,15 +139,15 @@
                                 else
                                 {
                 <div class="card__wrapper is-assigned">
-                    <input type="hidden" class="card__hidden" name="EditOperations.Index" value="@index" disabled />
-                    <input type="hidden" class="card__hidden" name="EditOperations[@index].AssetId" value="@_model.Asset.Id" disabled />
-                    <input type="radio" class="card__input is-return" name="EditOperations[@index].Type" value="2" />
+                    <input type="hidden" name="EditOperations.Index" value="@index" disabled />
+                    <input type="hidden" name="EditOperations[@index].AssetId" value="@_model.Asset.Id" disabled />
+                    <input type="radio" class="is-return" name="EditOperations[@index].Type" value="2" />
                     @if (_model.Asset.Due != null)
                     {
-                        <input type="radio" class="card__input is-extend" name="EditOperations[@index].Type" value="3" />
+                        <input type="radio" class="is-extend" name="EditOperations[@index].Type" value="3" />
                         if (_model.Periods.Count() > 1)
                         {
-                            <input type="hidden" class="card__hidden card__hidden--period" name="EditOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
+                            <input type="hidden" class="input__period" name="EditOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
                         }
                     }
                     <div class="card">
@@ -165,13 +165,13 @@
                                 <div>Status:</div>
                                 <div>Assigned:</div>
                                 <div>Due:</div>
-                                <div>Period:</div>
+                                <div>Extension Period:</div>
                             </div>
                             <div class="card__values">
                                 <div class="card__values--@_model.Asset.Status.ToString().ToLower() searchable">@_model.Asset.Status.ToString().Replace("_", "-")</div>
                                 <div>@_model.Asset.Assigned.ToString("dd-MM-yy")</div>
                                 <div>@(_model.Asset.Due != null ? @_model.Asset.Due.Value.ToString("dd-MM-yy") : "n/a")</div>
-                                <div class="card__value--period">@_model.DefaultPeriod.Text</div>
+                                <div class="card__period">@_model.DefaultPeriod.Text</div>
                             </div>
                         </div>
                     </div>

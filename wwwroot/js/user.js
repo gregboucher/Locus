@@ -24,7 +24,7 @@ $(function () {
     });
 
     $.validator.addMethod("checked", function () {
-        return $('.user .card__input.is-assign:checked').length > 0;
+        return $('.user .assets :radio.is-assign:checked').length > 0;
     });
 
     $('#user').validate({
@@ -92,20 +92,20 @@ $(function () {
     var checkboxReturnAll = $('.user #assets__header-check');
 
     cards.click(function () {
-        var $this = $(this);
-        var checkedInput = $this.find('.card__input:checked');
-        var hiddenInputs = $this.find('.card__hidden');
-        if (checkedInput.length != 0) {
-            var nextInput = checkedInput.nextAll('.card__input:first');
-            if (nextInput.length != 0) {
-                nextInput.prop('checked', true);
+        var card = $(this);
+        var checkedRadio = card.children(':radio:checked');
+        var hiddenInputs = card.children(':hidden');
+        if (checkedRadio.length > 0) {
+            var nextCheckedRadio = checkedRadio.nextAll(':radio:first');
+            if (nextCheckedRadio.length > 0) {
+                nextCheckedRadio.prop('checked', true);
                 checkboxReturnAll.prop('checked', false);
             } else {
-                checkedInput.prop('checked', false);
+                checkedRadio.prop('checked', false);
                 hiddenInputs.prop('disabled', true);
             }
         } else {
-            $this.find('.card__input:first').prop('checked', true);
+            card.children(':radio:first').prop('checked', true);
             hiddenInputs.prop('disabled', false);
         }
     });
@@ -114,26 +114,29 @@ $(function () {
 
     //custom context menu for period selection
     cards.contextmenu(function (e) {
+        var card = $(this);
         e.preventDefault();
-        var menu = $(e.currentTarget).prev('.period-menu')
-        menu.css({ top: e.pageY, left: e.pageX });
-        menu.show();
+        var periodMenu = card.prev('.period-menu')
+        if (periodMenu.length > 0) {
+            periodMenu.css({ top: e.pageY, left: e.pageX });
+            periodMenu.show();
+        }
     })
 
     allPeriodMenues.children('li').click(function (e) {
         e.stopPropagation();
-        var listItem = $(this);
-        var allListItems = listItem.siblings('li');
-        var menu = listItem.parent();
-        var cardContent = menu.next('.card__wrapper').children();
+        var selectedListItem = $(this);
+        var allListItems = selectedListItem.siblings('li');
+        var periodMenu = selectedListItem.parent();
+        var cardChildren = periodMenu.nextAll('.card__wrapper:first').children();
         allListItems.removeClass('is-selected');
-        listItem.addClass('is-selected');
-        cardContent.filter('.card__hidden--period').val(listItem.attr('data-period'));
-        cardContent.find('.card__value--period').text(listItem.text());
-        menu.hide();
-        cardContent.filter('.is-assign').prop('checked', true);
-        cardContent.filter('.is-extend').prop('checked', true);
-        cardContent.filter('.card__hidden').prop('disabled', false);
+        selectedListItem.addClass('is-selected');
+        cardChildren.filter('.input__period').val(selectedListItem.attr('data-period'));
+        cardChildren.find('.card__period').text(selectedListItem.text());
+        periodMenu.hide();
+        cardChildren.filter('.is-assign').prop('checked', true);
+        cardChildren.filter('.is-extend').prop('checked', true);
+        cardChildren.filter(':hidden').prop('disabled', false);
     });
 
     // close period menu if clicking outside menu
@@ -148,8 +151,8 @@ $(function () {
     $('#reset').click(function () {
         if ($(this).data('page') == null)
             $('.user .form__input').val("");
-        cards.find('.card__input').prop('checked', false);
-        cards.find('.card__hidden').prop('disabled', true);
+        cards.children(':radio:checked').prop('checked', false);
+        cards.children(':hidden').prop('disabled', true);
         checkboxReturnAll.prop('checked', false);
     });
 
@@ -187,11 +190,11 @@ $(function () {
     checkboxReturnAll.click(function(){
         var assigned = cards.filter('.is-assigned');
         if ($(this).prop('checked')) {
-            assigned.find('.is-return').prop('checked', true);
-            assigned.find('.card__hidden').prop('disabled', false);
+            assigned.children('.is-return').prop('checked', true);
+            assigned.children(':hidden').prop('disabled', false);
         } else {
-            assigned.find('.card__input').prop('checked', false);
-            assigned.find('.card__hidden').prop('disabled', true);
+            assigned.children(':radio:checked').prop('checked', false);
+            assigned.children(':hidden').prop('disabled', true);
         }
     });
 

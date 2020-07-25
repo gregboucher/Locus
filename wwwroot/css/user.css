@@ -63,6 +63,7 @@
                 .user .assets__body::-webkit-scrollbar-thumb:hover {
                     background-color: #373a56; }
     .user .assets .period-menu {
+        text-align: center;
         display: none;
         z-index: 1000;
         position: absolute;
@@ -101,6 +102,30 @@
                 pointer-events: none; }
             .user .assets .card__wrapper.is-assigned .card {
                 border: 1px solid #4b4b4b; }
+            .user .assets .card__wrapper input {
+                display: none; }
+                .user .assets .card__wrapper input.is-return:checked ~ .card {
+                    border: 2px solid #ff4747;
+                    padding: 0.5625rem 0.8125rem; }
+                    .user .assets .card__wrapper input.is-return:checked ~ .card:before {
+                        border-top: 1.5625rem solid #ff4747; }
+                    .user .assets .card__wrapper input.is-return:checked ~ .card:after {
+                        content: '\e828';
+                        margin-top: -0.125rem; }
+                .user .assets .card__wrapper input.is-extend:checked ~ .card {
+                    border: 2px solid #fbbc06;
+                    padding: 0.5625rem 0.8125rem; }
+                    .user .assets .card__wrapper input.is-extend:checked ~ .card:before {
+                        border-top: 1.5625rem solid #fbbc06; }
+                    .user .assets .card__wrapper input.is-extend:checked ~ .card:after {
+                        content: '\e835'; }
+                .user .assets .card__wrapper input.is-assign:checked ~ .card {
+                    border: 2px solid #23af47;
+                    padding: 0.5625rem 0.8125rem; }
+                    .user .assets .card__wrapper input.is-assign:checked ~ .card:before {
+                        border-top: 1.5625rem solid #23af47; }
+                    .user .assets .card__wrapper input.is-assign:checked ~ .card:after {
+                        content: '\e82b'; }
         .user .assets .card:hover {
             background-color: #2b2d43; }
         .user .assets .card:before {
@@ -120,38 +145,6 @@
             margin-top: -1px;
             color: #27293d;
             font-size: 1rem; }
-        .user .assets .card__input {
-            display: none; }
-            .user .assets .card__input.is-return:checked ~ .card {
-                border: 2px solid #ff4747;
-                padding: 0.5625rem 0.8125rem; }
-                .user .assets .card__input.is-return:checked ~ .card:before {
-                    border-top: 1.5625rem solid #ff4747; }
-                .user .assets .card__input.is-return:checked ~ .card:after {
-                    content: '\e828';
-                    margin-top: -0.125rem; }
-            .user .assets .card__input.is-extend:checked ~ .card {
-                border: 2px solid #fbbc06;
-                padding: 0.5625rem 0.8125rem; }
-                .user .assets .card__input.is-extend:checked ~ .card:before {
-                    border-top: 1.5625rem solid #fbbc06; }
-                .user .assets .card__input.is-extend:checked ~ .card:after {
-                    content: '\e835'; }
-            .user .assets .card__input.is-assign:checked ~ .card {
-                border: 2px solid #23af47;
-                padding: 0.5625rem 0.8125rem; }
-                .user .assets .card__input.is-assign:checked ~ .card:before {
-                    border-top: 1.5625rem solid #23af47; }
-                .user .assets .card__input.is-assign:checked ~ .card:after {
-                    content: '\e82b'; }
-            .user .assets .card__input.is-long_term:checked ~ .card {
-                border: 2px solid #4d83ff;
-                padding: 0.5625rem 0.8125rem; }
-                .user .assets .card__input.is-long_term:checked ~ .card:before {
-                    border-top: 1.5625rem solid #4d83ff; }
-                .user .assets .card__input.is-long_term:checked ~ .card:after {
-                    content: '\e818';
-                    font-size: 0.875rem; }
         .user .assets .card__properties {
             margin-right: 1rem; }
         .user .assets .card__values {
@@ -179,8 +172,7 @@
             align-items: center;
             text-align: right; }
             .user .assets .card__body-B--margin {
-                margin-top: 0.46875rem;
-                margin-bottom: 0.46875rem; }
+                margin: 0.46875rem 0rem; }
         .user .assets .card__tag {
             color: #6c707c;
             font-size: 0.875rem;

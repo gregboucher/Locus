@@ -95,6 +95,7 @@
     }
 
     & .period-menu {
+        text-align: center;
         display: none;
         z-index: 1000;
         position: absolute;
@@ -146,6 +147,50 @@
             &.is-assigned .card {
                 border: 1px solid #4b4b4b;
             }
+
+            & input {
+                display: none;
+
+                &.is-return:checked ~ .card {
+                    border: 2px solid map-get($colour-map, --red);
+                    padding: 0.5625rem 0.8125rem;
+
+                    &:before {
+                        border-top: 1.5625rem solid map-get($colour-map, --red);
+                    }
+
+                    &:after {
+                        content: '\e828';
+                        margin-top: -0.125rem;
+                    }
+                }
+
+                &.is-extend:checked ~ .card {
+                    border: 2px solid map-get($colour-map, --yellow);
+                    padding: 0.5625rem 0.8125rem;
+
+                    &:before {
+                        border-top: 1.5625rem solid map-get($colour-map, --yellow);
+                    }
+
+                    &:after {
+                        content: '\e835';
+                    }
+                }
+
+                &.is-assign:checked ~ .card {
+                    border: 2px solid map-get($colour-map, --green);
+                    padding: 0.5625rem 0.8125rem;
+
+                    &:before {
+                        border-top: 1.5625rem solid map-get($colour-map, --green);
+                    }
+
+                    &:after {
+                        content: '\e82b';
+                    }
+                }
+            }
         }
 
         &:hover {
@@ -171,64 +216,6 @@
             margin-top: -1px;
             color: map-get($colour-map, --foreground);
             font-size: 1rem;
-        }
-
-        &__input {
-            display: none;
-
-            &.is-return:checked ~ .card {
-                border: 2px solid map-get($colour-map, --red);
-                padding: 0.5625rem 0.8125rem;
-
-                &:before {
-                    border-top: 1.5625rem solid map-get($colour-map, --red);
-                }
-
-                &:after {
-                    content: '\e828';
-                    margin-top: -0.125rem;
-                }
-            }
-
-            &.is-extend:checked ~ .card {
-                border: 2px solid map-get($colour-map, --yellow);
-                padding: 0.5625rem 0.8125rem;
-
-                &:before {
-                    border-top: 1.5625rem solid map-get($colour-map, --yellow);
-                }
-
-                &:after {
-                    content: '\e835';
-                }
-            }
-
-            &.is-assign:checked ~ .card {
-                border: 2px solid map-get($colour-map, --green);
-                padding: 0.5625rem 0.8125rem;
-
-                &:before {
-                    border-top: 1.5625rem solid map-get($colour-map, --green);
-                }
-
-                &:after {
-                    content: '\e82b';
-                }
-            }
-
-            &.is-long_term:checked ~ .card {
-                border: 2px solid map-get($colour-map, --blue);
-                padding: 0.5625rem 0.8125rem;
-
-                &:before {
-                    border-top: 1.5625rem solid map-get($colour-map, --blue);
-                }
-
-                &:after {
-                    content: '\e818';
-                    font-size: 0.875rem;
-                }
-            }
         }
 
         &__properties {
@@ -269,8 +256,7 @@
             text-align: right;
 
             &--margin {
-                margin-top: 0.46875rem;
-                margin-bottom: 0.46875rem;
+                margin: 0.46875rem 0rem;
             }
         }
 
