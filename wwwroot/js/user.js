@@ -121,7 +121,9 @@ $(function () {
             periodMenu.css({ top: e.pageY, left: e.pageX });
             periodMenu.stop().fadeIn(100);
         } else {
-            card.find('.card__properties i').stop().fadeOut(250).fadeIn(250);
+            if (!card.hasClass('is-empty')) {
+                card.find('.card__properties i').stop().fadeOut(250).fadeIn(250);
+            }
         }
     })
 

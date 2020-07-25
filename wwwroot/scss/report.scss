@@ -26,12 +26,16 @@
             align-items: center;
         }
 
-        &__date, &__message {
+        &__date {
             font-size: 0.785rem;
         }
 
+        &__message {
+            margin-left: 1rem;
+        }
+
         &__icon {
-            font-size: 1.5rem;
+            font-size: 1rem;
 
             &--blue {
                 color: map-get($colour-map, --blue);

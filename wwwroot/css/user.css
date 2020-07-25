@@ -99,8 +99,7 @@
         .user .assets .card__wrapper {
             flex: 1 0 50%; }
             .user .assets .card__wrapper.is-empty {
-                opacity: 0.4;
-                pointer-events: none; }
+                opacity: 0.4; }
             .user .assets .card__wrapper.is-assigned .card {
                 border: 1px solid #4c4f79; }
             .user .assets .card__wrapper input {

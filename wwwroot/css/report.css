@@ -16,10 +16,12 @@
         .report-header__right {
             display: flex;
             align-items: center; }
-        .report-header__date, .report-header__message {
+        .report-header__date {
             font-size: 0.785rem; }
+        .report-header__message {
+            margin-left: 1rem; }
         .report-header__icon {
-            font-size: 1.5rem; }
+            font-size: 1rem; }
             .report-header__icon--blue {
                 color: #4d83ff; }
             .report-header__icon--yellow {

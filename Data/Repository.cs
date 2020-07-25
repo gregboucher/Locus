@@ -184,7 +184,7 @@ namespace Locus.Data
                                         ON I.Id = M.IconId
                                      INNER JOIN [dbo].[Period] AS P
                                         ON P.Id = M.DefaultPeriod
-                    ORDER BY Grouped.CollectionId, Asg.Due DESC;";
+                    ORDER BY Grouped.CollectionId, Asg.Due DESC, Grouped.ModelId;";
 
                 var collectionsOfModels = new List<ListModelsByCollection<Model>>();
                 var collectionDictionary = new Dictionary<int, int>();
@@ -283,12 +283,7 @@ namespace Locus.Data
                                   WHERE R.Deactivated IS NULL;";
                 try
                 {
-                    var result = db.Query<Role>(query);
-                    if (result.Any())
-                    {
-                        return result;
-                    }
-                    throw new InvalidOperationException();
+                    return db.Query<Role>(query);
                 }
                 catch (Exception ex)
                 {
@@ -690,7 +685,9 @@ namespace Locus.Data
 	                           C.Deactivated AS CollectionDeactivated,
 	                           M.Id AS ModelId,
 	                           M.[Name] AS ModelName,
-	                           M.[Period] AS ModelPeriod,
+	                           P.Id AS PeriodId,
+                               P.[Days] AS PeriodDays,
+                               P.[Text] AS PeriodText,
 	                           M.Deactivated AS ModelDeactivated,
 	                           I.Id AS IconId,
 	                           I.[Name] AS IconName,
@@ -710,9 +707,11 @@ namespace Locus.Data
                                         ON C.Id = Ast.CollectionId
                                      INNER JOIN [dbo].[Model] AS M
                                         ON M.Id = Ast.ModelId
-                                           INNER JOIN [dbo].[Icon] as I
+                                           INNER JOIN [dbo].[Icon] AS I
                                               ON I.Id = M.IconId
-	                           INNER JOIN [dbo].[User] as U
+                                           INNER JOIN [dbo].[Period] AS P
+                                              ON P.Id = M.DefaultPeriod
+	                           INNER JOIN [dbo].[User] AS U
 	                              ON U.Id = Asg.UserId
 		                             INNER JOIN [dbo].[Role] AS R
 		                                ON R.Id = U.RoleId

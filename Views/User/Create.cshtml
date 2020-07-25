@@ -40,9 +40,12 @@
                     <div class="form__input-wrapper">
                         <select name="UserDetails.RoleId" class="form__input form__input--select">
                             <option hidden="hidden" disabled selected></option>
-                            @foreach (var role in Model.Roles)
+                            @if (Model.Roles != null)
                             {
-                                <option value="@role.Id">@role.Name</option>
+                                @foreach (var role in Model.Roles)
+                                {
+                                    <option value="@role.Id">@role.Name</option>
+                                }
                             }
                         </select>
                     </div>

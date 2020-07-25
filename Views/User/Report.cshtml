@@ -44,15 +44,14 @@
                                 }
                                 break;
                             case Status.Inactive:
-                                <i class="icon-info report-header__icon report-header__icon--blue"></i>
                                 <div>
-                                    <div>All outstanding assets have been returned. User is INACTIVE</div>
+                                    <div class="report-header__message">All outstanding assets for this user have been returned.</div>
                                 </div>
                                 break;
                             case Status.Error:
                                 <i class="icon-attention report-header__icon report-header__icon--yellow"></i>
                                 <div>
-                                    <div>An error has occoured!</div>
+                                    <div class="report-header__message">An error has occoured!</div>
                                 </div>
                                 break;
                         }
