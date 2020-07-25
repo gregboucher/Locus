@@ -212,8 +212,7 @@ namespace Locus.Data
                         collectionsOfModels[collectionIndex].TList.Add(model);
                         collectionsOfModels[collectionIndex].Total += model.Total;
                         
-                        //add model to modelList mapped to modelId in modelDictionary
-                        //for future binding of periods
+                        //add a reference to each model to modelDictionary so we can append periodLists later
                         if (!modelDictionary.TryGetValue(model.Id, out List<Model> modelList))
                         {
                             modelList = new List<Model>();
@@ -230,13 +229,23 @@ namespace Locus.Data
                 }
 
                 //fetch the list of periods for each unique model, and then append them to all instances of that
-                //model found in collectionsOfModels.
+                //model found in collectionsOfModels. Periods are sorted with default first, and long-term last.
                 query =
                     @"SELECT P.Id, P.[Days], P.[Text]
                         FROM [dbo].[Period] AS P
-                             INNER JOIN [dbo].[PeriodMap] as PM
-                                ON PM.PeriodId = P.Id
-                        WHERE PM.ModelId = @modelId";
+                             INNER JOIN [dbo].[PeriodList] AS PL
+                                ON PL.PeriodId = P.Id
+								   INNER JOIN [dbo].[Model] AS M
+									  ON M.Id = PL.ModelId
+                        WHERE PL.ModelId = @modelId
+                        ORDER BY
+						CASE WHEN P.[Days] = 0
+						THEN 2 ELSE
+							CASE WHEN P.Id = M.DefaultPeriod
+							THEN 0 
+							ELSE 1
+						    END
+						END, P.[Days]";
 
                 foreach (KeyValuePair<int, List<Model>> pair in modelDictionary)
                 {
@@ -250,9 +259,14 @@ namespace Locus.Data
                         _logger.WriteLog(ex);
                         throw new LocusException("Unable to populate model period list.");
                     }
-                    foreach (var model in pair.Value)
+                    //we only want the period menu to show if there is more than one option, leave model.Period null
+                    //will revert to the default period.
+                    if (periods.Count > 1)
                     {
-                        model.Periods = periods;
+                        foreach (var model in pair.Value)
+                        {
+                            model.Periods = periods;
+                        }
                     }
                 }
                 return collectionsOfModels;

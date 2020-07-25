@@ -119,7 +119,9 @@ $(function () {
         var periodMenu = card.prev('.period-menu')
         if (periodMenu.length > 0) {
             periodMenu.css({ top: e.pageY, left: e.pageX });
-            periodMenu.show();
+            periodMenu.stop().fadeIn(100);
+        } else {
+            card.find('.card__properties i').stop().fadeOut(250).fadeIn(250);
         }
     })
 
@@ -131,9 +133,16 @@ $(function () {
         var cardChildren = periodMenu.nextAll('.card__wrapper:first').children();
         allListItems.removeClass('is-selected');
         selectedListItem.addClass('is-selected');
-        cardChildren.filter('.input__period').val(selectedListItem.attr('data-period'));
-        cardChildren.find('.card__period').text(selectedListItem.text());
-        periodMenu.hide();
+        var inputPeriod = cardChildren.filter('.input__period');
+        inputPeriod.val(selectedListItem.attr('data-period'));
+        var cardPeriod = cardChildren.find('.card__period');
+        cardPeriod.text(selectedListItem.text());
+        if (selectedListItem.hasClass('is-default')) {
+            cardPeriod.css('color', '#6c707c');
+        } else {
+            cardPeriod.css('color', '#c4c9d7');
+        }
+        periodMenu.stop().fadeOut(100);
         cardChildren.filter('.is-assign').prop('checked', true);
         cardChildren.filter('.is-extend').prop('checked', true);
         cardChildren.filter(':hidden').prop('disabled', false);
@@ -142,7 +151,7 @@ $(function () {
     // close period menu if clicking outside menu
     $(document).mousedown(function (e) {
         if (!$(e.target).parents(".period-menu").length > 0) {
-            allPeriodMenues.hide();
+            allPeriodMenues.stop().fadeOut(100);
         }
     });
 
@@ -154,6 +163,19 @@ $(function () {
         cards.children(':radio:checked').prop('checked', false);
         cards.children(':hidden').prop('disabled', true);
         checkboxReturnAll.prop('checked', false);
+
+        allPeriodMenues.each(function () {
+            var periodMenu = $(this);
+            var allListItems = periodMenu.children('li');
+            allListItems.removeClass('is-selected');
+            var defaultListItem = allListItems.filter('.is-default')
+            defaultListItem.addClass('is-selected');
+            var cardChildren = periodMenu.nextAll('.card__wrapper:first').children();
+            cardChildren.filter('.input__period').val(defaultListItem.attr('data-period'));
+            var cardPeriod = cardChildren.find('.card__period')
+            cardPeriod.text(defaultListItem.text());
+            cardPeriod.css('color', '#6c707c');
+        });
     });
 
     //define callback function for search behaviour when dropdown collection is selected,

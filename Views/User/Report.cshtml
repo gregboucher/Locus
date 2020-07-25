@@ -24,14 +24,13 @@
                     <div class="report-header__date select--on">@Model.Report.UserCreated.ToString("dd-MM-yy h:mm tt")</div>
                 </div>
                 <div class="report-header__right">
-                    <div class="btn btn--dark help" onmouseover="ShowTooltip($(this), 500, false, 10, 10);" onmouseout="HideTooltip($(this));">?</div>
+                    <div class="btn btn--dark help" onmouseover="ShowTooltip($(this), 500, false, 10, 10);" onmouseout="HideTooltip($(this));"><i class="icon-info"></i></div>
                     <div class="tooltip">
                         <div class="tooltip__content tooltip__content--no-spacing tooltip--caps">
-                            <div><i class="icon-plus tooltip__icon tooltip__icon--green"></i>asset has been assigned for one period</div>
-                            <div><i class="icon-star tooltip__icon tooltip__icon--blue"></i>asset has been assigned indefinitely</div>
+                            <div><i class="icon-ok tooltip__icon tooltip__icon--green"></i>asset has been assigned</div>
                             <div><i class="icon-cancel tooltip__icon tooltip__icon--red"></i>asset has been returned</div>
-                            <div><i class="icon-forward tooltip__icon tooltip__icon--yellow"></i>due date has been extended one period from today</div>
-                            <div><i class="icon-circle-empty tooltip__icon"></i>assigned, no action performed</div>
+                            <div><i class="icon-forward tooltip__icon tooltip__icon--yellow"></i>due date has been extended</div>
+                            <div><i class="icon-circle-empty tooltip__icon"></i>is assigned, no action performed</div>
                         </div>
                     </div>
                     @{

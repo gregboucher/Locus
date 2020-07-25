@@ -75,14 +75,14 @@
                         {
                             foreach (var _model in collection.TList)
                             {
-                                if (_model.Periods.Count() > 1 && _model.Surplus > 0)
+                                if (_model.Periods != null && _model.Surplus > 0)
                                 {
                                         <ul class="period-menu">
                                             @foreach (var period in _model.Periods)
                                             {
                                                 if (period.Days == _model.DefaultPeriod.Days)
                                                 {
-                                                    <li class="is-selected" data-period="@period.Days">@period.Text</li>
+                                                    <li class="is-selected is-default" data-period="@period.Days">@period.Text</li>
                                                 }
                                                 else
                                                 {
@@ -97,7 +97,10 @@
                         <input type="hidden" name="AssignmentOperations.Index" value="@index" disabled />
                         <input type="hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
                         <input type="hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
-                        <input type="hidden" class="input__period" name="AssignmentOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
+                        if (_model.Periods != null)
+                        {
+                            <input type="hidden" class="input__period" name="AssignmentOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
+                        }
                         <input type="radio" class="is-assign" name="AssignmentOperations[@index].Type" value="1" />
                         ++index;
                     }
@@ -111,7 +114,13 @@
                             <div class="card__properties">
                                 <div>Status:</div>
                                 <div>Surplus:</div>
-                                <div>Period:</div>
+                                <div>
+                                    @if (_model.Periods == null)
+                                    {
+                                        <i class="icon-lock"></i>
+                                    }
+                                    Period:
+                                </div>
                             </div>
                             <div class="card__values">
                                 <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
@@ -131,7 +140,7 @@
             <input type="submit" value="Create" class="btn">
             <input type="button" value="Reset" id="reset" class="btn btn--dark">
             <a asp-controller="Home" asp-action="Dashboard" class="btn--dark btn">Cancel</a>
-            <div class="btn btn--dark help" onmouseover="ShowTooltip($(this), 500, true, 0, -170);" onmouseout="HideTooltip($(this));">?</div>
+            <div class="btn btn--dark help" onmouseover="ShowTooltip($(this), 500, true, 0, -170);" onmouseout="HideTooltip($(this));"><i class="icon-info"></i></div>
             <div class="tooltip">
                 <div class="tooltip__content">
                     <div>

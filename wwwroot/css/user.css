@@ -77,7 +77,8 @@
         .user .assets .period-menu li {
             padding: 8px 12px;
             list-style-type: none;
-            user-select: none; }
+            user-select: none;
+            border-bottom: 1px solid #313452; }
             .user .assets .period-menu li.is-selected {
                 background-color: #222235;
                 color: white; }
@@ -101,7 +102,7 @@
                 opacity: 0.4;
                 pointer-events: none; }
             .user .assets .card__wrapper.is-assigned .card {
-                border: 1px solid #4b4b4b; }
+                border: 1px solid #4c4f79; }
             .user .assets .card__wrapper input {
                 display: none; }
                 .user .assets .card__wrapper input.is-return:checked ~ .card {
@@ -110,7 +111,7 @@
                     .user .assets .card__wrapper input.is-return:checked ~ .card:before {
                         border-top: 1.5625rem solid #ff4747; }
                     .user .assets .card__wrapper input.is-return:checked ~ .card:after {
-                        content: '\e828';
+                        content: '\e816';
                         margin-top: -0.125rem; }
                 .user .assets .card__wrapper input.is-extend:checked ~ .card {
                     border: 2px solid #fbbc06;
@@ -118,14 +119,14 @@
                     .user .assets .card__wrapper input.is-extend:checked ~ .card:before {
                         border-top: 1.5625rem solid #fbbc06; }
                     .user .assets .card__wrapper input.is-extend:checked ~ .card:after {
-                        content: '\e835'; }
+                        content: '\e82F'; }
                 .user .assets .card__wrapper input.is-assign:checked ~ .card {
                     border: 2px solid #23af47;
                     padding: 0.5625rem 0.8125rem; }
                     .user .assets .card__wrapper input.is-assign:checked ~ .card:before {
                         border-top: 1.5625rem solid #23af47; }
                     .user .assets .card__wrapper input.is-assign:checked ~ .card:after {
-                        content: '\e82b'; }
+                        content: '\e813'; }
         .user .assets .card:hover {
             background-color: #2b2d43; }
         .user .assets .card:before {
@@ -147,6 +148,8 @@
             font-size: 1rem; }
         .user .assets .card__properties {
             margin-right: 1rem; }
+            .user .assets .card__properties i {
+                margin: 0rem -0.2rem; }
         .user .assets .card__values {
             color: #6c707c; }
             .user .assets .card__values--overdue {
@@ -254,3 +257,5 @@
         display: flex;
         flex-direction: row-reverse;
         align-items: center; }
+        .user .footer .help {
+            font-size: 1rem; }

@@ -41,6 +41,10 @@
                 color: map-get($colour-map, --yellow);
             }
         }
+
+        & .help {
+            font-size: 1rem;
+        }
     }
 
     &-collection {

@@ -111,6 +111,7 @@
             padding: 8px 12px;
             list-style-type: none;
             user-select: none;
+            border-bottom: 1px solid map-get($colour-map, --border);
 
             &.is-selected {
                 background-color: lighten(map-get($colour-map, --background), 2%);
@@ -145,7 +146,7 @@
             }
 
             &.is-assigned .card {
-                border: 1px solid #4b4b4b;
+                border: 1px solid #4c4f79;
             }
 
             & input {
@@ -160,7 +161,7 @@
                     }
 
                     &:after {
-                        content: '\e828';
+                        content: '\e816';
                         margin-top: -0.125rem;
                     }
                 }
@@ -174,7 +175,7 @@
                     }
 
                     &:after {
-                        content: '\e835';
+                        content: '\e82F';
                     }
                 }
 
@@ -187,7 +188,7 @@
                     }
 
                     &:after {
-                        content: '\e82b';
+                        content: '\e813';
                     }
                 }
             }
@@ -220,6 +221,10 @@
 
         &__properties {
             margin-right: 1rem;
+
+            & i {
+                margin: 0rem -0.2rem;
+            }
         }
 
         &__values {
