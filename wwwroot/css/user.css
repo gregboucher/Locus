@@ -125,7 +125,7 @@
                     .user .assets .card__wrapper input.is-assign:checked ~ .card:before {
                         border-top: 1.5625rem solid #23af47; }
                     .user .assets .card__wrapper input.is-assign:checked ~ .card:after {
-                        content: '\e813'; }
+                        content: '\e819'; }
         .user .assets .card:hover {
             background-color: #2b2d43; }
         .user .assets .card:before {
