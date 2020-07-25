@@ -6,32 +6,31 @@
     height: 100%;
     display: flex;
 
-    &__logo {
+    &__brand {
         display: flex;
         align-items: center;
+        justify-content: center;
         width: $side-bar--width;
         border-right: 1px solid map-get($colour-map, --border);
         box-sizing: border-box;
-        padding: 1rem;
     }
 
-    &__logo-icon {
-        color: white;
-        font-size: 2rem;
-        margin-right: 0.625rem;
+    &__logo {
+        border: 1px solid #484b66;
+        margin-right: 1rem;
     }
 
     &__title {
         color: white;
         overflow: hidden;
         white-space: nowrap;
-        font-size: 1.25rem;
+        font-size: 1.75rem;
     }
 
     &__input {
         display: flex;
         background-color: map-get($colour-map, --background);
-        margin: 0.75rem;
+        margin: 1rem;
         align-items: center;
         border-radius: 0.25rem;
         flex-grow: 1;
