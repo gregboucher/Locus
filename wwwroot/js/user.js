@@ -120,6 +120,7 @@ $(function () {
         if (periodMenu.length > 0) {
             periodMenu.css({ top: e.pageY, left: e.pageX });
             periodMenu.stop().fadeIn(100);
+            periodMenu.addClass('is-visable');
         } else {
             if (!card.hasClass('is-empty')) {
                 card.find('.card__properties i').stop().fadeOut(250).fadeIn(250);
@@ -145,6 +146,7 @@ $(function () {
             cardPeriod.css('color', '#c4c9d7');
         }
         periodMenu.stop().fadeOut(100);
+        periodMenu.removeClass('is-visable');
         cardChildren.filter('.is-assign').prop('checked', true);
         cardChildren.filter('.is-extend').prop('checked', true);
         cardChildren.filter(':hidden').prop('disabled', false);
@@ -153,7 +155,11 @@ $(function () {
     // close period menu if clicking outside menu
     $(document).mousedown(function (e) {
         if (!$(e.target).parents(".period-menu").length > 0) {
-            allPeriodMenues.stop().fadeOut(100);
+            allPeriodMenues.each(function () {
+                var periodMenu = $(this);
+                periodMenu.stop().fadeOut(100);
+                periodMenu.removeClass('is-visable');
+            });
         }
     });
 

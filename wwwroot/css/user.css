@@ -74,6 +74,9 @@
         border: 1px solid #313452;
         color: #868a95;
         box-shadow: 7px 7px 7px 1px rgba(0, 0, 0, 0.2); }
+        .user .assets .period-menu.is-visable + .card__wrapper .card {
+            border: 1px solid #868a95;
+            padding: 0.625rem 0.875rem; }
         .user .assets .period-menu li {
             padding: 8px 12px;
             list-style-type: none;
@@ -168,7 +171,7 @@
             font-weight: 700;
             font-variant: small-caps; }
         .user .assets .card__collection {
-            font-size: 0.7rem; }
+            font-size: 0.8rem; }
         .user .assets .card__body-B {
             display: flex;
             align-items: center;

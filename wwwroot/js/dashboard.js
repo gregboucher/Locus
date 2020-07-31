@@ -65,7 +65,7 @@ $(function() {
                 break
                 case 3:
                     filterRowByAssetClass('icon--long_term');
-                    changePlaceholder('Assets Assigned Indefinitely');
+                    changePlaceholder('Long-Term Assignments');
                 break
             }
         } else {
