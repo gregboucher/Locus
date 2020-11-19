@@ -114,7 +114,7 @@
                             <td class="select--on">@user.Name</td>
                             <td class="select--on">@collection.Name</td>
                             <td class="select--on">@user.Role</td>
-                            <td class="@(DateTime.Now.ToString("dd-MM-yy") == user.Created.ToString("dd-MM-yy") ? "data-table__today" : "") select--on">@user.Created.ToString("dd-MM-yy")</td>
+                            <td class="select--on @(DateTime.Now.ToString("dd-MM-yy") == user.Created.ToString("dd-MM-yy") ? "data-table__today" : "")">@user.Created.ToString("dd-MM-yy")</td>
                             <td>
                                 <div class="data-table__status data-table__status--@user.Assets[0].Status.ToString().ToLower()">@user.Assets[0].Status.ToString().Replace("_", "-")</div>
                             </td>

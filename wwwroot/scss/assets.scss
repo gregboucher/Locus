@@ -94,6 +94,30 @@
         }
     }
 
+    & .help {
+        display: flex;
+        font-size: 0.875rem;
+        color: darken(map-get($colour-map, --font), 10%);
+        border: 1px dashed lighten(map-get($colour-map, --border), 10%);
+        padding: $content-spacing 1rem;
+        border-radius: 0.6rem;
+        position: relative;
+
+        & span {
+            color: desaturate(map-get($colour-map, --yellow), 40%);
+            font-variant: small-caps;
+        }
+
+        &__item {
+            flex: 0 0 50%;
+            white-space: normal;
+        }
+
+        &__line {
+            margin-bottom: 0.25rem;
+        }
+    }
+
     & .period-menu {
         text-align: center;
         display: none;

@@ -25,6 +25,10 @@
             color: #fbbc06; }
         .report-header .help {
             font-size: 1rem; }
+    .report-footer {
+        display: flex;
+        margin-top: 0.5rem;
+        justify-content: flex-end; }
     .report-collection__title {
         font-size: 1rem;
         padding: 0.625rem;

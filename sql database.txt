@@ -78,6 +78,7 @@
 	INSERT INTO [dbo].[Role] VALUES ('CRT', NULL);
 	INSERT INTO [dbo].[Role] VALUES ('Contractor', NULL);
 	INSERT INTO [dbo].[Role] VALUES ('Cleaner', NULL);
+	INSERT INTO [dbo].[Role] VALUES ('Teacher', NULL);
 
 	--UPDATE [dbo].[Role] SET Deactivated = GETDATE() WHERE Id = 1;
 

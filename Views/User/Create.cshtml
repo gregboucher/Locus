@@ -80,62 +80,84 @@
                             {
                                 if (_model.Periods != null && _model.Surplus > 0)
                                 {
-                                        <ul class="period-menu">
-                                            @foreach (var period in _model.Periods)
+                                    <ul class="period-menu">
+                                        @foreach (var period in _model.Periods)
+                                        {
+                                            if (period.Days == _model.DefaultPeriod.Days)
                                             {
-                                                if (period.Days == _model.DefaultPeriod.Days)
-                                                {
-                                                    <li class="is-selected is-default" data-period="@period.Days">@period.Text</li>
-                                                }
-                                                else
-                                                {
-                                                    <li data-period="@period.Days">@period.Text</li>
-                                                }
+                                                <li class="is-selected is-default" data-period="@period.Days">@period.Text</li>
                                             }
-                                        </ul>
+                                            else
+                                            {
+                                                <li data-period="@period.Days">@period.Text</li>
+                                            }
+                                        }
+                                    </ul>
                                 }
-                <div class="card__wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
-                    @if (_model.Surplus > 0)
-                    {
-                        <input type="hidden" name="AssignmentOperations.Index" value="@index" disabled />
-                        <input type="hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
-                        <input type="hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
-                        if (_model.Periods != null)
-                        {
-                            <input type="hidden" class="input__period" name="AssignmentOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
-                        }
-                        <input type="radio" class="is-assign" name="AssignmentOperations[@index].Type" value="1" />
-                        ++index;
-                    }
-                    <div class="card">
-                        <i class="icon-@_model.Icon card__icon"></i>
-                        <div class="card__body-A">
-                            <div class="card__model searchable">@_model.Name</div>
-                            <div class="card__collection searchable">@collection.Name</div>
-                        </div>
-                        <div class="card__body-B card__body-B--margin">
-                            <div class="card__properties">
-                                <div>Status:</div>
-                                <div>Surplus:</div>
-                                <div>
-                                    @if (_model.Periods == null)
+                                <div class="card__wrapper @(_model.Surplus == 0 ? "is-empty" : "")">
+                                    @if (_model.Surplus > 0)
                                     {
-                                        <i class="icon-lock"></i>
+                                        <input type="hidden" name="AssignmentOperations.Index" value="@index" disabled />
+                                        <input type="hidden" name="AssignmentOperations[@index].ModelId" value="@_model.Id" disabled />
+                                        <input type="hidden" name="AssignmentOperations[@index].CollectionId" value="@collection.Id" disabled />
+                                        if (_model.Periods != null)
+                                        {
+                                            <input type="hidden" class="input__period" name="AssignmentOperations[@index].Period" value="@_model.DefaultPeriod.Days" disabled />
+                                        }
+                                        <input type="radio" class="is-assign" name="AssignmentOperations[@index].Type" value="1" />
+                                        ++index;
                                     }
-                                    Period:
+                                    <div class="card">
+                                        <i class="icon-@_model.Icon card__icon"></i>
+                                        <div class="card__body-A">
+                                            <div class="card__model searchable">@_model.Name</div>
+                                            <div class="card__collection searchable">@collection.Name</div>
+                                        </div>
+                                        <div class="card__body-B card__body-B--margin">
+                                            <div class="card__properties">
+                                                <div>Status:</div>
+                                                <div>Surplus:</div>
+                                                <div>
+                                                    @if (_model.Periods == null)
+                                                    {
+                                                        <i class="icon-lock"></i>
+                                                    }
+                                                    Period:
+                                                </div>
+                                            </div>
+                                            <div class="card__values">
+                                                <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
+                                                <div>@(_model.Surplus + " of " + _model.Total)</div>
+                                                <div class="card__period">@_model.DefaultPeriod.Text</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="card__values">
-                                <div>@(_model.Surplus == 0 ? "Empty" : "Available")</div>
-                                <div>@(_model.Surplus + " of " + _model.Total)</div>
-                                <div class="card__period">@_model.DefaultPeriod.Text</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                             }
                         }
                     }
+                </div>
+                <div class="help">
+                    <div class="help__item">
+                        <div class="help__line">
+                            <span>left-click</span> multiple times on a <span>model card</span> to cycle through available operations.
+                        </div>
+                        <div>Where no asset is assigned:</div>
+                        <div class="tooltip__block tooltip--caps">
+                            <div><i class="icon-plus tooltip__icon tooltip__icon--green"></i>assign a new asset</div>
+                        </div>
+                        <div>For assets that are assigned:</div>
+                        <div class="tooltip__block tooltip--caps">
+                            <div><i class="icon-cancel tooltip__icon tooltip__icon--red"></i>return this asset</div>
+                            <div><i class="icon-forward tooltip__icon tooltip__icon--yellow"></i>extend the due date by the specified period</div>
+                        </div>
+                    </div>
+                    <div class="help__item">
+                        Creating a new assignment will select an asset <span>at random</span> from the available asset pool,
+                        based on the selected model and collection. The duration of the assignment will be equal to the
+                        <span>period</span> shown on the <span>model card</span>. To change the <span>period</span>, simply
+                        <span>right-click</span> on a <span>model card</span> and select a new period from the drop down menu.
+                    </div>
                 </div>
             </div>
         </div>
@@ -143,27 +165,6 @@
             <input type="submit" value="Create" class="btn">
             <input type="button" value="Reset" id="reset" class="btn btn--dark">
             <a asp-controller="Home" asp-action="Dashboard" class="btn--dark btn">Cancel</a>
-            <div class="btn btn--dark help" onmouseover="ShowTooltip($(this), 500, true, 0, -170);" onmouseout="HideTooltip($(this));"><i class="icon-info"></i></div>
-            <div class="tooltip">
-                <div class="tooltip__content">
-                    <div>
-                        Click multiple times on a <span>model card</span> to cycle through<br />
-                        available operations.
-                    </div>
-                    <div>Where no asset is assigned:</div>
-                    <div class="tooltip__block tooltip--caps">
-                        <div><i class="icon-plus tooltip__icon tooltip__icon--green"></i>assign a new asset</div>
-                    </div>
-                    <div>
-                        Creating a new assignment will select an asset <span>at random</span><br />
-                        from the available pool, based on the selected model and<br />
-                        collection. The duration of the assignment will be equal<br />
-                        to the <span>period</span> shown on the <span>model card</span>. To change the<br />
-                        <span>period</span>, simply <span>right-click</span> on a <span>model card</span> and select<br />
-                        a new period from the drop down menu.
-                    </div>
-                </div>
-            </div>
             <input type="hidden" id="checkboxAssigned" name="checkboxAssigned">
         </div>
     </form>

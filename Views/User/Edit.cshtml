@@ -197,6 +197,28 @@
                         }
                     }
                 </div>
+                <div class="help">
+                    <div class="help__item">
+                        <div class="help__line">
+                            <span>left-click</span> multiple times on a <span>model card</span> to cycle through available operations.
+                        </div>
+                        <div>Where no asset is assigned:</div>
+                        <div class="tooltip__block tooltip--caps">
+                            <div><i class="icon-plus tooltip__icon tooltip__icon--green"></i>assign a new asset</div>
+                        </div>
+                        <div>For assets that are assigned:</div>
+                        <div class="tooltip__block tooltip--caps">
+                            <div><i class="icon-cancel tooltip__icon tooltip__icon--red"></i>return this asset</div>
+                            <div><i class="icon-forward tooltip__icon tooltip__icon--yellow"></i>extend the due date by the specified period</div>
+                        </div>
+                    </div>
+                    <div class="help__item">
+                        Creating a new assignment will select an asset <span>at random</span> from the available asset pool,
+                        based on the selected model and collection. The duration of the assignment will be equal to the
+                        <span>period</span> shown on the <span>model card</span>. To change the <span>period</span>, simply
+                        <span>right-click</span> on a <span>model card</span> and select a new period from the drop down menu.
+                    </div>
+                </div>
             </div>
         </div>
         <div class="footer">
@@ -204,32 +226,6 @@
             <a asp-controller="User" asp-action="Report" asp-route-userId="@Model.UserId" class="btn btn--dark">Generate User Report</a>
             <input type="button" value="Reset" data-page="edit" id="reset" class="btn btn--dark">
             <a asp-controller="Home" asp-action="Dashboard" class="btn btn--dark">Cancel</a>
-            <div class="btn btn--dark help" onmouseover="ShowTooltip($(this), 500, true, 0, -170);" onmouseout="HideTooltip($(this));"><i class="icon-info"></i></div>
-            <div class="tooltip">
-                <div class="tooltip__content">
-                    <div>
-                        Click multiple times on a <span>model card</span> to cycle through<br />
-                        available operations.
-                    </div>
-                    <div>Where no asset is assigned:</div>
-                    <div class="tooltip__block tooltip--caps">
-                        <div><i class="icon-plus tooltip__icon tooltip__icon--green"></i>assign a new asset</div>
-                    </div>
-                    <div>For assets that are assigned:</div>
-                    <div class="tooltip__block tooltip--caps">
-                        <div><i class="icon-cancel tooltip__icon tooltip__icon--red"></i>return this asset</div>
-                        <div><i class="icon-forward tooltip__icon tooltip__icon--yellow"></i>extend the due date by the specified period</div>
-                    </div>
-                    <div>
-                        Creating a new assignment will select an asset <span>at random</span><br />
-                        from the available pool, based on the selected model and<br />
-                        collection. The duration of the assignment will be equal<br />
-                        to the <span>period</span> shown on the <span>model card</span>. To change the<br />
-                        <span>period</span>, simply <span>right-click</span> on a <span>model card</span> and select<br />
-                        a new period from the drop down menu.
-                    </div>
-                </div>
-            </div>
         </div>
     </form>
 }

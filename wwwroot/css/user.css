@@ -62,6 +62,22 @@
                 background-color: #27293d; }
                 .user .assets__body::-webkit-scrollbar-thumb:hover {
                     background-color: #373a56; }
+    .user .assets .help {
+        display: flex;
+        font-size: 0.875rem;
+        color: #6c707c;
+        border: 1px dashed #444872;
+        padding: 1.3125rem 1rem;
+        border-radius: 0.6rem;
+        position: relative; }
+        .user .assets .help span {
+            color: #c8a339;
+            font-variant: small-caps; }
+        .user .assets .help__item {
+            flex: 0 0 50%;
+            white-space: normal; }
+        .user .assets .help__line {
+            margin-bottom: 0.25rem; }
     .user .assets .period-menu {
         text-align: center;
         display: none;

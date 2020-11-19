@@ -130,7 +130,7 @@
             color: #c8a339;
             font-variant: small-caps; }
     .tooltip__block {
-        margin-left: 1rem; }
+        margin: 0.5rem 0 0.5rem 1rem; }
     .tooltip__icon {
         margin-right: 0.25rem; }
         .tooltip__icon--red {
